@@ -7,7 +7,7 @@ TODO:
     - main에 우겨넣었는데 모듈화 하기
 '''
 
-import socket
+# import socket
 import uvicorn
 from fastapi import FastAPI
 from py_eureka_client.eureka_client import EurekaClient
