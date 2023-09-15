@@ -16,7 +16,7 @@ from pymongo import MongoClient
 # 대문자 변수들을 상황에 따라 조작하기
 
 # EUREKA 관련 변수
-INSTANCE_PORT = 8080
+INSTANCE_PORT = 9091
 INSTANCE_HOST = "localhost"
 
 # MongoDB 관련 변수
