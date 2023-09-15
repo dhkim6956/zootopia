@@ -83,5 +83,5 @@ async def create_user(user: dict):
     return {"message": "User Created successfully"}
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, port=INSTANCE_PORT)
+# if __name__ == "__main__":
+#     uvicorn.run(app, port=INSTANCE_PORT)
