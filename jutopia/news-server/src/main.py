@@ -20,8 +20,8 @@ INSTANCE_PORT = 9091
 INSTANCE_HOST = "localhost"
 
 # MongoDB 관련 변수
-DB_NAME = "testdb"
-COLLECTION_NAME = "testdb-testcollection"
+DB_NAME = "jutopia"
+COLLECTION_NAME = "news"
 
 app = FastAPI()
 
