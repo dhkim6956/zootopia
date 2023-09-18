@@ -21,7 +21,7 @@ spring:
     gateway:
       routes:
         - id: bank-server
-          uri: lb://ORDER-SERVER
+          uri: lb://BANK-SERVER
           predicates:
             - Path=/bank-server/**
 management:

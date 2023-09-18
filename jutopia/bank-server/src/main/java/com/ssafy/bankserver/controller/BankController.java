@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/bank-service")
+@RequestMapping("/bank-server")
 public class BankController {
     Environment env;
 
