@@ -18,12 +18,17 @@ spring:
     username: guest
     password: guest
   cloud:
-    routes:
-      - id: news-server
-        uri: lb://NEWS-SERVER
-        predicates:
-          - Path=/news-service/**
-          
+    gateway:
+      routes:
+        - id: bank-server
+          uri: lb://BANK-SERVER
+          predicates:
+            - Path=/bank-server/**
+      routes:
+        - id: news-server
+          uri: lb://NEWS-SERVER
+          predicates:
+            - Path=/news-service/**
 
 management:
   endpoints:

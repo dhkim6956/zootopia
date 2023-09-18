@@ -3,22 +3,12 @@ server:
 
 spring:
   application:
-    name: bank-service
+    name: bank-server
   rabbitmq:
     host: 127.0.0.1
     port: 5672
     username: guest
     password: guest
-
-  jpa:
-    show-sql: true
-    defer-datasource-initialization: true
-  h2:
-    console:
-      enabled: true
-      settings:
-        web-allow-others: true
-      path: /h2-console
 
 eureka:
   instance:
@@ -29,22 +19,8 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
 
-
-logging:
-  level:
-    com.example.bankserver: DEBUG
-
-# configure \uC11C\uBC84\uC5D0 \uC788\uB294 \uD30C\uC77C\uC774 \uBCC0\uACBD \uB420\uB54C \uB9C8\uB2E4 \uC7AC\uBD80\uD305 \uC548\uD558\uACE0 actuator\uB97C \uC0AC\uC6A9\uD558\uC5EC \uCD5C\uC2E0\uD654
 management:
   endpoints:
     web:
       exposure:
-        # refresh : MSA\uC5D0 \uC788\uB294 configuration \uC11C\uBC84\uC5D0\uC11C \uAC00\uC9C0\uACE0 \uC640\uC57C\uD560 \uC815\uBCF4\uB97C refresh
         include: refresh, health, beans, busrefresh
-
-#token:
-#  # \uB9CC\uB8CC \uAE30\uAC04
-#  expiration_time: 86400000
-#  # \uC5B4\uB5A4 \uD0A4\uB97C \uAC00\uC9C0\uACE0 \uC0DD\uC131\uD560\uC9C0
-#  secret: user_token
-
