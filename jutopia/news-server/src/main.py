@@ -17,7 +17,7 @@ from pymongo import MongoClient
 
 # EUREKA 관련 변수
 INSTANCE_PORT = 9091
-INSTANCE_HOST = "https://j9c108.p.ssafy.io"
+INSTANCE_HOST = "j9c108.p.ssafy.io"
 
 # MongoDB 관련 변수
 DB_NAME = "jutopia"
@@ -39,7 +39,7 @@ app = FastAPI()
 async def eureka_init(): 
     global client
     client = EurekaClient(
-        eureka_server=f"http://{INSTANCE_HOST}:8761/eureka",
+        eureka_server=f"https://{INSTANCE_HOST}:8761/eureka",
         app_name="fastapi-service",
         instance_port=INSTANCE_PORT,
         instance_host=INSTANCE_HOST,
@@ -67,8 +67,8 @@ def index():
     return {"message": "Welcome FastAPI Nerds"}
 
 @app.get("/test/{user_id}")
-async def get_user(user_id: str):
-    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017")
+async def get_user(user_id: str): # 직렬화 못하는 코드이지만 test 코드이므로 일단 두자
+    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017") # 각 API 호출마다 MongoDB에 연결하는 형식. 연결을 최적화하거나 풀링을 해야한다.
     db = db_client[DB_NAME]
     collection = db[COLLECTION_NAME]
     
