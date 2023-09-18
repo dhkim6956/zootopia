@@ -16,28 +16,30 @@ from pymongo import MongoClient
 # 대문자 변수들을 상황에 따라 조작하기
 
 # EUREKA 관련 변수
-INSTANCE_PORT = 9091
-INSTANCE_HOST = "localhost"
+INSTANCE_PORT = 9001
+INSTANCE_HOST = "j9c108.p.ssafy.io"
 
 # MongoDB 관련 변수
-DB_NAME = "testdb"
-COLLECTION_NAME = "testdb-testcollection"
+DB_NAME = "jutopia"
+COLLECTION_NAME = "news"
 
 app = FastAPI()
+
+# 나중에 CRUD 제대로 할 때 구현하기
+# Setting up the database connectivity (from pymongo import MongoClient) 
+# def create_db_collections():
+#     mongoClient = MongoClient('mongodb://localhost:27017/')
+#     try:
+#         db = mongoClient.obrs # 얘가 뭐지
+#         buyers = db.buyer
+#         users = db.login
 
 # eureka 연결
 @app.on_event("startup")
 async def eureka_init(): 
-    # 포트번호 불러오기
-    # global INSTANCE_PORT
-    # s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # INSTANCE_PORT = socket.getservbyname('http', 'tcp')
-    # NEW_INSTANCE_PORT = s.getsockname()
-    # print(f"NEW_INSTANCE_PORT is: {NEW_INSTANCE_PORT}")
-    
     global client
     client = EurekaClient(
-        eureka_server="http://localhost:8761/eureka",
+        eureka_server=f"https://{INSTANCE_HOST}:8761/eureka",
         app_name="fastapi-service",
         instance_port=INSTANCE_PORT,
         instance_host=INSTANCE_HOST,
@@ -48,7 +50,7 @@ async def eureka_init():
 # monbodb 연결
 @app.on_event("startup")
 async def mongodb_init(): 
-    db_client = MongoClient("mongodb://localhost:27017")
+    db_client = MongoClient("mongodb://j9c108.p.ssafy.io:27017")
     db = db_client[DB_NAME]
     collection = db[COLLECTION_NAME]
     
@@ -65,8 +67,8 @@ def index():
     return {"message": "Welcome FastAPI Nerds"}
 
 @app.get("/test/{user_id}")
-async def get_user(user_id: str):
-    db_client = MongoClient("mongodb://localhost:27017")
+async def get_user(user_id: str): # 직렬화 못하는 코드이지만 test 코드이므로 일단 두자
+    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017") # 각 API 호출마다 MongoDB에 연결하는 형식. 연결을 최적화하거나 풀링을 해야한다.
     db = db_client[DB_NAME]
     collection = db[COLLECTION_NAME]
     
@@ -75,7 +77,7 @@ async def get_user(user_id: str):
 
 @app.post("/test")
 async def create_user(user: dict):
-    db_client = MongoClient("mongodb://localhost:27017")
+    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017")
     db = db_client[DB_NAME]
     collection = db[COLLECTION_NAME]
     

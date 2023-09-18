@@ -11,9 +11,15 @@ services:
     image: config-server:1.0
     ports:
     - "8082"
-  news-server:
-    image: fastapi:0.0.1
-    ports:
-    - "8083"
+  # news-server:
+  #   image: news-server:1.0
+  #   # build:
+  #   #   context: ./news-server
+  #   #   dockerfile: Dockerfile
+  #   ports:
+  #     - "9001:9001"
+  #   volumes:
+  #     - ./news-server/src:/app/src
+  #   command: ["uvicorn", "main:app", "--host=0.0.0.0", "--port=9001"]
   # jenkins/jenkins:
   #   image: jenkins/jenkins:lts-jdk17
