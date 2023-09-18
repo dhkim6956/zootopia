@@ -17,6 +17,13 @@ spring:
     port: 5672
     username: guest
     password: guest
+  cloud:
+    routes:
+      - id: news-server
+        uri: lb://NEWS-SERVER
+        predicates:
+          - Path=/news-service/**
+          
 
 management:
   endpoints:
