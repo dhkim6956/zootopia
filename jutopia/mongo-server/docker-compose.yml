@@ -1,61 +1,37 @@
-version: '3.3'
+version: "3"
 
 services:
+  mongodb1:
+    image: mongo
+    container_name: mongodb1
+    restart: always
+    command: mongod --replSet rs0 --bind_ip_all
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongodb1:/data/db
 
-  mongo1:
-    container_name: mongo1
-    hostname: mongo1
-    image: mongo:7.0.1
+  mongodb2:
+    image: mongo
+    container_name: mongodb2
     restart: always
-    environment:
-      - .env
+    command: mongod --replSet rs0 --bind_ip_all --port 27018
     ports:
-      # 로컬 4001 포트로 요청이 들어오면 컨테이너의 27017 포트로 리다이렉트 되도록 설정
-      - 4001:27017
+      - 27018:27018
     volumes:
-      - ~/data/mongodb/mongo1:/data/db
-      - ./mongodb.key:/etc/mongodb.key
-      - ./mongodb.conf:/etc/mongodb.conf
-    networks:
-      - mongo-network
-    command: mongod --config /etc/mongodb.conf
-    
-  
-  mongo2:
-    image: mongo:7.0.1
-    hostname: mongo2
-    container_name: mongo2
+      - ./mongodb2:/data/db
+
+  mongodb3:
+    image: mongo
+    container_name: mongodb3
     restart: always
-    environment:
-      - .env
+    command: mongod --replSet rs0 --bind_ip_all --port 27019
     ports:
-      - 4002:27017
+      - 27019:27019
     volumes:
-      - ~/data/mongodb/mongo2:/data/db
-      - ./mongodb.key:/etc/mongodb.key
-      - ./mongodb.conf:/etc/mongodb.conf
-    networks:
-      - mongo-network
-    command: mongod --config /etc/mongodb.conf
-  
-  mongo3:
-    image: mongo:7.0.1
-    hostname: mongo3
-    container_name: mongo3
-    restart: always
-    environment:
-      - .env
-    ports:
-      - 4003:27017
-    volumes:
-      - ~/data/mongodb/mongo3:/data/db
-      - ./mongodb.key:/etc/mongodb.key
-      - ./mongodb.conf:/etc/mongodb.conf
-      - ./haproxy.cfg:/etc/haproxy.cfg
-    networks:
-      - mongo-network
-    command: mongod --config /etc/mongodb.conf
+      - ./mongodb3:/data/db
+
 
 networks:
-  mongo-network:
-    driver: bridge
+  default:
+    name: mongoCluster
