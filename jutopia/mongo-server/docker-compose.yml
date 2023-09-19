@@ -1,26 +1,25 @@
-version: '3.8'
+version: '3.3'
 
 services:
 
   mongo1:
-    image: mongo:7.0.1
+    container_name: mongo1
     hostname: mongo1
+    image: mongo:7.0.1
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: jutopia
+      - .env
     ports:
-      # 로컬 27017 포트로 요청이 들어오면 컨테이너의 27017 포트로 리다이렉트 되도록 설정
-      - 27017:27017
+      # 로컬 4001 포트로 요청이 들어오면 컨테이너의 27017 포트로 리다이렉트 되도록 설정
+      - 4001:27017
     volumes:
-      - ~/data/mongodb/replica/mongo1:/data/db
-      - ~/etc/mongodb.key:/etc/mongodb.key
-    command:
-      - '--replSet'
-      - 'jutopiaReplSet'
-      - '--keyFile'
-      - '~/etc/mongodb.key'
-      - '--bind_ip_all'
+      - ~/data/mongodb/mongo1:/data/db
+      - ./mongodb.key:/etc/mongodb.key
+      - ./mongodb.conf:/etc/mongodb.conf
+    networks:
+      - mongo-network
+    command: mongod --config /etc/mongodb.conf
+    
   
   mongo2:
     image: mongo:7.0.1
@@ -28,21 +27,16 @@ services:
     container_name: mongo2
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: jutopia
-    depends_on:
-      - mongo1
+      - .env
     ports:
-      - 27018:27017
+      - 4002:27017
     volumes:
-      - ~/data/mongodb/replica/mongo2:/data/db
-      - ~/etc/mongodb.key:/etc/mongodb.key
-    command:
-      - '--replSet'
-      - 'jutopiaReplSet'
-      - '--keyFile'
-      - '~/etc/mongodb.key'
-      - '--bind_ip_all'
+      - ~/data/mongodb/mongo2:/data/db
+      - ./mongodb.key:/etc/mongodb.key
+      - ./mongodb.conf:/etc/mongodb.conf
+    networks:
+      - mongo-network
+    command: mongod --config /etc/mongodb.conf
   
   mongo3:
     image: mongo:7.0.1
@@ -50,22 +44,18 @@ services:
     container_name: mongo3
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: jutopia
-    depends_on:
-      - mongo2
+      - .env
     ports:
-      - 27019:27017
+      - 4003:27017
     volumes:
-      - ~/data/mongodb/replica/mongo3:/data/db
-      - ~/etc/mongodb.key:/etc/mongodb.key
-    command:
-      - '--replSet'
-      - 'jutopiaReplSet'
-      - '--keyFile'
-      - '~/etc/mongodb.key'
-      - '--bind_ip_all'
+      - ~/data/mongodb/mongo3:/data/db
+      - ./mongodb.key:/etc/mongodb.key
+      - ./mongodb.conf:/etc/mongodb.conf
+      - ./haproxy.cfg:/etc/haproxy.cfg
+    networks:
+      - mongo-network
+    command: mongod --config /etc/mongodb.conf
 
 networks:
-  default:
-    name: mongo-cluster
+  mongo-network:
+    driver: bridge
