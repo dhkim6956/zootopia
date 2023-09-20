@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/main_gridview_img"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:src="@drawable/bank" />
+
+    <TextView
+        android:id="@+id/main_gridview_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="은행"
+        android:textStyle="bold"/>
+
+
+<!--    <ImageView-->
+<!--        android:id="@+id/gridview_stock_image"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:src="@drawable/stock" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/gridview_stock_text"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:text="주식"-->
+<!--        android:textStyle="bold" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/gridview_lease_image"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:src="@drawable/lease" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/gridview_lease_text"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:text="임대"-->
+<!--        android:textStyle="bold" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/gridview_trade_image"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:src="@drawable/trade" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/gridview_trade_text"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:text="환전"-->
+<!--        android:textStyle="bold" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/gridview_market_image"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:src="@drawable/market" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/gridview_market_text"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:text="상점"-->
+<!--        android:textStyle="bold" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/gridview_notice_image"-->
+<!--        android:layout_width="100dp"-->
+<!--        android:layout_height="100dp"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:src="@drawable/notice" />-->
+
+<!--    <TextView-->
+<!--        android:id="@+id/gridview_notice_text"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="center"-->
+<!--        android:text="공지사항"-->
+<!--        android:textStyle="bold" />-->
+</LinearLayout>
