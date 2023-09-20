@@ -32,7 +32,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace, busrefresh
+        include: refresh, health, beans, httpexchanges , busrefresh
 
 
 

@@ -1,4 +1,4 @@
-package com.ssafy.bankserver.controller;
+package com.ssafy.bankserver.domain.account.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,7 @@ public class BankController {
     public String status() {
         return String.format("It's working in Order Service on PORT %s", env.getProperty("local.server.port"));
     }
+
 
 //    @GetMapping(value = "/api/accounts/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
 //    public ResponseEntity<ResponseUser> getAccounts(@PathVariable("userId") String userId) {
