@@ -1,35 +1,35 @@
-version: "3"
+version: "3.3"
 
 services:
-  mongodb1:
-    image: mongo
-    container_name: mongodb1
+  mongo1:
+    image: mongo:7.0.1
+    container_name: mongo1
     restart: always
-    command: mongod --replSet rs0 --bind_ip_all
+    command: mongod --replSet jutopia-repl --bind_ip_all
     ports:
       - 27017:27017
     volumes:
-      - ./mongodb1:/data/db
+      - ~/data/mongo/mongo1:/data/db
 
-  mongodb2:
-    image: mongo
-    container_name: mongodb2
+  mongo2:
+    image: mongo:7.0.1
+    container_name: mongo2
     restart: always
-    command: mongod --replSet rs0 --bind_ip_all --port 27018
+    command: mongod --replSet jutopia-repl --bind_ip_all --port 27018
     ports:
       - 27018:27018
     volumes:
-      - ./mongodb2:/data/db
+      - ~/data/mongo/mongo2:/data/db
 
-  mongodb3:
-    image: mongo
-    container_name: mongodb3
+  mongo3:
+    image: mongo:7.0.1
+    container_name: mongo3
     restart: always
-    command: mongod --replSet rs0 --bind_ip_all --port 27019
+    command: mongod --replSet jutopia-repl --bind_ip_all --port 27019
     ports:
       - 27019:27019
     volumes:
-      - ./mongodb3:/data/db
+      - ~/data/mongo/mongo3:/data/db
 
 
 networks:
