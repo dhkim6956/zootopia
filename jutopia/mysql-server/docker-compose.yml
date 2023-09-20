@@ -1,6 +1,8 @@
 version: "3"
 services:
   mysql-master:
+    image: mysql-master
+    container_name: mysql-master
     build: 
       context: ./
       dockerfile: master/Dockerfile
@@ -20,6 +22,8 @@ services:
       - jutopia-network
   
   mysql-slave:
+    image: mysql-slave
+    container_name: mysql-slave
     build: 
       context: ./
       dockerfile: slave/Dockerfile
@@ -45,4 +49,6 @@ volumes:
 
 networks: 
   jutopia-network:
-    driver: bridge
+    external: true
+    # name: jutopia-network
+    # driver: bridge
