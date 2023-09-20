@@ -9,6 +9,32 @@ spring:
     port: 5672
     username: guest
     password: guest
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/mydb
+    username: root
+    password: test1357
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+#    url: jdbc:mysql://localhost:3306/jutopia
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: juto
+#    password: juto1234
+#  jpa:
+#    database: mysql
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    hibernate:
+#      ddl-auto: none
+#    #      ddl-auto: update
+#    properties:
+#      hibernate:
+#        default_batch_fetch_size: 100
+#    open-in-view: true
 
 eureka:
   instance:

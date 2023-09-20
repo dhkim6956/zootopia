@@ -26,18 +26,40 @@ ext {
 }
 
 dependencies {
-	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
+	//Spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	//spring cloud
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	//lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	//h2
+	runtimeOnly 'com.h2database:h2'
+
+	//mysql
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'mysql:mysql-connector-java:8.0.17'
+
+	//test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// cloud config
 	implementation 'org.springframework.cloud:spring-cloud-starter-config'
 	implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+
+	// actuator
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.cloud:spring-cloud-starter'
-	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// feign client
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	// bus
+	implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp'
 }
 
 dependencyManagement {
