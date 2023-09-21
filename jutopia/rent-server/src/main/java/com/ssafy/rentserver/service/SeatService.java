@@ -1,23 +1,42 @@
 package com.ssafy.rentserver.service;
 
+import com.ssafy.rentserver.enums.SeatStatus;
 import com.ssafy.rentserver.model.Seat;
 import com.ssafy.rentserver.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SeatService {
 
     private final SeatRepository seatRepository;
-    private final StringRedisTemplate redisTemplate;
+//    private final StringRedisTemplate redisTemplate;
 
-    public void createGrid(int row, int col, int classNumber) {
+    public List<Seat> createGrid(int row, int col, int classNumber) {
         //TODO: 해당 반에 기본 좌석생성 및 좌석 상태를 저장 성공시 행,렬,반 리턴
+        List<Seat> seats = new ArrayList<>();
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                var seat = Seat.builder()
+                        .rowNum(i)
+                        .colNum(j)
+                        .price(new BigDecimal(1000))
+                        .class_number(classNumber)
+                        .SeatStatus(SeatStatus.POSSIBLE)
+                        .build();
+                seats.add(seat);
+            }
+        }
+        log.info("{}", seats.toString());
+        return seatRepository.saveAll(seats);
     }
 
     public void getAllSeat(int classNumber) {
@@ -40,19 +59,18 @@ public class SeatService {
 
     public void requestSeat(String seatId, String userId) {
         //TODO: 해당 유저의 보유 포인트가 좌석 비용보다 많은지 검사하는 로직 추가
-
-        String key = "seat_" + seatId + "_queue";
-        redisTemplate.opsForList().leftPush(key, userId);
-        String firstUserId = redisTemplate.opsForList().rightPop(key);
-
-        if (Objects.equals(firstUserId, userId)) {
-            Optional<Seat> result = assignSeatToUser(seatId, userId);
-            if (result.isPresent()) {
-                System.out.println("좌석 성공");
-            } else {
-                System.out.println("좌석 실패");
-            }
-        }
+//        String key = "seat_" + seatId + "_queue";
+//        redisTemplate.opsForList().leftPush(key, userId);
+//        String firstUserId = redisTemplate.opsForList().rightPop(key);
+//
+//        if (Objects.equals(firstUserId, userId)) {
+//            Optional<Seat> result = assignSeatToUser(seatId, userId);
+//            if (result.isPresent()) {
+//                System.out.println("좌석 성공");
+//            } else {
+//                System.out.println("좌석 실패");
+//            }
+//        }
 
     }
 
