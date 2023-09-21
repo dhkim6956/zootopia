@@ -41,4 +41,14 @@ public class Seat {
             id = UUID.randomUUID();
         }
     }
+
+    public void changePrice(BigDecimal price) {
+        this.price = price;
+    }
+    public void changeStatus(SeatStatus status){
+        this.SeatStatus = status;
+    }
+    public void setUserId(UUID userId){
+        this.userId = userId;
+    }
 }
