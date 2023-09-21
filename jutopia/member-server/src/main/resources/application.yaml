@@ -1,0 +1,31 @@
+server:
+  port: 18080
+
+spring:
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/sns?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: ssafy
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+  logging:
+    level:
+      org.hibernate.SQL: debug
+      type: trace
+
+  #  security:
+  #    user:
+  #      name: ssafy
+  #      password: ssafy
+  mail:
+    username:
+    password:
