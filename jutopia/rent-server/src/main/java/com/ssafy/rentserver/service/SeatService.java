@@ -25,7 +25,7 @@ public class SeatService {
     private final SeatRepository seatRepository;
     private final StringRedisTemplate redisTemplate;
 
-    public List<Seat> createGrid(int row, int col, int clazzNumber, int grade) {
+    public List<Seat> createGrid(int row, int col, int clazzNumber, int grade, String school) {
         List<Seat> seats = new ArrayList<>();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
@@ -35,6 +35,7 @@ public class SeatService {
                         .price(new BigDecimal(1000))
                         .clazzNumber(clazzNumber)
                         .grade(grade)
+                        .school(school)
                         .SeatStatus(SeatStatus.AVAILABLE)
                         .build();
                 seats.add(seat);
@@ -44,16 +45,16 @@ public class SeatService {
         return seatRepository.saveAll(seats);
     }
 
-//    public Optional<List<Seat>> getAllSeat(int clazzNumber, int grade, SeatStatus status) {
-//        return seatRepository.findAllByClazzNumberAndGradeAndSeatStatus(clazzNumber, grade, status);
-//    }
+    public Optional<List<Seat>> getAllSeat(int clazzNumber, int grade, String school, SeatStatus status) {
+        return seatRepository.getAllSeats(clazzNumber, grade, school, status);
+    }
 
     public Optional<Seat> getSeatInfo(UUID seatId) {
         return seatRepository.findById(seatId);
     }
 
     @Transactional
-    public Seat setSeatInfO(UUID seatId, SeatRequest request) {
+    public Seat setSeatInfo(UUID seatId, SeatRequest request) {
         Seat seat = seatRepository.findById(seatId).orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
         seat.changePrice(request.price());
         seat.changeStatus(request.seatStatus());
@@ -112,10 +113,6 @@ public class SeatService {
             }
         }
         // 전부 실패
-    }
-
-    public void redisTest(){
-        redisTemplate.opsForList().leftPush("1","1");
     }
 
 }

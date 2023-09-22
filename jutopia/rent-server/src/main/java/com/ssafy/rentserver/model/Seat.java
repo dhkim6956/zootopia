@@ -34,6 +34,8 @@ public class Seat {
     private int clazzNumber;
     @Column(nullable = false)
     private int grade;
+    @Column(nullable = false)
+    private String school;
 
     @Enumerated(EnumType.STRING)
     private SeatStatus SeatStatus;
