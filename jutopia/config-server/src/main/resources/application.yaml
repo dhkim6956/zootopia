@@ -11,12 +11,12 @@ spring:
     password: guest
 
   profiles:
-    active: native, git
+    active: git
   cloud:
     config:
       server:
-        native: # 직접적인 파일경로로 설정 파일 불러오는 방법
-          search-locations: file:///C:/SSAFY/project2/jutopia/config-server/src/main/resources/
+#        native: # 직접적인 파일경로로 설정 파일 불러오는 방법
+#          search-locations: file:///C:/SSAFY/project2/jutopia/config-server/src/main/resources/
         git:
           uri: https://github.com/hans0537/jutopia_cloud_config
           default-label: master
