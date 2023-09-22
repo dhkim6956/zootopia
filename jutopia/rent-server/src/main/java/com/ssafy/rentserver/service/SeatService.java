@@ -25,7 +25,7 @@ public class SeatService {
     private final SeatRepository seatRepository;
     private final StringRedisTemplate redisTemplate;
 
-    public List<Seat> createGrid(int row, int col, int classNumber) {
+    public List<Seat> createGrid(int row, int col, int clazzNumber, int grade) {
         List<Seat> seats = new ArrayList<>();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
@@ -33,7 +33,8 @@ public class SeatService {
                         .rowNum(i)
                         .colNum(j)
                         .price(new BigDecimal(1000))
-                        .class_number(classNumber)
+                        .clazzNumber(clazzNumber)
+                        .grade(grade)
                         .SeatStatus(SeatStatus.AVAILABLE)
                         .build();
                 seats.add(seat);
@@ -43,9 +44,9 @@ public class SeatService {
         return seatRepository.saveAll(seats);
     }
 
-    public Optional<List<Seat>> getAllSeat(int classNumber) {
-        return seatRepository.findAllByClass_number(classNumber);
-    }
+//    public Optional<List<Seat>> getAllSeat(int clazzNumber, int grade, SeatStatus status) {
+//        return seatRepository.findAllByClazzNumberAndGradeAndSeatStatus(clazzNumber, grade, status);
+//    }
 
     public Optional<Seat> getSeatInfo(UUID seatId) {
         return seatRepository.findById(seatId);
@@ -111,6 +112,10 @@ public class SeatService {
             }
         }
         // 전부 실패
+    }
+
+    public void redisTest(){
+        redisTemplate.opsForList().leftPush("1","1");
     }
 
 }

@@ -31,7 +31,10 @@ public class Seat {
     private UUID userId;
 
     @Column(nullable = false)
-    private int class_number;
+    private int clazzNumber;
+    @Column(nullable = false)
+    private int grade;
+
     @Enumerated(EnumType.STRING)
     private SeatStatus SeatStatus;
 
