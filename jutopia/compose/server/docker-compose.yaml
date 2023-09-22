@@ -33,7 +33,7 @@ services:
       - jutopia-network
   news-server:
     build:
-      context: ../../service/news-server
+      context: ../../news-server
       dockerfile: Dockerfile
     container_name: news-server
     ports:
