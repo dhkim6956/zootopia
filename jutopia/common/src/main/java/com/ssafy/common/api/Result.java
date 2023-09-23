@@ -25,6 +25,14 @@ public class Result {
                 .build();
     }
 
+    public static Result CREATED() {
+        return Result.builder()
+                .resultCode(ErrorCode.OK.getErrorCode())
+                .resultMessage(ErrorCode.OK.getDescription())
+                .resultDescription("생성 완료")
+                .build();
+    }
+
     public static Result ERROR(ErrorCodeIfs errorCodeIfs){
         return Result.builder()
                 .resultCode(errorCodeIfs.getErrorCode())
@@ -40,4 +48,6 @@ public class Result {
                 .resultDescription(description)
                 .build();
     }
+
+
 }
