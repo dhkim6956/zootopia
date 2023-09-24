@@ -1,5 +1,4 @@
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import asset.Asset
 import moe.tlaster.precompose.navigation.NavHost
