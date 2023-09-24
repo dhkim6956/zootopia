@@ -27,7 +27,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ssafy.jutopia.android.ui.BankPage
-import com.ssafy.jutopia.android.ui.LeasePage
+import com.ssafy.jutopia.android.ui.lease.LeasePage
 import com.ssafy.jutopia.android.ui.MainPage
 import com.ssafy.jutopia.android.ui.MarketPage
 import com.ssafy.jutopia.android.ui.NoticePage
