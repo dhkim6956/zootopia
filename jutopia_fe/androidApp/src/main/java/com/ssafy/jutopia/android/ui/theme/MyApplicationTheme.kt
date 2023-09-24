@@ -1,4 +1,4 @@
-package com.ssafy.jutopia.android
+package com.ssafy.jutopia.android.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.compose.md_theme_light_primary
 
 @Composable
 fun MyApplicationTheme(
@@ -28,7 +29,7 @@ fun MyApplicationTheme(
         )
     } else {
         lightColors(
-            primary = Color(0xFF6200EE),
+            primary = md_theme_light_primary,
             primaryVariant = Color(0xFF3700B3),
             secondary = Color(0xFF03DAC5)
         )
