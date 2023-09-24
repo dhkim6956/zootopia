@@ -1,5 +1,6 @@
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontFamily
 import asset.Asset
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
@@ -52,3 +53,9 @@ fun App() {
 
 
 expect fun getPlatformName(): String
+
+expect val icehimchanFontFamily: FontFamily
+expect val icejaramFontFamily: FontFamily
+expect val icesiminFontFamily: FontFamily
+expect val icesotongFontFamily: FontFamily
+expect val pretendardFontFamily: FontFamily

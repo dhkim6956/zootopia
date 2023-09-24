@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import icehimchanFontFamily
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -41,7 +42,7 @@ fun Home(navigator: Navigator) {
                 .background(color = Variables.ColorsBackground)
                 .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
         ) {
-            Text("홈")
+            Text("홈", fontFamily = icehimchanFontFamily, fontSize = 28.sp)
         }
         BottomTabBar(navigator)
     }

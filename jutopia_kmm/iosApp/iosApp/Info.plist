@@ -39,6 +39,14 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>icehimchan.ttf</string>
+		<string>icejaram.ttf</string>
+		<string>icesimin.ttf</string>
+		<string>icesotong.ttf</string>
+		<string>pretendard.ttf</string>
+	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
