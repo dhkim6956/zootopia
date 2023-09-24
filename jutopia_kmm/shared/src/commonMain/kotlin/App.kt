@@ -1,13 +1,15 @@
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import asset.Asset
 import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.rememberNavigator
-import moe.tlaster.precompose.navigation.transition.NavTransition
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import home.Home
 import menus.Menus
+import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
 import school.School
 
@@ -18,7 +20,7 @@ fun App() {
     MaterialTheme {
         NavHost(
             navigator = navigator,
-            navTransition = NavTransition(),
+            navTransition = NavTransition(createTransition = EnterTransition.None),
             initialRoute = "/home",
         ) {
             scene(
