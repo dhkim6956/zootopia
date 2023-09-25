@@ -18,11 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import asset.subMenu.Building
-import asset.subMenu.Deposit
-import asset.subMenu.Point
-import asset.subMenu.Save
-import asset.subMenu.Stock
+import asset.subMenu.MyBuilding
+import asset.subMenu.MyDeposit
+import asset.subMenu.MyPoint
+import asset.subMenu.MySave
+import asset.subMenu.MyStock
 import common.TopPageBar
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
@@ -51,11 +51,11 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
         Chips(navigator, viewModel.chipIdx.value, viewModel)
 
         when (viewModel.chipIdx.value) {
-            0 -> Deposit()
-            1 -> Save()
-            2 -> Point()
-            3 -> Stock()
-            4 -> Building()
+            0 -> MyDeposit()
+            1 -> MySave()
+            2 -> MyPoint()
+            3 -> MyStock()
+            4 -> MyBuilding()
             else -> Text("Error Page")
         }
     }
