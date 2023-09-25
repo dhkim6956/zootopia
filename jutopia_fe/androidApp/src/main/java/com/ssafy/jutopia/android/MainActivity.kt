@@ -3,11 +3,13 @@ package com.ssafy.jutopia.android
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.AdapterView
 import com.ssafy.jutopia.android.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
@@ -40,9 +42,7 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this@MainActivity,BankActivity::class.java )
                     startActivity(intent)
                 }
-
             }
         }
-
     }
 }
