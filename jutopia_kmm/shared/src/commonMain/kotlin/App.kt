@@ -16,8 +16,14 @@ import home.Trade
 import lease.LeaseScreen
 import menus.Menus
 import moe.tlaster.precompose.navigation.transition.NavTransition
+import moe.tlaster.precompose.viewmodel.viewModel
 import news.News
 import school.School
+import stock.chart.StockChartScreen
+import stock.chart.StockDetailViewModel
+import stock.stocklist.StockListPage
+import stock.stocklist.StockListScreen
+import stock.stocklist.StockListViewModel
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -113,6 +119,16 @@ fun App() {
                 route = "/lease"
             ) {
                 LeaseScreen(navigator)
+            }
+            scene(
+                route = "/stockList"
+            ) {
+                StockListScreen(navigator)
+            }
+            scene(
+                route = "/stockChart/{stockName}"
+            ) {
+                StockChartScreen(it, navigator)
             }
         }
     }

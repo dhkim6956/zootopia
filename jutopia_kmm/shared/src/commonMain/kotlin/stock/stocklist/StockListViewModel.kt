@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import kotlin.random.Random
@@ -14,7 +15,7 @@ import kotlin.random.Random
 class StockListViewModel : ViewModel() {
     private val _stocks = MutableStateFlow(initialData())
     val stocks: StateFlow<List<Stock>> = _stocks
-
+    var selectedStock: Stock? = null
     init {
         viewModelScope.launch {
             while (true) {
@@ -39,4 +40,10 @@ class StockListViewModel : ViewModel() {
         Stock("TSLA", 600.0, 0.0, false,0.0),
         Stock("dasd", 600.0, 0.0, false,0.0),
     )
+
+    fun onStockClicked(navigator: Navigator, stock: Stock){
+        selectedStock = stock
+        navigator.navigate("/stockChart/${stock.name}")
+    }
+
 }

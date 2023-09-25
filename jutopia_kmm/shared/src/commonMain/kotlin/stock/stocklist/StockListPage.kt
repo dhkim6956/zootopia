@@ -1,6 +1,7 @@
 package stock.stocklist
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,10 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import formatDouble
+import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.navigation.rememberNavigator
 
 @Composable
-fun StockListPage(
-    viewModel: StockListViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockListViewModel::class) {
+fun StockListPage(navigator: Navigator = rememberNavigator(),
+                  viewModel: StockListViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockListViewModel::class) {
         StockListViewModel()
     }, modifier: Modifier = Modifier
 ) {
@@ -49,7 +52,9 @@ fun StockListPage(
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
             items(filteredStocks) { stock ->
-                StockRow(stock)
+                StockRow(stock) {
+                    viewModel.onStockClicked(navigator, stock)
+                }
                 Divider()
         }
     }
@@ -67,11 +72,12 @@ fun Divider(){
 }
 
 @Composable
-fun StockRow(stock: Stock) {
+fun StockRow(stock: Stock, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable { onClick() },
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

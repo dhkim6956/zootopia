@@ -34,6 +34,7 @@ kotlin {
                 api("moe.tlaster:precompose:1.5.3")
                 api("moe.tlaster:precompose-viewmodel:1.5.3")
                 implementation("co.touchlab:kermit:2.0.0")
+
             }
         }
         val androidMain by getting {
