@@ -32,12 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import moe.tlaster.precompose.viewmodel.viewModel
-
+import co.touchlab.kermit.Logger
 object Variables {
     val Brown50: Color = Color(0xFFF6F3F0)
     val Brown200: Color = Color(0xFFD3C4B5)
 }
-
+private val log = Logger.withTag("LeasePage")
 @Composable
 fun LeasePage(
     viewModel: LeaseViewModel = viewModel(modelClass = LeaseViewModel::class) {
@@ -46,6 +46,7 @@ fun LeasePage(
 ) {
     val seats by viewModel.seats.collectAsState()
     val selectedSeat by viewModel.selectedSeat.collectAsState()
+
 
     Box(
         modifier = Modifier
@@ -174,7 +175,9 @@ fun SeatView(seat: Seat, viewModel: LeaseViewModel) {
         modifier = Modifier
             .size(50.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 10.dp))
-            .clickable { viewModel.selectSeat(seat) }
+            .clickable {
+                log.i{"버튼 클릭 선택된 좌석 ${seat.info}"}
+                viewModel.selectSeat(seat) }
 
     ) {
         Text(
