@@ -17,6 +17,11 @@ public class SavingProductsEntity {
     private UUID id;
 
     @Column(nullable = false)
+    private String productName;
+
+    private String productDetail;
+
+    @Column(nullable = false)
     private BigDecimal minMoney;
     @Column(nullable = false)
     private BigDecimal maxMoney;

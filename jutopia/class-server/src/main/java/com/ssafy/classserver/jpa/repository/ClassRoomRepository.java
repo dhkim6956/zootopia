@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface ClassRoomRepository extends JpaRepository<ClassRoomEntity, UUID> {
     List<ClassRoomEntity> findAll();
     Optional<ClassRoomEntity> findById(UUID id);
+
+    Iterable<ClassRoomEntity> findAllByGradeId(UUID gradeId);
 }

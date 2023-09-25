@@ -16,4 +16,5 @@ public interface SchoolService {
     SchoolDto createSchool(SchoolDto school);
     ClassRoomDto createClassRoom(ClassRoomDto classRoomDto, UUID gradeId);
     ClassRoomDto getClassRoom(UUID classroomId);
+    Iterable<ClassRoomEntity> getClassesByGradeId(UUID id);
 }

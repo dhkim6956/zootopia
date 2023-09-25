@@ -92,12 +92,17 @@ public class SchoolServiceImpl implements SchoolService{
     @Override
     public ClassRoomDto getClassRoom(UUID classroomId) {
         Optional<ClassRoomEntity> classroom = classRoomRepository.findById(classroomId);
-        System.out.println("서비스: " +  classroom);
-
-        ClassRoomDto result = mapper.map(classroom, ClassRoomDto.class);
+        System.out.println("service : " + classroom);
+        ClassRoomDto result = mapper.map(classroom.get(), ClassRoomDto.class);
         result.setSchoolName(classroom.get().getGrade().getSchool().getSchoolName());
         result.setGradeNum(classroom.get().getGrade().getGradeNum());
+        System.out.println("service: " + result);
         return result;
+    }
+
+    @Override
+    public Iterable<ClassRoomEntity> getClassesByGradeId(UUID gradeId) {
+        return classRoomRepository.findAllByGradeId(gradeId);
     }
 
     @Override

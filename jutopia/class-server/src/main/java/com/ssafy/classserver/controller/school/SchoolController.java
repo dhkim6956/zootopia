@@ -53,12 +53,22 @@ public class SchoolController {
         for (SchoolEntity school : schoolList) {
             // 해당 학교의 학년 정보 가져오기
             Iterable<GradeEntity> gradeList = schoolService.getGradesBySchoolId(school.getId());
-            System.out.println(gradeList);
             List<ResponseGrade> responseGrades = new ArrayList<>();
+
 
             for (GradeEntity grade : gradeList) {
                 // GradeEntity를 ResponseGrade로 매핑
-                ResponseGrade responseGrade = new ModelMapper().map(grade, ResponseGrade.class);
+                ResponseGrade responseGrade = mapper.map(grade, ResponseGrade.class);
+
+                // 해당 학년의 반정보 가져오기
+                List<ResponseClassRoom> responseClassRooms = new ArrayList<>();
+                Iterable<ClassRoomEntity> classList = schoolService.getClassesByGradeId(grade.getId());
+                for (ClassRoomEntity classroom : classList) {
+                    ResponseClassRoom classRoom = mapper.map(classroom, ResponseClassRoom.class);
+                    responseClassRooms.add(classRoom);
+                }
+                responseGrade.setClassRooms(responseClassRooms);
+
                 responseGrades.add(responseGrade);
                 System.out.println(grade);
             }
@@ -98,6 +108,9 @@ public class SchoolController {
     @GetMapping("/classroom/{classroomId}")
     public Api<ResponseClassRoom> getClassRoom(@PathVariable UUID classroomId){
         ClassRoomDto classroom = schoolService.getClassRoom(classroomId);
+        System.out.println("controller : " + classroom);
         return Api.OK(mapper.map(classroom, ResponseClassRoom.class));
     }
+
+
 }
