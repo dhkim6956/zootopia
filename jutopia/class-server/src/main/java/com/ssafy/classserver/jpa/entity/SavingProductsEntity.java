@@ -1,5 +1,6 @@
-package com.ssafy.classserver.jpa;
+package com.ssafy.classserver.jpa.entity;
 
+import com.ssafy.classserver.jpa.entity.ClassRoomEntity;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 public class SavingProductsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "SAVING_PRODUCTS_ID")
     private UUID id;
 
     @Column(nullable = false)
@@ -23,7 +25,8 @@ public class SavingProductsEntity {
     @Column(nullable = false)
     private Short term;
 
-    // 어느 은행의 적금 상품인지
-    @Column(nullable = false)
-    private UUID bankId;
+    // 어느 반(은행) 에서 만든 적금상품인지
+    @ManyToOne
+    @JoinColumn(name = "CLASSROOM_ID")
+    private ClassRoomEntity classroom;
 }

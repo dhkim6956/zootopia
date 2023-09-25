@@ -13,26 +13,27 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/class-server/api/banks")
+@RequestMapping("/class-server/api/bank")
 public class ProductsController {
 
     Environment env;
     BankService bankService;
+    ModelMapper mapper;
 
     public ProductsController(Environment env, BankService bankService) {
         this.env = env;
         this.bankService = bankService;
+        this.mapper = new ModelMapper();
+        this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    @PostMapping("/{bankId}")
+    // 반 적금 상품 생성
+    @PostMapping("/{classId}")
     public Api<ResponseProduct> createProduct(@RequestBody RequestProduct product
-                                                        , @PathVariable UUID bankId) {
-
-        ModelMapper mapper = new ModelMapper();
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+                                                        , @PathVariable UUID classId) {
 
         ProductDto productDto = mapper.map(product, ProductDto.class);
-        productDto.setBankId(bankId);
+        productDto.setClassId(classId);
 
         bankService.createProduct(productDto);
         ResponseProduct responseProduct = mapper.map(productDto, ResponseProduct.class);
