@@ -24,14 +24,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import common.TopPageBar
+import lease.LeasePage
+import lease.LeaseScreen
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import stock.stocklist.Divider
+import stock.stocklist.StockListPage
+import stock.stocklist.StockListScreen
 
 val LightGray = Color(0xFFF6F6F6)
 
+//@Composable
+//fun Home(navigator: Navigator) {
+//    Column {
+//        TopPageBar("홈")
+//        BottomTabBar(navigator)
+//    }
+//}
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -240,6 +256,11 @@ fun Home(navigator: Navigator) {
         }
 
         BottomTabBar(navigator)
+    Column(modifier = Modifier.padding(bottom = 56.dp)) {
+        TopPageBar("홈")
+        StockListPage(
+            modifier = Modifier.weight(1f)
+        )
     }
+    BottomTabBar(navigator)
 }
-

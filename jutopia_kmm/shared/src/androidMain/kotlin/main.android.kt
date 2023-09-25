@@ -2,6 +2,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.myapplication.common.R
+import java.text.DecimalFormat
 
 actual fun getPlatformName(): String = "Android"
 
@@ -22,3 +23,12 @@ actual val icesotongFontFamily: FontFamily = FontFamily(
 actual val pretendardFontFamily: FontFamily = FontFamily(
     Font(R.font.pretendard)
 )
+
+actual fun formatDouble(value: Double, decimalPlaces: Int): String {
+    val formatString = StringBuilder("#.")
+    repeat(decimalPlaces) {
+        formatString.append("#")
+    }
+    val formatter = DecimalFormat(formatString.toString())
+    return formatter.format(value)
+}

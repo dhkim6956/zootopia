@@ -13,9 +13,15 @@ import home.Notice
 import home.Rent
 import home.Stock
 import home.Trade
+import home.Home
+import lease.LeaseScreen
 import menus.Menus
+import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.RouteBuilder
+import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import school.School
 
 @OptIn(ExperimentalResourceApi::class)
@@ -82,12 +88,13 @@ fun App() {
                 route = "/notice"
             ) {
                 Notice(navigator)
+                route = "/lease"
+            ) {
+                LeaseScreen(navigator)
             }
         }
     }
 }
-
-
 
 expect fun getPlatformName(): String
 
@@ -96,3 +103,4 @@ expect val icejaramFontFamily: FontFamily
 expect val icesiminFontFamily: FontFamily
 expect val icesotongFontFamily: FontFamily
 expect val pretendardFontFamily: FontFamily
+expect fun formatDouble(value: Double, decimalPlaces: Int): String
