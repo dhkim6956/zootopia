@@ -45,7 +45,13 @@ fun BottomTabBar(navigator: Navigator) {
             Box(
                 modifier = Modifier.weight(1f)
             ) {
-                BottomTabItem({ navigator.navigate("/home") }, imgStr = "drawable/house.xml", tabName = "홈")
+                BottomTabItem(
+                    { navigator.navigate(
+                    "/home",
+                        NavOptions(
+                        launchSingleTop = true,
+                    )
+                ) }, imgStr = "drawable/house.xml", tabName = "홈")
             }
             Box(
                 modifier = Modifier.weight(1f)
