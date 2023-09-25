@@ -5,6 +5,7 @@ import moe.tlaster.precompose.PreComposeApplication
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Typeface
 
+
 actual fun getPlatformName(): String = "iOS"
 fun MainViewController() = PreComposeApplication { App() }
 
@@ -27,3 +28,8 @@ actual val icesotongFontFamily: FontFamily = FontFamily(
 actual val pretendardFontFamily: FontFamily = FontFamily(
     Typeface(loadCustomFont("pretendard"))
 )
+
+
+actual fun formatDouble(value: Double, decimalPlaces: Int): String {
+
+}
