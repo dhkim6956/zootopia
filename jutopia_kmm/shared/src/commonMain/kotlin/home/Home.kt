@@ -24,20 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import common.TopPageBar
-import lease.LeasePage
-import lease.LeaseScreen
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import stock.stocklist.Divider
 import stock.stocklist.StockListPage
-import stock.stocklist.StockListScreen
 
 val LightGray = Color(0xFFF6F6F6)
 
@@ -73,7 +65,7 @@ fun Home(navigator: Navigator) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TopPageBar("홈")
-        Box (
+        Box(
             modifier = Modifier
                 .width(250.dp)
                 .height(200.dp)
@@ -162,71 +154,71 @@ fun Home(navigator: Navigator) {
                 Text("임대")
             }
         }
-            Row(
-                modifier = Modifier
-                    .width(250.dp)
-                    .height(100.dp)
-                    .background(Color.White)
-                    .padding(top = 16.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
+        Row(
+            modifier = Modifier
+                .width(250.dp)
+                .height(100.dp)
+                .background(Color.White)
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(60.dp)
+                        .background(LightGray),
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(60.dp)
-                            .background(LightGray),
+                    IconButton(
+                        onClick = { selectedTab = 4 },
+                        modifier = Modifier.align(Alignment.Center)
                     ) {
-                        IconButton(
-                            onClick = { selectedTab = 4 },
-                            modifier = Modifier.align(Alignment.Center)
-                        ) {
-                            Image(painter = tradeIcon, contentDescription = "Trade Icon")
-                        }
+                        Image(painter = tradeIcon, contentDescription = "Trade Icon")
                     }
-                    Text("환전")
                 }
+                Text("환전")
+            }
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(60.dp)
+                        .background(LightGray),
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(60.dp)
-                            .background(LightGray),
+                    IconButton(
+                        onClick = { selectedTab = 5 },
+                        modifier = Modifier.align(Alignment.Center)
                     ) {
-                        IconButton(
-                            onClick = { selectedTab = 5 },
-                            modifier = Modifier.align(Alignment.Center)
-                        ) {
-                            Image(painter = marketIcon, contentDescription = "Market Icon")
-                        }
+                        Image(painter = marketIcon, contentDescription = "Market Icon")
                     }
-                    Text("상점")
                 }
+                Text("상점")
+            }
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .width(60.dp)
+                        .height(60.dp)
+                        .background(LightGray),
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .width(60.dp)
-                            .height(60.dp)
-                            .background(LightGray),
+                    IconButton(
+                        onClick = { selectedTab = 6 },
+                        modifier = Modifier.align(Alignment.Center)
                     ) {
-                        IconButton(
-                            onClick = { selectedTab = 6 },
-                            modifier = Modifier.align(Alignment.Center)
-                        ) {
-                            Image(painter = noticeIcon, contentDescription = "Notice Icon")
-                        }
+                        Image(painter = noticeIcon, contentDescription = "Notice Icon")
                     }
-                    Text("공지사항")
                 }
+                Text("공지사항")
+            }
         }
         when (selectedTab) {
             1 -> {
@@ -256,11 +248,12 @@ fun Home(navigator: Navigator) {
         }
 
         BottomTabBar(navigator)
-    Column(modifier = Modifier.padding(bottom = 56.dp)) {
-        TopPageBar("홈")
-        StockListPage(
-            modifier = Modifier.weight(1f)
-        )
+        Column(modifier = Modifier.padding(bottom = 56.dp)) {
+            TopPageBar("홈")
+            StockListPage(
+                modifier = Modifier.weight(1f)
+            )
+        }
+        BottomTabBar(navigator)
     }
-    BottomTabBar(navigator)
 }
