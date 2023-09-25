@@ -1,10 +1,10 @@
-package com.ssafy.jutopia;
+package com.ssafy.rentserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class JutopiaApplicationTests {
+class RentServerApplicationTests {
 
     @Test
     void contextLoads() {
