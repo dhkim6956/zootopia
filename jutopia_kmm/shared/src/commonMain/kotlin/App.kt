@@ -1,16 +1,17 @@
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import asset.Asset
-import moe.tlaster.precompose.navigation.NavHost
-import moe.tlaster.precompose.navigation.rememberNavigator
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import home.Home
+import lease.LeaseScreen
 import menus.Menus
+import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.RouteBuilder
+import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import school.School
 
 @OptIn(ExperimentalResourceApi::class)
@@ -48,11 +49,14 @@ fun App() {
             ) {
                 Menus(navigator)
             }
+            scene(
+                route = "/lease"
+            ) {
+                LeaseScreen(navigator)
+            }
         }
     }
 }
-
-
 
 expect fun getPlatformName(): String
 
@@ -61,3 +65,4 @@ expect val icejaramFontFamily: FontFamily
 expect val icesiminFontFamily: FontFamily
 expect val icesotongFontFamily: FontFamily
 expect val pretendardFontFamily: FontFamily
+expect fun formatDouble(value: Double, decimalPlaces: Int): String
