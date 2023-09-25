@@ -107,6 +107,7 @@ fun BottomTabBar(navigator: Navigator) {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun BottomTabItem(navigateRoot: ()-> Unit , imgStr: String, tabName: String) {
     Column(
