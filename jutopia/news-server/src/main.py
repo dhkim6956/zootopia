@@ -1,90 +1,63 @@
-'''
-TODO:
-    - uvicorn이나 socket을 이용해 랜덤포트로 돌아가게 하기 -> 일단 보류
-    - requirements.txt 작성
-    - Spring api-gateway 연결하기
-    - 몽고DB에 시계열 DB 만들기
-    - main에 우겨넣었는데 모듈화 하기
-    - 서비스 켤 때만 db 연결시키기
-'''
-
-# import socket
 import uvicorn
 from fastapi import FastAPI
 from py_eureka_client.eureka_client import EurekaClient
-from pymongo import MongoClient
+# from pymongo import MongoClient
+# from pydantic import BaseModel
+import httpx
 
-# 대문자 변수들을 상황에 따라 조작하기
-
-# EUREKA 관련 변수
+# 유레카 관련 변수
 INSTANCE_PORT = 9001
-INSTANCE_HOST = "j9c108.p.ssafy.io"
+INSTANCE_HOST = "http://j9c108.p.ssafy.io"
 
-# MongoDB 관련 변수
-DB_NAME = "jutopia"
-COLLECTION_NAME = "news"
+NAVER_API_URL = "https://openapi.naver.com/v1/search/news.json"
+CLIENT_ID = "OCDILfuJhLKAdvqraNNy"
+CLIENT_SECRET = "pi8ZEzmb8L"
 
 app = FastAPI()
 
-# 나중에 CRUD 제대로 할 때 구현하기
-# Setting up the database connectivity (from pymongo import MongoClient) 
-# def create_db_collections():
-#     mongoClient = MongoClient('mongodb://localhost:27017/')
-#     try:
-#         db = mongoClient.obrs # 얘가 뭐지
-#         buyers = db.buyer
-#         users = db.login
-
-# eureka 연결
 @app.on_event("startup")
-async def eureka_init(): 
+async def eureka_init():
     global client
     client = EurekaClient(
-        eureka_server=f"https://{INSTANCE_HOST}:8761/eureka",
-        app_name="fastapi-service",
+        eureka_server=f"http://{INSTANCE_HOST}:8761/eureka",
+        app_name="news-server",
         instance_port=INSTANCE_PORT,
         instance_host=INSTANCE_HOST,
     )
     await client.start()
     
-    
-# monbodb 연결
-@app.on_event("startup")
-async def mongodb_init(): 
-    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017")
-    db = db_client[DB_NAME]
-    collection = db[COLLECTION_NAME]
-    
-# 연결 종료
 @app.on_event("shutdown")
 async def destroy():
-    # close_async_db()
     await client.stop()
-
-
-# API 작성
+    
 @app.get("/index")
 def index():
     return {"message": "Welcome FastAPI Nerds"}
 
-@app.get("/test/{user_id}")
-async def get_user(user_id: str): # 직렬화 못하는 코드이지만 test 코드이므로 일단 두자
-    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017") # 각 API 호출마다 MongoDB에 연결하는 형식. 연결을 최적화하거나 풀링을 해야한다.
-    db = db_client[DB_NAME]
-    collection = db[COLLECTION_NAME]
+@app.get("/health")
+def health_check():
+    return {"status": "UP"}
+
+@app.get("/{stock_name}/{display}/{start}/{sort}")
+async def fetch_news(stock_name: str, display: int, start: int, sort: str):
+    params = {
+        "query": stock_name, # 검색할 주식 이름 (전체는 '시황' 으로 검색 추천)
+        "display": display, # 검색할 뉴스 개수
+        "start": start, # 뉴스 검색 시작점 (1부터 시작, 100까지 가능)
+        "sort": sort # 'sim': 정확도 내림차순, 'date': 날짜 내림차순
+    }
+    headers = {
+        "X-Naver-Client-Id": CLIENT_ID,
+        "X-Naver-Client-Secret": CLIENT_SECRET
+    }
     
-    user = collection.find_one({"_id": user_id})
-    return user
-
-@app.post("/test")
-async def create_user(user: dict):
-    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017")
-    db = db_client[DB_NAME]
-    collection = db[COLLECTION_NAME]
+    async with httpx.AsyncClient() as client:
+        response = await client.get(NAVER_API_URL, params=params, headers=headers)
+        
+        # Error handling
+        if response.status_code != 200:
+            raise HTTPException(status_code=response.status_code, detail="Naver API call failed")
     
-    collection.insert_one(user)
-    return {"message": "User Created successfully"}
+    return response.json()
 
-
-# if __name__ == "__main__":
-#     uvicorn.run(app, port=INSTANCE_PORT)
+# @app.get("/fs/{stock_name}")
