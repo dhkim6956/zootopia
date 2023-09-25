@@ -10,7 +10,8 @@ import lease.LeasePage
 import lease.LeaseScreen
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-
+import stock.stocklist.StockListPage
+import stock.stocklist.StockListScreen
 
 
 //@Composable
@@ -25,7 +26,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 fun Home(navigator: Navigator) {
     Column {
         TopPageBar("홈")
-        LeasePage()
+        StockListPage()
     }
     BottomTabBar(navigator)
 }
