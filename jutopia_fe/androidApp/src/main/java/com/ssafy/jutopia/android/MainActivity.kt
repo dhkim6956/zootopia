@@ -1,16 +1,22 @@
 package com.ssafy.jutopia.android
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+<<<<<<< HEAD
 import android.util.Log
 import android.widget.AdapterView
 import com.ssafy.jutopia.android.databinding.ActivityMainBinding
+=======
+import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
+import com.ssafy.jutopia.android.ui.theme.MyApplicationTheme
+>>>>>>> e8ec0f4ca13795f3f067dc7612f73f28d37d6f1e
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+<<<<<<< HEAD
         val binding = ActivityMainBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -42,6 +48,12 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this@MainActivity,BankActivity::class.java )
                     startActivity(intent)
                 }
+=======
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        setContent{
+            MyApplicationTheme {
+                JutopiaApp()
+>>>>>>> e8ec0f4ca13795f3f067dc7612f73f28d37d6f1e
             }
         }
     }

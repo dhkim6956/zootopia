@@ -20,13 +20,20 @@ ext {
 }
 
 dependencies {
+    // config server
     implementation 'org.springframework.cloud:spring-cloud-config-server'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    // rabbitmq
-    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp:4.0.1'
-    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.3'
 
+    // test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // bus
+    implementation 'org.springframework.cloud:spring-cloud-starter-bus-amqp:4.0.1'
+
+    //bootstrap
+    implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.3'
 }
 
 dependencyManagement {
