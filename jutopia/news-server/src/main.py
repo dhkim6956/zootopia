@@ -5,6 +5,7 @@ TODO:
     - Spring api-gateway 연결하기
     - 몽고DB에 시계열 DB 만들기
     - main에 우겨넣었는데 모듈화 하기
+    - 서비스 켤 때만 db 연결시키기
 '''
 
 # import socket
@@ -50,7 +51,7 @@ async def eureka_init():
 # monbodb 연결
 @app.on_event("startup")
 async def mongodb_init(): 
-    db_client = MongoClient("mongodb://j9c108.p.ssafy.io:27017")
+    db_client = MongoClient(f"mongodb://{INSTANCE_HOST}:27017")
     db = db_client[DB_NAME]
     collection = db[COLLECTION_NAME]
     

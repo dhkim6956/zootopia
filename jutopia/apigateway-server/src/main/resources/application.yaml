@@ -20,21 +20,27 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: bank-server
-          uri: lb://BANK-SERVER
+        - id: member-server
+          uri: lb://MEMBER-SERVER
           predicates:
-            - Path=/bank-server/**
-      routes:
+            - Path=/member-server/**
+        - id: class-server
+          uri: lb://CLASS-SERVER
+          predicates:
+            - Path=/class-server/**
         - id: news-server
           uri: lb://NEWS-SERVER
           predicates:
-            - Path=/news-service/**
-
+            - Path=/news-server/**
+        - id: rent-server
+          uri: lb://RENT-SERVER
+          predicates:
+            - Path=/rent-server/**
 management:
   endpoints:
     web:
       exposure:
-        include: refresh, health, beans, httptrace, busrefresh
+        include: refresh, health, beans, httpexchanges, busrefresh
 
 
 
