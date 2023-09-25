@@ -72,4 +72,5 @@ android {
 }
 dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview-android:1.5.1")
+    implementation("androidx.compose.material3:material3:1.1.2")
 }

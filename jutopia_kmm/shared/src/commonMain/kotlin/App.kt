@@ -34,6 +34,31 @@ fun App() {
                 Asset(navigator)
             }
             scene(
+                route = "/asset/deposit"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/save"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/point"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/stock"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/building"
+            ) {
+                Asset(navigator)
+            }
+            scene(
                 route = "/school"
             ) {
                 School(navigator)
