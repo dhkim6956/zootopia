@@ -29,11 +29,6 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun Asset(navigator: Navigator) {
 
-
-    var kotTest:String = "lalala"
-
-
-
     Column {
         TopPageBar("자산")
 
