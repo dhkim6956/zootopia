@@ -1,6 +1,6 @@
 package com.ssafy.stockserver.domain.volume.entity;
 
-import com.ssafy.zutopia.stockserver.domain.stock.entity.Stock;
+import com.ssafy.stockserver.domain.stock.entity.Stock;
 import jakarta.persistence.*;
 import lombok.*;
 
