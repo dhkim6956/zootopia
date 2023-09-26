@@ -38,6 +38,10 @@ spring:
           uri: lb://RENT-SERVER
           predicates:
             - Path=/rent-server/**
+        - id: stock-server
+          uri: lb://STOCK-SERVER
+          predicates:
+            - Path=/stock-server/**
 management:
   endpoints:
     web:
