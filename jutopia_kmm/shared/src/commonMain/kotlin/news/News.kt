@@ -7,6 +7,7 @@ import Variables.ColorsPrimary
 import Variables.ColorsPrimaryVariant
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -137,22 +138,32 @@ fun NewsList(viewModel: NewsViewModel, searchStr: String) {
     ) {
         items(viewModel.newses) {newsItem ->
             if (newsItem.title.contains(searchStr)) {
-                Text(newsItem.title, fontSize = 20.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Box(
+                    modifier = Modifier
+                        .clickable {  }
                 ) {
+                    Text(
+                        newsItem.title,
+                        fontSize = 20.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(newsItem.date, color = Color(0xFF9E9E9E))
-                        Text(newsItem.time, color = Color(0xFF9E9E9E))
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        ) {
+                            Text(newsItem.date, color = Color(0xFF9E9E9E))
+                            Text(newsItem.time, color = Color(0xFF9E9E9E))
+                        }
+                        Text("|", color = Color(0xFF9E9E9E))
+                        Text(newsItem.publisher, color = Color(0xFF9E9E9E))
                     }
-                    Text("|", color = Color(0xFF9E9E9E))
-                    Text(newsItem.publisher, color = Color(0xFF9E9E9E))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Divider(color = Color(0x22000000))
                 }
-                Spacer(modifier = Modifier.height(8.dp))
-                Divider(color = Color(0x22000000))
             }
         }
     }
