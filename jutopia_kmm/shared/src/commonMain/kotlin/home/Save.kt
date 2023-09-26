@@ -42,7 +42,7 @@ fun Save(navigator: Navigator) {
     val heartIcon: Painter = painterResource(heartImg)
     val rabbit_coinIcon: Painter = painterResource(rabbit_coinImg)
     Column {
-        TopPageBar("적금정보")
+        TopPageBar("적금정보", navigator=navigator)
         Box(
             modifier = Modifier
                 .fillMaxWidth()

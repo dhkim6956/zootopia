@@ -23,7 +23,7 @@ fun Send_detail(navigator: Navigator) {
     val checkHumanIcon: Painter = painterResource(checkHuman)
 
     Column {
-        TopPageBar("송금하기")
+        TopPageBar("송금하기", navigator=navigator)
         Box {
             Column {
                 Text("나의 계좌에서... 에서")

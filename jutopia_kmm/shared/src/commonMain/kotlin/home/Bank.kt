@@ -50,7 +50,7 @@ fun Bank(navigator: Navigator) {
     Column(
 
     ) {
-        TopPageBar("은행")
+        TopPageBar("은행", navigator=navigator)
         Box(
             modifier = Modifier
                 .fillMaxWidth(),

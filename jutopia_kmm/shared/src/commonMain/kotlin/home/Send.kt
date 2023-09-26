@@ -45,7 +45,7 @@ fun Send(navigator: Navigator) {
     Column(
         verticalArrangement= Arrangement.spacedBy(15.dp)
     ) {
-        TopPageBar("송금하기")
+        TopPageBar("송금하기", navigator=navigator)
         Box(
             modifier = Modifier
                 .width(300.dp)
