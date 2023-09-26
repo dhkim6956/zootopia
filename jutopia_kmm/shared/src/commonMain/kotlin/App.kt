@@ -125,6 +125,17 @@ fun App() {
                 LeaseScreen(navigator)
             }
             scene(
+                route = "/stocklist"
+            ){
+                StockListScreen(navigator)
+            }
+            scene(
+                route = "/stockChart/{stockId}?"
+            ) {backStackEntry ->
+                val stockId: String? = backStackEntry.path<String>("stockId")
+                StockChartScreen(stockId!!, navigator)
+            }
+            scene(
                 route = "/send"
             ) {
                 Send(navigator)
@@ -138,16 +149,8 @@ fun App() {
                 route = "/send_detail"
             ) {
                 Send_detail(navigator)
-                route = "/stocklist"
-            ){
-                StockListScreen(navigator)
             }
-            scene(
-                route = "/stockChart/{stockId}?"
-            ) {backStackEntry ->
-                val stockId: String? = backStackEntry.path<String>("stockId")
-                StockChartScreen(stockId!!, navigator)
-            }
+
         }
     }
 }
