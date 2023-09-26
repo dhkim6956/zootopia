@@ -17,10 +17,9 @@ public class SeatController {
     private final SeatService seatService;
     private final SeatRepository seatRepository;
 
-    @GetMapping("")
-    public void test(){
-        seatService.redisTest();
-    }
-
+//    @GetMapping("")
+//    public void test(){
+//        seatService.redisTest();
+//    }
 
 }
