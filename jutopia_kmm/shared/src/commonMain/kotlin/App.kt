@@ -18,9 +18,16 @@ import home.Stock
 import home.Trade
 import lease.LeaseScreen
 import menus.Menus
+import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.path
+import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
 import school.School
+import stock.stockchart.StockChartScreen
+import stock.stocklist.StockListScreen
+
+private val log = Logger.withTag("App")
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
@@ -39,6 +46,31 @@ fun App() {
             }
             scene(
                 route = "/asset"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/deposit"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/save"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/point"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/stock"
+            ) {
+                Asset(navigator)
+            }
+            scene(
+                route = "/asset/building"
             ) {
                 Asset(navigator)
             }
@@ -106,6 +138,15 @@ fun App() {
                 route = "/send_detail"
             ) {
                 Send_detail(navigator)
+                route = "/stocklist"
+            ){
+                StockListScreen(navigator)
+            }
+            scene(
+                route = "/stockChart/{stockId}?"
+            ) {backStackEntry ->
+                val stockId: String? = backStackEntry.path<String>("stockId")
+                StockChartScreen(stockId!!, navigator)
             }
         }
     }

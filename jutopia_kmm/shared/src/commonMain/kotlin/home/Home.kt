@@ -270,12 +270,5 @@ fun Home(navigator: Navigator) {
         }
 
         BottomTabBar(navigator)
-        Column(modifier = Modifier.padding(bottom = 56.dp)) {
-            TopPageBar("홈")
-            StockListPage(
-                modifier = Modifier.weight(1f)
-            )
-        }
-        BottomTabBar(navigator)
     }
 }

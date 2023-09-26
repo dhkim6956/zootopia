@@ -32,11 +32,11 @@ class StockListViewModel : ViewModel() {
     }
 
     private fun initialData() = listOf(
-        Stock("AAPL", 150.0, 0.0, true,0.0),
-        Stock("GOOGL", 2500.0, 0.0, false,0.0),
-        Stock("AMZN", 3300.0, 0.0, true,0.0),
-        Stock("MSFT", 200.0, 0.0, true,0.0),
-        Stock("TSLA", 600.0, 0.0, false,0.0),
-        Stock("dasd", 600.0, 0.0, false,0.0),
+        Stock("AAPL","AAPL", 150.0, 0.0, true,0.0),
+        Stock("GOOGL","GOOGL", 2500.0, 0.0, false,0.0),
+        Stock("AMZN","AMZN", 3300.0, 0.0, true,0.0),
+        Stock("MSFT","MSFT", 200.0, 0.0, true,0.0),
+        Stock("TSLA", "TSLA", 600.0, 0.0, false,0.0),
+        Stock("dasd","dasd", 600.0, 0.0, false,0.0),
     )
 }

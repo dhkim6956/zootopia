@@ -32,6 +32,8 @@ spring:
           uri: lb://NEWS-SERVER
           predicates:
             - Path=/news-server/**
+          filters:
+            - RewritePath=/news-server/(?<segment>.*), /$\{segment}
         - id: rent-server
           uri: lb://RENT-SERVER
           predicates:
