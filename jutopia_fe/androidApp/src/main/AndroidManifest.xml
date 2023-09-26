@@ -6,6 +6,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".SaveActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SendActivity"
+            android:exported="false" />
+        <activity
             android:name=".BankActivity"
             android:exported="false" />
         <activity

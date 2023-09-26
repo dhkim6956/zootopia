@@ -3,8 +3,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
 import asset.Asset
-import co.touchlab.kermit.Logger
 import home.Bank
+import moe.tlaster.precompose.navigation.NavHost
+import moe.tlaster.precompose.navigation.rememberNavigator
+import org.jetbrains.compose.resources.ExperimentalResourceApi
 import home.Home
 import home.Market
 import home.Notice
@@ -18,7 +20,6 @@ import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import school.School
 import stock.stockchart.StockChartScreen
 import stock.stocklist.StockListScreen
