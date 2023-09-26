@@ -1,16 +1,14 @@
-@file:OptIn(ExperimentalMaterialApi::class, ExperimentalMaterialApi::class,
-    ExperimentalMaterialApi::class, ExperimentalResourceApi::class
-)
+@file:OptIn(ExperimentalResourceApi::class, ExperimentalMaterialApi::class)
 
 package asset
 
 import BottomTabBar
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ChipDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FilterChip
@@ -19,114 +17,78 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import asset.subMenu.MyBuilding
+import asset.subMenu.MyAccount
+import asset.subMenu.MyPoint
+import asset.subMenu.MySave
+import asset.subMenu.MyStock
 import common.TopPageBar
 import moe.tlaster.precompose.navigation.Navigator
+import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
+data class chipItem(val idx: Int, val name: String, val bgColor: Color, val conColor: Color, val desc: String)
+
+val chipItems: List<chipItem> = listOf(
+    chipItem(0, "deposit", Color(0xFFF1D3FB), Color(0xFFAF30C9), "입출금"),
+    chipItem(1, "save", Color(0xFFDFDBF9), Color(0xFF7E51D6), "적금"),
+    chipItem(2, "point", Color(0xFFCBD8F2), Color(0xFF4963C7), "포인트"),
+    chipItem(3, "stock", Color(0xFFB7E7FF), Color(0xFF0087D1), "주식"),
+    chipItem(4, "building", Color(0xFFC8EAC9), Color(0xFF358438), "부동산")
+)
+
 @Composable
-fun Asset(navigator: Navigator) {
-
-
-    var kotTest:String = "lalala"
-
-
+fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = viewModel(modelClass = AssetViewModel::class) {savedStateHolder ->
+    AssetViewModel(savedStateHolder)
+}) {
+    if(category != null) viewModel.setChipIdx(category)
 
     Column {
-        TopPageBar("자산")
+        TopPageBar("자산", navigator, showReturn = false)
 
-        Chips(navigator)
+        Chips(navigator, viewModel.chipIdx.value, viewModel)
+
+        when (viewModel.chipIdx.value) {
+            0 -> MyAccount()
+            1 -> MySave()
+            2 -> MyPoint()
+            3 -> MyStock()
+            4 -> MyBuilding()
+            else -> Text("Error Page")
+        }
     }
     BottomTabBar(navigator)
 }
 
 @Composable
-fun Chips(navigator: Navigator ) {
-
-    Row (
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+fun Chips(navigator: Navigator, selectedIdx: Int, viewModel: AssetViewModel ) {
+    Box(
+        modifier = Modifier
+            .padding(12.dp)
     ) {
-        FilterChip(
-            onClick = { navigator.navigate("/asset/deposit") },
-            selected = true,
-            colors = ChipDefaults.filterChipColors(
-                backgroundColor = Color(0xFFF1D3FB),
-                contentColor = Color(0xFFAF30C9)
-            ),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource("drawable/chip_deposit.xml"),
-                    contentDescription = "chip_deposit"
-                )
-            }
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("입출금")
-        }
-        FilterChip(
-            onClick = { navigator.navigate("/asset/save") },
-            selected = true,
-            colors = ChipDefaults.filterChipColors(
-                backgroundColor = Color(0xFFDFDBF9),
-                contentColor = Color(0xFF7E51D6)
-            ),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource("drawable/chip_save.xml"),
-                    contentDescription = "chip_save"
-                )
+            items(chipItems) { item ->
+                FilterChip(
+                    onClick = { viewModel.setChipIdx(item.idx) },
+                    selected = false,
+                    colors = ChipDefaults.filterChipColors(
+                        backgroundColor = if (item.idx == viewModel.chipIdx.value) item.bgColor else item.bgColor.copy(alpha = 0.4F),
+                        contentColor = if (item.idx == viewModel.chipIdx.value) item.conColor else item.conColor.copy(alpha = 0.4F)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource("drawable/chip_" + item.name + ".xml"),
+                            contentDescription = "chip_" + item.name
+                        )
+                    }
+                ) {
+                    Text(item.desc)
+                }
             }
-        ) {
-            Text("적금")
-        }
-        FilterChip(
-            onClick = { navigator.navigate("/asset/point") },
-            selected = true,
-            colors = ChipDefaults.filterChipColors(
-                backgroundColor = Color(0xFFCBD8F2),
-                contentColor = Color(0xFF4963C7)
-            ),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource("drawable/chip_point.xml"),
-                    contentDescription = "chip_point"
-                )
-            }
-        ) {
-            Text("포인트")
-        }
-        FilterChip(
-            onClick = { navigator.navigate("/asset/stock") },
-            selected = true,
-            colors = ChipDefaults.filterChipColors(
-                backgroundColor = Color(0xFFB7E7FF),
-                contentColor = Color(0xFF0087D1)
-            ),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource("drawable/chip_stock.xml"),
-                    contentDescription = "chip_stock"
-                )
-            }
-        ) {
-            Text("주식")
-        }
-        FilterChip(
-            onClick = { navigator.navigate("/asset/building") },
-            selected = true,
-            colors = ChipDefaults.filterChipColors(
-                backgroundColor = Color(0xFFC8EAC9),
-                contentColor = Color(0xFF358438)
-            ),
-            leadingIcon = {
-                Icon(
-                    painter = painterResource("drawable/chip_building.xml"),
-                    contentDescription = "chip_building"
-                )
-            }
-        ) {
-            Text("부동산")
         }
     }
 }

@@ -1,4 +1,5 @@
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.FontFamily
@@ -23,6 +24,7 @@ import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
+import school.NotiContents
 import school.School
 import stock.stockchart.StockChartScreen
 import stock.stocklist.StockListScreen
@@ -36,7 +38,7 @@ fun App() {
     MaterialTheme {
         NavHost(
             navigator = navigator,
-            navTransition = NavTransition(createTransition = EnterTransition.None),
+            navTransition = NavTransition(createTransition = EnterTransition.None, destroyTransition = ExitTransition.None, pauseTransition = ExitTransition.None, resumeTransition = EnterTransition.None),
             initialRoute = "/home",
         ) {
             scene(
@@ -45,39 +47,21 @@ fun App() {
                 Home(navigator)
             }
             scene(
-                route = "/asset"
+                route = "/asset/{category}?"
             ) {
-                Asset(navigator)
-            }
-            scene(
-                route = "/asset/deposit"
-            ) {
-                Asset(navigator)
-            }
-            scene(
-                route = "/asset/save"
-            ) {
-                Asset(navigator)
-            }
-            scene(
-                route = "/asset/point"
-            ) {
-                Asset(navigator)
-            }
-            scene(
-                route = "/asset/stock"
-            ) {
-                Asset(navigator)
-            }
-            scene(
-                route = "/asset/building"
-            ) {
-                Asset(navigator)
+                val category: Int? = it.path<Int>("category")
+                Asset(navigator, category)
             }
             scene(
                 route = "/school"
             ) {
                 School(navigator)
+            }
+            scene(
+                route = "/notice/{idx}?"
+            ) {
+                val idx: Int? = it.path<Int>("idx")
+                NotiContents(navigator, idx!!)
             }
             scene(
                 route = "/news"

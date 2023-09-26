@@ -1,9 +1,17 @@
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Typeface
+import co.touchlab.kermit.Logger
 import moe.tlaster.precompose.PreComposeApplication
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Typeface
+import platform.Foundation.NSLocale
+import platform.Foundation.NSNumber
+import platform.Foundation.NSNumberFormatter
+import platform.Foundation.NSNumberFormatterDecimalStyle
+import platform.Foundation.NSString
+import platform.Foundation.currentLocale
+import platform.darwin.NSUInteger
 
 
 actual fun getPlatformName(): String = "iOS"
@@ -29,7 +37,10 @@ actual val pretendardFontFamily: FontFamily = FontFamily(
     Typeface(loadCustomFont("pretendard"))
 )
 
-
 actual fun formatDouble(value: Double, decimalPlaces: Int): String {
-
+    val formatter = NSNumberFormatter()
+    formatter.minimumFractionDigits = 0u
+    formatter.maximumFractionDigits = decimalPlaces.toULong()
+    formatter.numberStyle = 1u //Decimal
+    return formatter.stringFromNumber(NSNumber(value))!!
 }

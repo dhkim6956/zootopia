@@ -66,7 +66,7 @@ fun Home(navigator: Navigator) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopPageBar("홈")
+        TopPageBar("홈", navigator, showReturn = false)
         Box(
             modifier = Modifier
                 .width(250.dp)
