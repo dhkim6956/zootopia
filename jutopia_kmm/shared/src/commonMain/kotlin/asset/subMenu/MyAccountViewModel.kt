@@ -13,7 +13,5 @@ class MyAccountViewModel: ViewModel() {
         depositDetail("2023.09.01", "00:00:00", transactionType.Deposit, "월 기본급", 200000, 250000)
     ))
 
-
     val transactionHistory: State<List<depositDetail>> = _transactionHistory
-
 }

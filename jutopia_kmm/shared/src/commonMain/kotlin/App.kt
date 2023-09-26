@@ -19,6 +19,7 @@ import menus.Menus
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
+import school.NotiContents
 import school.School
 
 @OptIn(ExperimentalResourceApi::class)
@@ -46,6 +47,12 @@ fun App() {
                 route = "/school"
             ) {
                 School(navigator)
+            }
+            scene(
+                route = "/notice/{idx}?"
+            ) {
+                val idx: Int? = it.path<Int>("idx")
+                NotiContents(navigator, idx!!)
             }
             scene(
                 route = "/news"

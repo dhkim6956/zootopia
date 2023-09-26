@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,7 +34,7 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun MyDeposit(viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
+fun MyAccount(viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
     MyAccountViewModel()
 }) {
 
@@ -93,7 +92,12 @@ fun History(viewModel: MyAccountViewModel) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .padding(
+                top = 20.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = 80.dp,
+            ),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {

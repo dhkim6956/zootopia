@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import asset.subMenu.MyBuilding
-import asset.subMenu.MyDeposit
+import asset.subMenu.MyAccount
 import asset.subMenu.MyPoint
 import asset.subMenu.MySave
 import asset.subMenu.MyStock
@@ -51,7 +51,7 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
         Chips(navigator, viewModel.chipIdx.value, viewModel)
 
         when (viewModel.chipIdx.value) {
-            0 -> MyDeposit()
+            0 -> MyAccount()
             1 -> MySave()
             2 -> MyPoint()
             3 -> MyStock()

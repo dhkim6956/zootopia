@@ -1,6 +1,7 @@
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Typeface
+import co.touchlab.kermit.Logger
 import moe.tlaster.precompose.PreComposeApplication
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Typeface
@@ -36,13 +37,10 @@ actual val pretendardFontFamily: FontFamily = FontFamily(
     Typeface(loadCustomFont("pretendard"))
 )
 
-
-3274
-1.
 actual fun formatDouble(value: Double, decimalPlaces: Int): String {
     val formatter = NSNumberFormatter()
     formatter.minimumFractionDigits = 0u
-    formatter.maximumFractionDigits = 2u
+    formatter.maximumFractionDigits = decimalPlaces.toULong()
     formatter.numberStyle = 1u //Decimal
     return formatter.stringFromNumber(NSNumber(value))!!
 }
