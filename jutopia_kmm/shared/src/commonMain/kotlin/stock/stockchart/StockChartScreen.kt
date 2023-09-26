@@ -17,7 +17,7 @@ fun StockChartScreen(stockId: String, navigator: Navigator) {
     Column(
         modifier = Modifier.fillMaxHeight().padding(bottom = 100.dp)
     ) {
-        TopPageBar(stockId)
+        TopPageBar(stockId, navigator=navigator)
         StockChartPage(stockId)
     }
     BottomTabBar(navigator)

@@ -19,9 +19,7 @@ import home.Stock
 import home.Trade
 import lease.LeaseScreen
 import menus.Menus
-import moe.tlaster.precompose.navigation.NavHost
 import moe.tlaster.precompose.navigation.path
-import moe.tlaster.precompose.navigation.rememberNavigator
 import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
 import school.NotiContents
@@ -29,7 +27,6 @@ import school.School
 import stock.stockchart.StockChartScreen
 import stock.stocklist.StockListScreen
 
-private val log = Logger.withTag("App")
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
