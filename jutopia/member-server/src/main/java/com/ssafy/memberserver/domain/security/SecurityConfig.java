@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Configuration
+@EnableWebSecurity
 public class SecurityConfig {
     private final List<String> CORS_ALLOW_LIST = Arrays.asList();
     private final List<String> CORS_ALLOW_METHOD = Arrays.asList();
