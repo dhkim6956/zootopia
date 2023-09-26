@@ -102,7 +102,7 @@ fun History(viewModel: MyAccountViewModel) {
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         var prev = ""
-        items(viewModel.transactionHistory.value) { detail ->
+        items(viewModel.transactionHistory) { detail ->
             if (prev != detail.date) {
                 prev = detail.date
 
