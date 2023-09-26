@@ -11,6 +11,9 @@ import home.Home
 import home.Market
 import home.Notice
 import home.Rent
+import home.Save
+import home.Send
+import home.Send_detail
 import home.Stock
 import home.Trade
 import lease.LeaseScreen
@@ -122,6 +125,19 @@ fun App() {
                 LeaseScreen(navigator)
             }
             scene(
+                route = "/send"
+            ) {
+                Send(navigator)
+            }
+            scene(
+                route = "/save"
+            ) {
+                Save(navigator)
+            }
+            scene(
+                route = "/send_detail"
+            ) {
+                Send_detail(navigator)
                 route = "/stocklist"
             ){
                 StockListScreen(navigator)
@@ -129,7 +145,6 @@ fun App() {
             scene(
                 route = "/stockChart/{stockId}?"
             ) {backStackEntry ->
-                log.i { "---------------------------------" }
                 val stockId: String? = backStackEntry.path<String>("stockId")
                 StockChartScreen(stockId!!, navigator)
             }

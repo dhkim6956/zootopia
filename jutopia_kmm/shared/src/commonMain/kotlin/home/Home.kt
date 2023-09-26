@@ -5,10 +5,12 @@ package home
 import BottomTabBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,15 +75,46 @@ fun Home(navigator: Navigator) {
         ) {
             Column(
                 modifier = Modifier
-                    .align(Alignment.Center)
+                    .align(Alignment.Center),
+                verticalArrangement= Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+
             ) {
                 Text("나의 계좌번호:302-535463")
-                Text("나의 화폐 10,000$")
-                Text("나의 포인트 12P")
-                Row {
-                    Text("거래내역")
-                    Text(" | ")
-                    Text("송금하기")
+                Text("나의 화폐: 10,000$")
+                Text("나의 포인트: 12P")
+                Box(
+                    modifier = Modifier
+                        .width(200.dp)
+                        .height(1.dp)
+                        .background(Color.Black)
+                        .align(Alignment.CenterHorizontally),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clickable { selectedTab = 8 }
+                    ) {
+                        Text("거래내역")
+                    }
+                    Spacer(modifier = Modifier.width(20.dp)) // 이 부분 추가
+                    Box(
+                        modifier = Modifier
+                            .width(2.dp)
+                            .height(25.dp)
+                            .background(Color.Black)
+                    )
+                    Spacer(modifier = Modifier.width(20.dp)) // 이 부분 추가
+                    Box(
+                        modifier = Modifier
+                            .clickable { selectedTab = 7 }
+                    ) {
+                        Text("송금하기")
+                    }
                 }
             }
         }
@@ -103,15 +136,11 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .background(LightGray),
+                        .background(LightGray)
+                        .clickable { selectedTab = 1 },
+                    contentAlignment = Alignment.Center
                 ) {
-                    IconButton(
-                        onClick = { selectedTab = 1 },
-                        modifier = Modifier.align(Alignment.Center) // IconButton을 Box의 중앙에 위치
-                    ) {
-                        Image(painter = bankIcon, contentDescription = "Bank Icon")
-                    }
-
+                    Image(painter = bankIcon, contentDescription = "Bank Icon")
                 }
                 Text("은행")
             }
@@ -123,14 +152,11 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .background(LightGray),
+                        .background(LightGray)
+                        .clickable { selectedTab = 2 },
+                    contentAlignment = Alignment.Center
                 ) {
-                    IconButton(
-                        onClick = { selectedTab = 2 },
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        Image(painter = stockIcon, contentDescription = "Stock Icon")
-                    }
+                    Image(painter = stockIcon, contentDescription = "Stock Icon")
                 }
                 Text("주식")
             }
@@ -142,14 +168,11 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .background(LightGray),
+                        .background(LightGray)
+                        .clickable { selectedTab = 3 },
+                    contentAlignment = Alignment.Center
                 ) {
-                    IconButton(
-                        onClick = { selectedTab = 3 },
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        Image(painter = rentIcon, contentDescription = "Rent Icon")
-                    }
+                    Image(painter = rentIcon, contentDescription = "Rent Icon")
                 }
                 Text("임대")
             }
@@ -170,14 +193,11 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .background(LightGray),
+                        .background(LightGray)
+                        .clickable { selectedTab = 4 },
+                    contentAlignment = Alignment.Center
                 ) {
-                    IconButton(
-                        onClick = { selectedTab = 4 },
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        Image(painter = tradeIcon, contentDescription = "Trade Icon")
-                    }
+                    Image(painter = tradeIcon, contentDescription = "Trade Icon")
                 }
                 Text("환전")
             }
@@ -189,14 +209,11 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .background(LightGray),
+                        .background(LightGray)
+                        .clickable { selectedTab = 5 },
+                    contentAlignment = Alignment.Center
                 ) {
-                    IconButton(
-                        onClick = { selectedTab = 5 },
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        Image(painter = marketIcon, contentDescription = "Market Icon")
-                    }
+                    Image(painter = marketIcon, contentDescription = "Market Icon")
                 }
                 Text("상점")
             }
@@ -208,14 +225,11 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
-                        .background(LightGray),
+                        .background(LightGray)
+                        .clickable { selectedTab = 6 },
+                    contentAlignment = Alignment.Center
                 ) {
-                    IconButton(
-                        onClick = { selectedTab = 6 },
-                        modifier = Modifier.align(Alignment.Center)
-                    ) {
-                        Image(painter = noticeIcon, contentDescription = "Notice Icon")
-                    }
+                    Image(painter = noticeIcon, contentDescription = "Notice Icon")
                 }
                 Text("공지사항")
             }
@@ -243,6 +257,14 @@ fun Home(navigator: Navigator) {
 
             6 -> {
                 navigator.navigate("/notice")
+            }
+
+            7 -> {
+                navigator.navigate("/send")
+            }
+
+            8 -> {
+                navigator.navigate("/asset")
             }
 
         }
