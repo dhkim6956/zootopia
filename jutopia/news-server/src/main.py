@@ -4,10 +4,11 @@ from py_eureka_client.eureka_client import EurekaClient
 # from pymongo import MongoClient
 # from pydantic import BaseModel
 import httpx
+import openai
 
 # 유레카 관련 변수
 INSTANCE_PORT = 9001
-INSTANCE_HOST = "http://j9c108.p.ssafy.io"
+INSTANCE_HOST = "j9c108.p.ssafy.io"
 
 NAVER_API_URL = "https://openapi.naver.com/v1/search/news.json"
 CLIENT_ID = "OCDILfuJhLKAdvqraNNy"
@@ -38,6 +39,8 @@ def index():
 def health_check():
     return {"status": "UP"}
 
+# -------------------------- 뉴스 API 시작 ---------------------------
+
 @app.get("/{stock_name}/{display}/{start}/{sort}")
 async def fetch_news(stock_name: str, display: int, start: int, sort: str):
     params = {
@@ -59,5 +62,9 @@ async def fetch_news(stock_name: str, display: int, start: int, sort: str):
             raise HTTPException(status_code=response.status_code, detail="Naver API call failed")
     
     return response.json()
+
+# ------------------------- 챗봇 API 시작 -------------------------
+
+
 
 # @app.get("/fs/{stock_name}")
