@@ -77,17 +77,21 @@ fun Contents() {
                 .height(80.dp)
         ) {
             categories.map { category ->
+
+                var isSelected: Boolean = idx == category.idx
+
                 Tab(
-                    selected = idx == category.idx,
+                    selected = isSelected,
                     onClick = { idx = category.idx }
 
                 ) {
                     Image(
                         painterResource("drawable/logo_" + category.imgSrc),
                         "",
+                        alpha = if(isSelected) 1f else 0.4f,
                         modifier = Modifier.height(32.dp).width(40.dp)
                     )
-                    Text(category.brand, fontSize = 12.sp)
+                    Text(category.brand, fontSize = 12.sp, color = if(isSelected) Color(0xFFFFFFFF) else Color(0x66FFFFFF))
                 }
             }
         }
@@ -138,7 +142,7 @@ fun NewsList(viewModel: NewsViewModel, searchStr: String) {
     ) {
         items(viewModel.newses) {newsItem ->
             if (newsItem.title.contains(searchStr)) {
-                Box(
+                Column (
                     modifier = Modifier
                         .clickable {  }
                 ) {
