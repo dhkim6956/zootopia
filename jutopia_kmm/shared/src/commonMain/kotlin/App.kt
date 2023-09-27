@@ -20,7 +20,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import school.School
-import stock.stockchart.StockChartScreen
+import stock.common.StockScreen
 import stock.stocklist.StockListScreen
 
 private val log = Logger.withTag("App")
@@ -122,15 +122,20 @@ fun App() {
             }
             scene(
                 route = "/stocklist"
-            ){
+            ) {
                 StockListScreen(navigator)
             }
             scene(
                 route = "/stockChart/{stockId}?"
-            ) {backStackEntry ->
-                log.i { "---------------------------------" }
+            ) { backStackEntry ->
                 val stockId: String? = backStackEntry.path<String>("stockId")
-                StockChartScreen(stockId!!, navigator)
+                StockScreen(stockId!!, navigator)
+            }
+            scene(
+                route = "/stocktrade/{stockId}?"
+            ) { backStackEntry ->
+                val stockId: String? = backStackEntry.path<String>("stockId")
+                StockScreen(stockId!!, navigator)
             }
         }
     }
