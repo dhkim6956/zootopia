@@ -4,12 +4,11 @@ import com.ssafy.rentserver.enums.SeatStatus;
 import com.ssafy.rentserver.model.Seat;
 import com.ssafy.rentserver.repository.SeatCacheRepository;
 import com.ssafy.rentserver.repository.SeatRepository;
+import com.ssafy.rentserver.service.Producer;
 import com.ssafy.rentserver.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -24,7 +23,7 @@ public class SeatController {
     private final SeatCacheRepository seatCacheRepository;
 
     @GetMapping("")
-    public Seat test(){
+    public Seat testRedis(){
         Seat seat = Seat.builder().id(UUID.randomUUID())
                 .seatStatus(SeatStatus.AVAILABLE)
                 .pk(1L)
@@ -38,6 +37,13 @@ public class SeatController {
                 .build();
         seatCacheRepository.setSeat(seat);
         return seatCacheRepository.getSeat(seat.getId().toString());
+    }
+
+    private final Producer producer;
+
+    @PostMapping("/kafka")
+    public void testKafka(@RequestParam String msg){
+        producer.pub(msg);
     }
 
 }
