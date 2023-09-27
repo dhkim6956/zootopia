@@ -5,6 +5,7 @@ import com.ssafy.common.exception.ApiException;
 import com.ssafy.rentserver.dto.SeatRequest;
 import com.ssafy.rentserver.enums.SeatStatus;
 import com.ssafy.rentserver.model.Seat;
+import com.ssafy.rentserver.repository.SeatCacheRepository;
 import com.ssafy.rentserver.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +25,12 @@ public class SeatService {
     //TODO : 히스토리 테이블 생성해 기록 저장
     private static boolean isTransactionSuccess = false;
     private final SeatRepository seatRepository;
-    private final StringRedisTemplate redisTemplate;
+    private final SeatCacheRepository seatCacheRepository;
 
     public List<Seat> createGrid(int row, int col, int clazzNumber, int grade, String school) {
+        //TODO : 해당 반의 좌석 정보가 변경됐을떄는 기존의 자리는?
         List<Seat> seats = new ArrayList<>();
+        int count = 1;
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 var seat = Seat.builder()
@@ -36,26 +40,45 @@ public class SeatService {
                         .clazzNumber(clazzNumber)
                         .grade(grade)
                         .school(school)
+                        .position(count)
                         .seatStatus(SeatStatus.AVAILABLE)
                         .build();
                 seats.add(seat);
+                count++;
             }
         }
         log.info("{}", seats.toString());
         return seatRepository.saveAll(seats);
     }
 
-    public Optional<List<Seat>> getAllSeat(int clazzNumber, int grade, String school, SeatStatus status) {
-        return seatRepository.getAllSeats(clazzNumber, grade, school, status);
+    public List<Seat> getAllSeat(int clazzNumber, int grade, String school, SeatStatus status) {
+        String key = seatCacheRepository.getListKey(school, grade, clazzNumber);
+        var seats = seatCacheRepository.getSeats(key);
+        if (seats.isEmpty()) {
+            Optional<List<Seat>> seatList = seatRepository.getAllSeats(clazzNumber, grade, school, status);
+            if (seatList.get().isEmpty()){
+                throw new ApiException(ErrorCode.BAD_REQUEST, "해당 데이터에 좌석들이 존재하지 않습니다.");
+            }
+            seatCacheRepository.setSeats(seatList.get());
+            return seatList.get();
+        }
+        return seats.stream().map(it -> (Seat)it).collect(Collectors.toList());
     }
 
-    public Optional<Seat> getSeatInfo(UUID seatId) {
-        return seatRepository.findById(seatId);
+    public Seat getSeatInfo(UUID seatId) {
+        var seat = seatCacheRepository.getSeat(seatId.toString());
+        if (seat == null) {
+            seat = seatRepository.findById(seatId).orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
+            seatCacheRepository.setSeat(seat);
+            return seat;
+        }
+        return seat;
     }
 
     @Transactional
     public Seat setSeatInfo(UUID seatId, SeatRequest request) {
         Seat seat = seatRepository.findById(seatId).orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
+        seatCacheRepository.setSeat(seat);
         seat.changePrice(request.price());
         seat.changeStatus(request.seatStatus());
         return seat;
@@ -91,28 +114,7 @@ public class SeatService {
     }
 
     public void requestSeat(UUID seatId, UUID userId) {
-        //TODO: 해당 유저의 보유 포인트가 좌석 비용보다 많은지 검사하는 로직 추가
-        Seat seat = seatRepository.findById(seatId).orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "잘못된 좌석 요청입니다."));
-        if (!seat.getSeatStatus().equals(SeatStatus.AVAILABLE)){
-            throw new ApiException(ErrorCode.BAD_REQUEST,"이용할 수 없는 좌석입니다.");
-        }
-        String key = "{seat_" + seatId.toString() + "}_queue"; //해시태그를 사용해 같은 키 = 같은 노드 위치 하게 설정
-        redisTemplate.opsForList().leftPush(key, userId.toString());
-        //TODO: 첫 사용자 실패시 그 다음 우선순위 시도 로직 추가
-        while (!isTransactionSuccess && redisTemplate.hasKey(key)){
-            String firstUserId = redisTemplate.opsForList().rightPop(key);
-            if (firstUserId == null) {
-                throw new ApiException(ErrorCode.BAD_REQUEST, "잘못된 요청입니다");
-            }
-            if (firstUserId.equals(userId.toString())) {
-                assignSeatToUser(seatId, userId);
-                isSuccessUserTransaction();
-            }
-            if (seat.getSeatStatus().equals(SeatStatus.INUSE)){
-                isTransactionSuccess = true;
-            }
-        }
-        // 전부 실패
+
     }
 
 }

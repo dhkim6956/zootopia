@@ -26,6 +26,8 @@ public class Seat {
     private int rowNum;
     @Column(nullable = false)
     private int colNum;
+    @Column(nullable = false)
+    private int position;
     @Column(precision = 30, scale = 4, nullable = false)
     private BigDecimal price;
     private UUID userId;
