@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -13,8 +14,10 @@ import java.time.LocalTime;
 @Entity
 public class Trading {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "TRADING_ID")
+    private UUID id;
+
     private BigDecimal price;
     private LocalTime tradeAt;
 

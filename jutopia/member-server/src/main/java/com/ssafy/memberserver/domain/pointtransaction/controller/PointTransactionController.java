@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/member-server/api")
     public class PointTransactionController {
         private final PointTransactionService pointTransactionService;
 
