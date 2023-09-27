@@ -36,7 +36,7 @@ public class SeatService {
                         .clazzNumber(clazzNumber)
                         .grade(grade)
                         .school(school)
-                        .SeatStatus(SeatStatus.AVAILABLE)
+                        .seatStatus(SeatStatus.AVAILABLE)
                         .build();
                 seats.add(seat);
             }

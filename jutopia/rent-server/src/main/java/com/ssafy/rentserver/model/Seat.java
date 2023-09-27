@@ -38,7 +38,7 @@ public class Seat {
     private String school;
 
     @Enumerated(EnumType.STRING)
-    private SeatStatus SeatStatus;
+    private SeatStatus seatStatus;
 
     @PrePersist
     public void generateUUID() {
@@ -51,7 +51,7 @@ public class Seat {
         this.price = price;
     }
     public void changeStatus(SeatStatus status){
-        this.SeatStatus = status;
+        this.seatStatus = status;
     }
     public void setUserId(UUID userId){
         this.userId = userId;
