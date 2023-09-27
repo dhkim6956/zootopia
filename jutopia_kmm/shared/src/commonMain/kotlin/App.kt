@@ -29,6 +29,7 @@ import moe.tlaster.precompose.navigation.transition.NavTransition
 import news.News
 import school.NotiContents
 import school.School
+import stock.common.StockScreen
 import stock.stockchart.StockChartScreen
 import stock.stocklist.StockListScreen
 
@@ -129,7 +130,13 @@ fun App() {
                     route = "/stockChart/{stockId}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockChartScreen(stockId!!, navigator)
+                    StockScreen(stockId!!, navigator)
+                }
+                scene(
+                    route = "/stocktrade/{stockId}?"
+                ) { backStackEntry ->
+                    val stockId: String? = backStackEntry.path<String>("stockId")
+                    StockScreen(stockId!!, navigator)
                 }
                 scene(
                     route = "/send"
@@ -146,7 +153,6 @@ fun App() {
                 ) {
                     Send_detail(navigator)
                 }
-
             }
         }
     }

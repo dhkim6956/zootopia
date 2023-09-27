@@ -16,6 +16,11 @@ import java.util.UUID;
 public class AccountController {
     private final AccountService accountService;
 
+    @GetMapping("/health_check")
+    public String status() {
+        return "It's working in Order Service on PORT %s";
+    }
+
     @Operation(summary = "학생 계좌 생성")
     @PostMapping
     public ApiResponse makeAccount(@RequestBody CreateAccountRequest createAccountRequest,@RequestParam String studentId){

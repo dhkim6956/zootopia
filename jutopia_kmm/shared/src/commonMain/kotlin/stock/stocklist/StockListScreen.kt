@@ -14,7 +14,7 @@ import moe.tlaster.precompose.navigation.Navigator
 @Composable
 fun StockListScreen(navigator: Navigator) {
     Column(modifier = Modifier.fillMaxHeight().padding(bottom = 100.dp)) {
-        TopPageBar("주식", navigator=navigator)
+        TopPageBar("주식", navigator)
         StockListPage(navigator = navigator)
     }
     BottomTabBar(navigator)
