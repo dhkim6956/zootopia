@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "")
+@Table(name = "stock")
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,6 +30,5 @@ public class Stock {
     private String sectorCode;
     private IndexType indexType;
 
-//    @OneToMany(fetch = FetchType.LAZY)
-//    Trading trading;
+
 }
