@@ -54,6 +54,12 @@ springdoc:
     urls:
       - url: /class-server/v3/api-docs
         name: class-server
+      - url: /member-server/v3/api-docs
+        name: member-server
+      - url: /rent-server/v3/api-docs
+        name: rent-server
+      - url: /stock-server/v3/api-docs
+        name: stock-server
 
 management:
   endpoints:
