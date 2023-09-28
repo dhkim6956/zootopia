@@ -68,8 +68,8 @@ public class Student {
                 .build();
     }
     public void update(StudentUpdateRequest studentUpdateRequest, PasswordEncoder passwordEncoder){
-        if(studentUpdateRequest.StudentNewPwd() != null || !studentUpdateRequest.StudentPwd().isBlank()){
-            this.studentPwd = passwordEncoder.encode(studentUpdateRequest.StudentNewPwd());
+        if(studentUpdateRequest.studentNewPwd() != null || !studentUpdateRequest.studentPwd().isBlank()){
+            this.studentPwd = passwordEncoder.encode(studentUpdateRequest.studentNewPwd());
         }
     }
     public void pointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
@@ -86,7 +86,7 @@ public class Student {
             this.point = subtractPoint;
         }
     }
-    public void delete(StudentDeleteRequest studentDeleteRequest,PasswordEncoder passwordEncoder){
+    public void delete(StudentDeleteRequest studentDeleteRequest){
         if(studentDeleteRequest.memberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }

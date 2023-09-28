@@ -25,14 +25,14 @@ public class StudentController {
 
     @Operation(summary = "학생 정보 수정")
     @PutMapping
-    public ApiResponse studentUpdate(@RequestBody StudentUpdateRequest studentUpdateRequest, String id){
-        return ApiResponse.success(studentService.studentUpdate(studentUpdateRequest,UUID.fromString(id)));
+    public ApiResponse studentUpdate(@RequestBody StudentUpdateRequest studentUpdateRequest){
+        return ApiResponse.success(studentService.studentUpdate(studentUpdateRequest));
     }
 
     @Operation(summary = "학생 탈퇴")
     @DeleteMapping
-    public ApiResponse studentDelete(@RequestBody StudentDeleteRequest studentDeleteRequest, String id){
-        return ApiResponse.success(studentService.studentDelete(studentDeleteRequest,UUID.fromString(id)));
+    public ApiResponse studentDelete(@RequestBody StudentDeleteRequest studentDeleteRequest){
+        return ApiResponse.success(studentService.studentDelete(studentDeleteRequest));
     }
     @Operation(summary = "학생 포인트 차감")
     @PutMapping("/point")
