@@ -59,10 +59,12 @@ fun TopPageBar(navLoc: String, navigator: Navigator, showReturn: Boolean = true)
             }
             Text(navLoc, fontFamily = icehimchanFontFamily, fontSize = 28.sp)
         }
-        Image(
-            painterResource("drawable/text_bubble.xml"),
-            null,
-            modifier = Modifier.height(40.dp).clickable { navigator.navigate("/chatbot") }
-        )
+        if(navLoc != "챗봇"){
+            Image(
+                painterResource("drawable/text_bubble.xml"),
+                null,
+                modifier = Modifier.height(40.dp).clickable { navigator.navigate("/chatbot") }
+            )
+        }
     }
 }
