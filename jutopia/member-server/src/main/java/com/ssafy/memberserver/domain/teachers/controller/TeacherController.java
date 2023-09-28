@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/teacher")
+@RequestMapping("/member-server/api/teacher")
 public class TeacherController {
     private final TeacherService teacherService;
 

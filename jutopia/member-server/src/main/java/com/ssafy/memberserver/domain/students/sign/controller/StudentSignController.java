@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/student")
+@RequestMapping("/member-server/api/student")
 public class StudentSignController {
     private final StudentSignService studentSignService;
     @Operation(summary = "학생 로그인")

@@ -2,6 +2,7 @@ package com.ssafy.memberserver.domain.students.controller;
 
 import com.ssafy.memberserver.common.api.ApiResponse;
 import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
+import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
 import com.ssafy.memberserver.domain.students.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/student")
+@RequestMapping("/member-server/api/student")
 public class StudentController {
     private final StudentService studentService;
 
@@ -32,5 +33,10 @@ public class StudentController {
     @DeleteMapping
     public ApiResponse studentDelete(@RequestBody StudentDeleteRequest studentDeleteRequest, String id){
         return ApiResponse.success(studentService.studentDelete(studentDeleteRequest,UUID.fromString(id)));
+    }
+    @Operation(summary = "학생 포인트 차감")
+    @PutMapping("/point")
+    public ApiResponse studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest){
+        return ApiResponse.success(studentService.studentPointUpdate(studentPointUpdateRequest));
     }
 }
