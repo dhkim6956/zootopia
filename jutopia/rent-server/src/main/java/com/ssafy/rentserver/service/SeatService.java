@@ -8,6 +8,7 @@ import com.ssafy.rentserver.dto.SeatChangeRequest;
 import com.ssafy.rentserver.dto.SeatRequest;
 import com.ssafy.rentserver.dto.SeatResponse;
 import com.ssafy.rentserver.enums.SeatStatus;
+import com.ssafy.rentserver.feignclient.UserServerClient;
 import com.ssafy.rentserver.model.Seat;
 import com.ssafy.rentserver.repository.SeatCacheRepository;
 import com.ssafy.rentserver.repository.SeatRepository;
@@ -30,14 +31,21 @@ import java.util.stream.Collectors;
 public class SeatService {
 
     //TODO : 히스토리 테이블 생성해 기록 저장
-    private static boolean isTransactionSuccess = false;
     private final SeatRepository seatRepository;
     private final SeatCacheRepository seatCacheRepository;
     private final RedisTemplate<String, String> redisTemplate;
+    private final UserServerClient userServerClient;
 
     public List<Seat> createGrid(int totalCount, int clazzNumber, int grade, String school) {
         //TODO : 해당 반의 좌석 정보가 변경됐을떄는 기존의 자리는?
         //만약 해당반, 학년, 학교 조합의 데이터가 존재한다 -> 전부 DELETED처리 후 새로 추가
+        Optional<List<Seat>> existingSeats = seatRepository.getAllSeats(clazzNumber, grade, school);
+        if (existingSeats.isPresent()){
+            existingSeats.get().forEach(it -> it.changeStatus(SeatStatus.DELETED));
+            String key = seatCacheRepository.getListKey(school, grade, clazzNumber);
+            seatCacheRepository.clearSeats(key);
+        }
+
         List<Seat> seats = new ArrayList<>();
         int count = 1;
         for (int i = 0; i < totalCount; i++) {
@@ -113,8 +121,10 @@ public class SeatService {
             if (seat.getSeatStatus() != SeatStatus.AVAILABLE) {
                 return Api.ERROR(ErrorCode.BAD_REQUEST, "신청할 수 없는 좌석입니다.");
             }
-            //TODO: 포인트 차감 로직 추가 feign을 통해 user-server에 요청
-            var errorCode = 200;
+
+            Api<?> pointResponse = userServerClient.reducePoint();
+
+            var errorCode = pointResponse.getResult().getResultCode();
 
             if (errorCode == 1002) {
                 return Api.ERROR(RentErrorCode.POINT_LACK, "포인트가 부족합니다.");
