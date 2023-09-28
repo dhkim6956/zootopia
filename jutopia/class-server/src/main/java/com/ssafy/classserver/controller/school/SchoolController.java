@@ -43,7 +43,6 @@ public class SchoolController {
         return String.format("It's working in Order Service on PORT %s", env.getProperty("local.server.port"));
     }
 
-    // 등록 되어 있는 학교 정보 가져오기 (관리자)
     @GetMapping("/")
     public Api<List<ResponseSchool>> getAllSchool() {
         Iterable<SchoolEntity> schoolList = schoolService.getAllSchool();

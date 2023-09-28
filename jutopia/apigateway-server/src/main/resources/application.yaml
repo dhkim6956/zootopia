@@ -8,6 +8,8 @@ eureka:
     service-url:
       defaultZone: http://localhost:8761/eureka
 
+#springdoc.api-docs.path : /openapi
+
 spring:
   application:
     name: apigateway-server
@@ -20,6 +22,12 @@ spring:
   cloud:
     gateway:
       routes:
+#        - id: ${spring.application.name}
+#          uri: lb://${spring.application.name}
+#          predicates:
+#            - Path=/openapi/${spring.application.name}
+#          filters:
+#            - RewritePath=/openapi/${spring.application.name}, /openapi
         - id: member-server
           uri: lb://MEMBER-SERVER
           predicates:
