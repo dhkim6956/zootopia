@@ -19,9 +19,10 @@ public class ClassServerApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("http://localhost:8000/",
-															"http://j9c108.p.ssafy.io:8000/",
-															"http://j9c108.p.ssafy.io:8000/**");
+				registry.addMapping("/**").allowedOrigins("/**");
+				registry.addMapping("/**").allowedHeaders("/**");
+//															"http://j9c108.p.ssafy.io:8000/",
+//															"http://j9c108.p.ssafy.io:8000/**");
 			}
 		};
 	}
