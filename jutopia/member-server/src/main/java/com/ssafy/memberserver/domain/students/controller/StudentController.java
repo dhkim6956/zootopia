@@ -19,8 +19,8 @@ public class StudentController {
 
     @Operation(summary = "학생 조회")
     @GetMapping("")
-    public ApiResponse getStudent(String id){
-        return ApiResponse.success(studentService.getStudentInfo(UUID.fromString(id)));
+    public ApiResponse getStudent(String studentId){
+        return ApiResponse.success(studentService.getStudentInfo(studentId));
     }
 
     @Operation(summary = "학생 정보 수정")

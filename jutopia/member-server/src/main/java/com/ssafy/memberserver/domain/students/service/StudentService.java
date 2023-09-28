@@ -26,8 +26,8 @@ public class StudentService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public StudentInfoResponse getStudentInfo(UUID id){
-        return studentRepository.findById(id)
+    public StudentInfoResponse getStudentInfo(String studentId){
+        return studentRepository.findByStudentId(studentId)
                 .map(StudentInfoResponse::from)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
