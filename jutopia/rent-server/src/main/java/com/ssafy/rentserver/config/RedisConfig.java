@@ -1,5 +1,6 @@
 package com.ssafy.rentserver.config;
 
+import com.ssafy.rentserver.dto.SeatResponse;
 import com.ssafy.rentserver.model.Seat;
 import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.util.List;
 
 @Configuration
 @EnableRedisRepositories
@@ -32,11 +35,21 @@ public class RedisConfig {
 
 
     @Bean
-    public RedisTemplate<String, Object> seatRedisTemplate(RedisConnectionFactory redisConnectionFactory){
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Seat> seatRedisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, Seat> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Object.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Seat.class));
+
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, List<SeatResponse>> seatsRedisTemplate(RedisConnectionFactory redisConnectionFactory){
+        RedisTemplate<String, List<SeatResponse>> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(List.class));
 
         return redisTemplate;
     }

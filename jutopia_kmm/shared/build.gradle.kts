@@ -5,6 +5,8 @@ plugins {
 
     id("com.google.devtools.ksp") version "1.9.10-1.0.13"
     id("com.rickclephas.kmp.nativecoroutines") version "1.0.0-ALPHA-18"
+
+    kotlin("plugin.serialization") version "1.9.10"
 }
 
 kotlin {
@@ -21,6 +23,7 @@ kotlin {
         }
     }
 
+    val ktorVersion = "2.3.4"
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -36,6 +39,13 @@ kotlin {
                 implementation("co.touchlab:kermit:2.0.0")
                 implementation("io.github.thechance101:chart:Beta-0.0.5")
                 implementation("com.svenjacobs.reveal:reveal-core:3.0.0")
+                implementation("io.ktor:ktor-client-core:$ktorVersion")
+                implementation("io.ktor:ktor-client-json:$ktorVersion")
+                implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+                implementation("io.ktor:ktor-client-serialization:$ktorVersion")
+                implementation("io.ktor:ktor-client-cio:$ktorVersion")
+                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
             }
         }
         val androidMain by getting {
@@ -43,6 +53,7 @@ kotlin {
                 api("androidx.activity:activity-compose:1.7.2")
                 api("androidx.appcompat:appcompat:1.6.1")
                 api("androidx.core:core-ktx:1.10.1")
+                implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
             }
         }
         val iosX64Main by getting

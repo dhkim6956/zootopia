@@ -22,10 +22,7 @@ public class Seat {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
-    @Column(nullable = false)
-    private int rowNum;
-    @Column(nullable = false)
-    private int colNum;
+
     @Column(nullable = false)
     private int position;
     @Column(precision = 30, scale = 4, nullable = false)

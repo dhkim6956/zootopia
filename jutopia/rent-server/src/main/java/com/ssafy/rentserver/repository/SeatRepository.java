@@ -13,8 +13,8 @@ public interface SeatRepository extends JpaRepository<Seat, String> {
 
     Optional<Seat> findById(UUID seatId);
 
-    @Query(value = "SELECT * FROM seat WHERE clazz_number = ?1 AND grade = ?2 AND school = ?3 AND seat_status = ?4", nativeQuery = true)
-    Optional<List<Seat>> getAllSeats(int clazzNumber, int grade, String school, SeatStatus status);
+    @Query(value = "SELECT * FROM seat WHERE clazz_number = ?1 AND grade = ?2 AND school = ?3 AND seat_status NOT IN ('DELETED')", nativeQuery = true)
+    Optional<List<Seat>> getAllSeats(int clazzNumber, int grade, String school);
 
 
 }

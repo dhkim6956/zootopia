@@ -3,6 +3,7 @@ package com.ssafy.rentserver.service;
 import com.ssafy.common.error.ErrorCode;
 import com.ssafy.common.exception.ApiException;
 import com.ssafy.rentserver.dto.SeatRequest;
+import com.ssafy.rentserver.dto.SeatResponse;
 import com.ssafy.rentserver.enums.SeatStatus;
 import com.ssafy.rentserver.model.Seat;
 import com.ssafy.rentserver.repository.SeatCacheRepository;
@@ -27,42 +28,41 @@ public class SeatService {
     private final SeatRepository seatRepository;
     private final SeatCacheRepository seatCacheRepository;
 
-    public List<Seat> createGrid(int row, int col, int clazzNumber, int grade, String school) {
+    public List<Seat> createGrid(int totalCount, int clazzNumber, int grade, String school) {
         //TODO : 해당 반의 좌석 정보가 변경됐을떄는 기존의 자리는?
+        //만약 해당반, 학년, 학교 조합의 데이터가 존재한다 -> 전부 DELETED처리 후 새로 추가
         List<Seat> seats = new ArrayList<>();
         int count = 1;
-        for (int i = 0; i < row; i++) {
-            for (int j = 0; j < col; j++) {
-                var seat = Seat.builder()
-                        .rowNum(i)
-                        .colNum(j)
-                        .price(new BigDecimal(1000))
-                        .clazzNumber(clazzNumber)
-                        .grade(grade)
-                        .school(school)
-                        .position(count)
-                        .seatStatus(SeatStatus.AVAILABLE)
-                        .build();
-                seats.add(seat);
-                count++;
-            }
+        for (int i = 0; i < totalCount; i++) {
+            var seat = Seat.builder()
+                    .price(new BigDecimal(1000))
+                    .clazzNumber(clazzNumber)
+                    .grade(grade)
+                    .school(school)
+                    .position(count)
+                    .seatStatus(SeatStatus.AVAILABLE)
+                    .build();
+            seats.add(seat);
+            count++;
         }
-        log.info("{}", seats.toString());
         return seatRepository.saveAll(seats);
     }
 
-    public List<Seat> getAllSeat(int clazzNumber, int grade, String school, SeatStatus status) {
+
+    public List<SeatResponse> getAllSeat(int clazzNumber, int grade, String school) {
         String key = seatCacheRepository.getListKey(school, grade, clazzNumber);
         var seats = seatCacheRepository.getSeats(key);
-        if (seats.isEmpty()) {
-            Optional<List<Seat>> seatList = seatRepository.getAllSeats(clazzNumber, grade, school, status);
-            if (seatList.get().isEmpty()){
+        if (seats == null) {
+            Optional<List<Seat>> seatList = seatRepository.getAllSeats(clazzNumber, grade, school);
+            if (seatList.get().isEmpty()) {
                 throw new ApiException(ErrorCode.BAD_REQUEST, "해당 데이터에 좌석들이 존재하지 않습니다.");
             }
-            seatCacheRepository.setSeats(seatList.get());
-            return seatList.get();
+            List<SeatResponse> response = seatList.get().stream().map(SeatResponse::toResponse).toList();
+            seatCacheRepository.setSeats(response);
+            return response;
         }
-        return seats.stream().map(it -> (Seat)it).collect(Collectors.toList());
+
+        return seats;
     }
 
     public Seat getSeatInfo(UUID seatId) {
@@ -77,7 +77,7 @@ public class SeatService {
 
     @Transactional
     public Seat setSeatInfo(UUID seatId, SeatRequest request) {
-        Seat seat = seatRepository.findById(seatId).orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
+        Seat seat = seatRepository.findById(seatId).orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
         seatCacheRepository.setSeat(seat);
         seat.changePrice(request.price());
         seat.changeStatus(request.seatStatus());
@@ -88,13 +88,13 @@ public class SeatService {
     public Seat assignSeatToUser(UUID seatId, UUID userId) {
         //TODO: DB에 해당 좌석에 유저 할당. 유서 서비스에 그 유저에 할당된 좌석 전달
         //1. seat db에 해당 좌석에 유저 등록
-        Seat seat = seatRepository.findById(seatId).orElseThrow(()-> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
+        Seat seat = seatRepository.findById(seatId).orElseThrow(() -> new ApiException(ErrorCode.BAD_REQUEST, "존재하지 않는 좌석입니다"));
         seat.setUserId(userId);
         //2. rent-service-success에 이벤트 생성 -> seatId를 보낸다.
         return seatRepository.save(seat);
     }
 
-    public void isSuccessUserTransaction(){
+    public void isSuccessUserTransaction() {
         //TODO: assign에서 rent-service-success에 이벤트를 퍼블리쉬 한 후
         // user-service에서 해당 유저의 포인트를 차감하고 좌석을 할당했는가에 대한 토픽 구독
         // 메시지에는 좌석의 id, 성공여부가 들어가있다.

@@ -104,7 +104,7 @@ fun LeasePage(
         }
 
         if (selectedSeat != null) {
-            val isAvailable = selectedSeat!!.isAvailable
+            val status = selectedSeat!!.seatStatus
             Dialog(onDismissRequest = { }) {
                 // 박스로 전체 Dialog 레이아웃을 감쌈
                 Box(
@@ -143,7 +143,7 @@ fun LeasePage(
                             // 신청 버튼
                             Button(
                                 onClick = {
-                                    if (isAvailable) {
+                                    if (status=="AVAILABLE") {
                                         viewModel.reserveSeat(selectedSeat!!.id)
                                         viewModel.clearSelectedSeat()
                                     }
@@ -152,7 +152,7 @@ fun LeasePage(
                                     backgroundColor = Color(0xFFC3E0E8)
                                 ),
                                 shape = RoundedCornerShape(size = 10.dp),
-                                enabled = isAvailable
+                                enabled = status.equals("AVAILABLE")
                             ) {
                                 Text("신청")
                             }
@@ -169,19 +169,19 @@ fun LeasePage(
 
 @Composable
 fun SeatView(seat: Seat, viewModel: LeaseViewModel) {
-    val backgroundColor = if (seat.isAvailable) Variables.Brown200 else Color.Gray
+    val backgroundColor = if (seat.seatStatus == "AVAILABLE") Variables.Brown200 else Color.Gray
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .size(50.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 10.dp))
             .clickable {
-                log.i{"버튼 클릭 선택된 좌석 ${seat.info}"}
+                log.i{"버튼 클릭 선택된 좌석 ${seat}"}
                 viewModel.selectSeat(seat) }
 
     ) {
         Text(
-            text = "${seat.id}",
+            text = "${seat.position}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )

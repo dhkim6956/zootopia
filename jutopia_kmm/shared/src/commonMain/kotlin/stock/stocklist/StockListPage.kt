@@ -51,7 +51,6 @@ fun StockListPage(
                 log.i { stock.id }
                 navigator.navigate("/stockChart/${stock.id}")
                 log.i { "이동 실패" }
-
             }
         }
     }
