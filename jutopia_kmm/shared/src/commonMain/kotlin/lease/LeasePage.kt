@@ -16,12 +16,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -46,6 +50,8 @@ fun LeasePage(
 ) {
     val seats by viewModel.seats.collectAsState()
     val selectedSeat by viewModel.selectedSeat.collectAsState()
+    val apiResponse by viewModel.apiResponse.collectAsState()
+    val showDialog by viewModel.showDialog.collectAsState()
 
 
     Box(
@@ -121,7 +127,7 @@ fun LeasePage(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text("자리 정보", textAlign = TextAlign.Center)
-                        Text("자리: ${selectedSeat?.id ?: ""}")
+                        Text("자리: ${selectedSeat?.position ?: ""}")
                         Text("가격: ${selectedSeat?.price ?: ""}")
                         Text("구매하시겠습니까?")
                         Row(
@@ -143,6 +149,7 @@ fun LeasePage(
                             // 신청 버튼
                             Button(
                                 onClick = {
+                                    log.i { status }
                                     if (status=="AVAILABLE") {
                                         viewModel.reserveSeat(selectedSeat!!.id)
                                         viewModel.clearSelectedSeat()
@@ -162,8 +169,21 @@ fun LeasePage(
             }
         }
 
-    }
+//        when (apiResponse) {
+//            is ApiResponse.Success -> {
+//                ShowSuccessMessage()
+//            }
+//            is ApiResponse.InsufficientPoints -> {
+//                ShowInsufficientPointsMessage()
+//            }
+//            is ApiResponse.ServerError -> {
+//                ShowServerErrorMessage()
+//            }
+//            null -> Unit
+//        }
+        ShowDialogBasedOnApiResponse(apiResponse, viewModel)
 
+    }
 
 }
 
@@ -176,7 +196,6 @@ fun SeatView(seat: Seat, viewModel: LeaseViewModel) {
             .size(50.dp)
             .background(color = backgroundColor, shape = RoundedCornerShape(size = 10.dp))
             .clickable {
-                log.i{"버튼 클릭 선택된 좌석 ${seat}"}
                 viewModel.selectSeat(seat) }
 
     ) {
@@ -184,6 +203,65 @@ fun SeatView(seat: Seat, viewModel: LeaseViewModel) {
             text = "${seat.position}",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
+        )
+    }
+}
+
+@Composable
+fun ShowSuccessMessage() {
+    Text("신청이 성공적으로 완료되었습니다.")
+}
+
+@Composable
+fun ShowInsufficientPointsMessage() {
+    Text("포인트가 부족합니다.")
+}
+
+@Composable
+fun ShowServerErrorMessage() {
+    Text("서버 에러가 발생했습니다.")
+}
+
+@Composable
+fun ShowDialogBasedOnApiResponse(apiResponse: ApiResponse?, viewModel: LeaseViewModel) {
+    val showDialog by viewModel.showDialog.collectAsState()
+    val dialogMessage = remember { mutableStateOf("") }
+
+    when (apiResponse) {
+        is ApiResponse.Success -> {
+            dialogMessage.value = "신청 완료"
+            viewModel.toggleDialog(true)
+        }
+        is ApiResponse.InsufficientPoints -> {
+            dialogMessage.value = "포인트가 부족합니다"
+            viewModel.toggleDialog(true)
+        }
+        is ApiResponse.ServerError -> {
+            dialogMessage.value = "서버 에러 발생"
+            viewModel.toggleDialog(true)
+        }
+        null -> Unit
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.toggleDialog(false)  // Dialog를 닫기 위해 상태 변경
+            },
+            title = {
+                Text("알림")
+            },
+            text = {
+                Text(dialogMessage.value)
+            },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.toggleDialog(false)
+                    viewModel.clearApiResponse()
+                }) {
+                    Text("확인")
+                }
+            }
         )
     }
 }

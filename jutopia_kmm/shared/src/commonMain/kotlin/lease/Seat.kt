@@ -1,32 +1,44 @@
 package lease
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.json.JsonTransformingSerializer
 
 //data class Seat(val id: Int, val info: String, val price: Int, val isAvailable: Boolean)
 
 
 @Serializable
-data class ApiResponse(
+data class ListResponse(
     val result: ApiResult,
-    val body: List<Seat>
+    val body: List<Seat>?
 )
 
 @Serializable
+data class Response(
+    val result: ApiResult,
+    val body: Seat?
+)
+
+
+@Serializable
 data class ApiResult(
-    val result_code: Int,
-    val result_message: String,
-    val result_description: String
+    @SerialName("result_code") val resultCode: Int,
+    @SerialName("result_message") val resultMessage: String,
+    @SerialName("result_description") val resultDescription: String
 )
 @Serializable
 data class Seat(
     val id: String,
     val position: Int,
     val price: Double,
-    val userId: String?,
-    val seatStatus: String,
-    val clazzNumber: Int,
+    @SerialName("user_id") val userId: String?,
+    @SerialName("seat_status") val seatStatus: String,
+    @SerialName("clazz_number") val clazzNumber: Int,
     val grade: Int,
     val school: String,
+)
+
+@Serializable
+data class SeatRequest(
+    @SerialName("seat_id")val seatId: String,
+    @SerialName("user_id")val userId: String,
 )
