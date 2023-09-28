@@ -1,4 +1,4 @@
-package com.ssafy.stockserver.domain.trading.entity;
+package com.ssafy.stockserver.domain.memberStock.entity;
 
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import jakarta.persistence.*;
@@ -13,11 +13,12 @@ import java.util.UUID;
 @Getter
 @Builder
 @Entity
-@Table(name = "trading")
-public class Trading {
+@Table(name = "memberstock")
+public class MembmerStock {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "TRADING_ID")
+    @Column(name = "MEMBERSTOCK_ID")
     private UUID id;
 
     // 누구의 거래 인지
