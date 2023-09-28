@@ -41,7 +41,7 @@ public class ProductsController {
     @PostMapping("/{classroomId}/product")
     public Api<ResponseProduct> createProduct(@RequestBody RequestProduct product
                                                         , @PathVariable UUID classroomId) {
-        // oustasdfsadf
+        // oustasdfsadfasdf
         ProductDto productDto = mapper.map(product, ProductDto.class);
         productDto.setClassroomId(classroomId);
         System.out.println("copntroller : " + productDto);
