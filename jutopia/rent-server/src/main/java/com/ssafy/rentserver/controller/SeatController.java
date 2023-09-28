@@ -10,13 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/seat-service")
+@RequestMapping("/seat-service/api/seat")
 @Slf4j
 public class SeatController {
 
     private final SeatService seatService;
     private final SeatRepository seatRepository;
 
+    @GetMapping("/health_check")
+    public String status() {
+        return "It's working in Order Service on PORT";
+    }
 //    @GetMapping("")
 //    public void test(){
 //        seatService.redisTest();

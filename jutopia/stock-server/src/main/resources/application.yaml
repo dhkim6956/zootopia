@@ -19,6 +19,18 @@ eureka:
     service-url:
       defaultZone: http://127.0.0.1:8761/eureka
 
+springdoc:
+  api-docs:
+    path: /stock-server/v3/api-docs
+  swagger-ui:
+    path: /stock-server/swagger-ui.html
+
+openapi:
+  service:
+    # API Gateway 포트
+    url: http://localhost:8000
+
+
 management:
   endpoints:
     web:
