@@ -22,10 +22,9 @@ public class Seat {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @Column(nullable = false)
-    private int rowNum;
-    @Column(nullable = false)
-    private int colNum;
+    private int position;
     @Column(precision = 30, scale = 4, nullable = false)
     private BigDecimal price;
     private UUID userId;
@@ -38,7 +37,7 @@ public class Seat {
     private String school;
 
     @Enumerated(EnumType.STRING)
-    private SeatStatus SeatStatus;
+    private SeatStatus seatStatus;
 
     @PrePersist
     public void generateUUID() {
@@ -51,9 +50,9 @@ public class Seat {
         this.price = price;
     }
     public void changeStatus(SeatStatus status){
-        this.SeatStatus = status;
+        this.seatStatus = status;
     }
-    public void setUserId(UUID userId){
+    public void changeUserId(UUID userId){
         this.userId = userId;
     }
 }
