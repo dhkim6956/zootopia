@@ -7,6 +7,7 @@ import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointDepositRe
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointWithDrawRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.response.PointDepositResponse;
 import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
+import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import jakarta.persistence.*;
@@ -66,6 +67,9 @@ public class Student {
         if(studentUpdateRequest.StudentNewPwd() != null || !studentUpdateRequest.StudentPwd().isBlank()){
             this.studentPwd = passwordEncoder.encode(studentUpdateRequest.StudentNewPwd());
         }
+    }
+    public void pointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
+        this.point = point.subtract(studentPointUpdateRequest.point());
     }
     public void addPointUpdate(PointDepositRequest pointDepositRequest, BigDecimal addPoint){
         if(pointDepositRequest.deposit() != null){
