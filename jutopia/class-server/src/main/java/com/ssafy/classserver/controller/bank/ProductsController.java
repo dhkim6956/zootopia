@@ -9,6 +9,7 @@ import com.ssafy.classserver.vo.request.RequestProduct;
 import com.ssafy.classserver.vo.response.ResponseClassRoom;
 import com.ssafy.classserver.vo.response.ResponseProduct;
 import com.ssafy.common.api.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.core.env.Environment;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/class-server/api/bank")
+@Tag(name = "products", description = "적금 상품 관리 api 입니다.")
 public class ProductsController {
 
     Environment env;
