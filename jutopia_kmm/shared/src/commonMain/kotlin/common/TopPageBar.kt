@@ -2,6 +2,7 @@ package common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,7 +62,7 @@ fun TopPageBar(navLoc: String, navigator: Navigator, showReturn: Boolean = true)
         Image(
             painterResource("drawable/text_bubble.xml"),
             null,
-            modifier = Modifier.height(40.dp)
+            modifier = Modifier.height(40.dp).clickable { navigator.navigate("/chatbot") }
         )
     }
 }
