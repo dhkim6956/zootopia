@@ -30,12 +30,12 @@ public class SwaggerConfig {
                 .build();
     }
 
-//    @Bean
-//    public OpenAPI customOpenAPI() {
-//        return new OpenAPI().addServersItem(new Server().url("/"))
-//                .components(new Components().addSecuritySchemes("basicScheme",
-//                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")))
-//                .info(new io.swagger.v3.oas.models.info.Info().title("springdoc API").version("V1")
-//                        .license(new License().name("Apache 2.0").url("<http://springdoc.org>")));
-//    }
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI().addServersItem(new Server().url("/"))
+                .components(new Components().addSecuritySchemes("basicScheme",
+                        new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")))
+                .info(new io.swagger.v3.oas.models.info.Info().title("springdoc API").version("V1")
+                        .license(new License().name("Apache 2.0").url("<http://springdoc.org>")));
+    }
 }
