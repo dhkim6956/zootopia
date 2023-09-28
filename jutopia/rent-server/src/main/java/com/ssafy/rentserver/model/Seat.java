@@ -52,7 +52,7 @@ public class Seat {
     public void changeStatus(SeatStatus status){
         this.seatStatus = status;
     }
-    public void setUserId(UUID userId){
+    public void changeUserId(UUID userId){
         this.userId = userId;
     }
 }

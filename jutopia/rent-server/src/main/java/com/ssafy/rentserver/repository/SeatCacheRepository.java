@@ -32,6 +32,10 @@ public class SeatCacheRepository {
         log.info("Get data from Redis {}:{}", key, seat);
         return seat;
     }
+    public void clearSeat(String seatId){
+        String key = getKey(seatId);
+        seatRedisTemplate.delete(key);
+    }
 
     public void setSeats(List<SeatResponse> seats){
         SeatResponse seat = seats.get(0);
@@ -45,6 +49,9 @@ public class SeatCacheRepository {
         return seats;
     }
 
+    public void clearSeats(String key) {
+        seatsRedisTemplate.delete(key);
+    }
 
     private String getKey(String seatId) {
         return "SEAT:" + seatId;
@@ -53,4 +60,5 @@ public class SeatCacheRepository {
     public String getListKey(String school, int grade, int clazzNumber){
         return "seats:" + school + ":" + grade + ":" + clazzNumber;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.ssafy.rentserver.config;
 
+import com.ssafy.common.objectmapper.ObjectMapperConfig;
 import com.ssafy.rentserver.dto.SeatResponse;
 import com.ssafy.rentserver.model.Seat;
 import io.lettuce.core.RedisURI;
@@ -23,6 +24,7 @@ import java.util.List;
 public class RedisConfig {
 
     private final RedisProperties redisProperties;
+    private final ObjectMapperConfig objectMapperConfig;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory(){
@@ -39,7 +41,7 @@ public class RedisConfig {
         RedisTemplate<String, Seat> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Seat.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapperConfig.objectMapper(),Seat.class));
 
         return redisTemplate;
     }
@@ -49,7 +51,7 @@ public class RedisConfig {
         RedisTemplate<String, List<SeatResponse>> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(List.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(objectMapperConfig.objectMapper(),List.class));
 
         return redisTemplate;
     }
