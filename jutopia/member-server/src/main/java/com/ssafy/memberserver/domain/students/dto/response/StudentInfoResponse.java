@@ -3,6 +3,7 @@ package com.ssafy.memberserver.domain.students.dto.response;
 import com.ssafy.memberserver.common.enums.MemberBioStatus;
 import com.ssafy.memberserver.common.enums.MemberRole;
 import com.ssafy.memberserver.common.enums.MemberStatus;
+import com.ssafy.memberserver.common.enums.SeatOwnershipStatus;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -35,6 +36,8 @@ public record StudentInfoResponse(
         MemberStatus memberStatus,
         @Schema(description = "학생 바이오 여부")
         MemberBioStatus memberBioStatus,
+        @Schema(description = "학생 좌석 보유 여부")
+        SeatOwnershipStatus seatOwnershipStatus,
         Integer school,
         Integer grade,
         Integer classRoom
@@ -55,6 +58,7 @@ public record StudentInfoResponse(
                         .school(student.getSchool())
                         .grade(student.getGrade())
                         .classRoom(student.getClassRoom())
+                        .seatOwnershipStatus(student.getSeatOwnershipStatus())
                         .build();
         }
 }
