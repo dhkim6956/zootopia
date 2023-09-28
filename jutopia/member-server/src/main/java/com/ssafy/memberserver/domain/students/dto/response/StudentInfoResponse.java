@@ -18,18 +18,18 @@ public record StudentInfoResponse(
         UUID id,
         @Schema(description = "학생 아이디")
         String studentId,
-        @Schema(description = "학생 비밀 번호")
-        String studentPwd,
         @Schema(description = "학생 이름")
         String studentName,
         @Schema(description = "학생 포인트")
         BigDecimal point,
         @Schema(description = "학생 화폐 총량")
         BigDecimal money,
-        @Schema(description = "학생 생성일")
-        LocalDateTime createdAt,
-        @Schema(description = "학생 수정일")
-        LocalDateTime updateAt,
+        @Schema(description = "학생의 학교")
+        Integer school,
+        @Schema(description = "학생의 학년")
+        Integer grade,
+        @Schema(description = "학생의 반")
+        Integer classRoom,
         @Schema(description = "학생 권한")
         MemberRole memberRole,
         @Schema(description = "학생 상태 여부")
@@ -38,27 +38,27 @@ public record StudentInfoResponse(
         MemberBioStatus memberBioStatus,
         @Schema(description = "학생 좌석 보유 여부")
         SeatOwnershipStatus seatOwnershipStatus,
-        Integer school,
-        Integer grade,
-        Integer classRoom
+        @Schema(description = "학생 생성일")
+        LocalDateTime createdAt,
+        @Schema(description = "학생 수정일")
+        LocalDateTime updateAt
 ) {
         public static StudentInfoResponse from(Student student){
                 return StudentInfoResponse.builder()
                         .id(student.getId())
                         .studentId(student.getStudentId())
-                        .studentPwd(student.getStudentPwd())
                         .studentName(student.getStudentName())
                         .point(student.getPoint())
                         .money(student.getMoney())
-                        .createdAt(student.getCreatedAt())
-                        .updateAt(student.getUpdatedAt())
-                        .memberRole(student.getMemberRole())
-                        .memberStatus(student.getMemberStatus())
-                        .memberBioStatus(student.getMemberBioStatus())
                         .school(student.getSchool())
                         .grade(student.getGrade())
                         .classRoom(student.getClassRoom())
+                        .memberRole(student.getMemberRole())
+                        .memberStatus(student.getMemberStatus())
+                        .memberBioStatus(student.getMemberBioStatus())
                         .seatOwnershipStatus(student.getSeatOwnershipStatus())
+                        .createdAt(student.getCreatedAt())
+                        .updateAt(student.getUpdatedAt())
                         .build();
         }
 }
