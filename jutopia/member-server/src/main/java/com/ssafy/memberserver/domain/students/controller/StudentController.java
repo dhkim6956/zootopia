@@ -36,7 +36,7 @@ public class StudentController {
     }
     @Operation(summary = "학생 포인트 차감")
     @PutMapping("/point")
-    public ApiResponse studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest){
-        return ApiResponse.success(studentService.studentPointUpdate(studentPointUpdateRequest));
+    public ApiResponse studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest,String seatId){
+        return ApiResponse.success(studentService.studentPointUpdate(studentPointUpdateRequest, UUID.fromString(seatId)));
     }
 }
