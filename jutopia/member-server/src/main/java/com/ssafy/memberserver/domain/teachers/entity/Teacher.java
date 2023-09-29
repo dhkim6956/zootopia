@@ -50,7 +50,7 @@ public class Teacher {
             this.teacherPwd = passwordEncoder.encode(teacherUpdateRequest.teacherNewPwd());
         }
     }
-    public void delete(TeacherDeleteRequest teacherDeleteRequest,PasswordEncoder passwordEncoder){
+    public void delete(TeacherDeleteRequest teacherDeleteRequest){
         if(teacherDeleteRequest.memberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }

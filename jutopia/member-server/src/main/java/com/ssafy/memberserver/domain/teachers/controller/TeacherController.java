@@ -15,15 +15,14 @@ import java.util.UUID;
 @RequestMapping("/member-server/api/teacher")
 public class TeacherController {
     private final TeacherService teacherService;
-
     @Operation(summary = "선생님 회원 수정")
     @PutMapping
-    public ApiResponse teacherUpdate(@RequestBody TeacherUpdateRequest teacherUpdateRequest, String uuid){
-        return ApiResponse.success(teacherService.teacherUpdate(teacherUpdateRequest, UUID.fromString(uuid)));
+    public ApiResponse teacherUpdate(@RequestBody TeacherUpdateRequest teacherUpdateRequest){
+        return ApiResponse.success(teacherService.teacherUpdate(teacherUpdateRequest));
     }
     @Operation(summary = "선생님 회원 삭제")
     @DeleteMapping
-    public ApiResponse teacherDelete(@RequestBody TeacherDeleteRequest teacherDeleteRequest, String uuid){
-        return ApiResponse.success(teacherService.teacherDelete(teacherDeleteRequest, UUID.fromString(uuid)));
+    public ApiResponse teacherDelete(@RequestBody TeacherDeleteRequest teacherDeleteRequest){
+        return ApiResponse.success(teacherService.teacherDelete(teacherDeleteRequest));
     }
 }
