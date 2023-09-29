@@ -1,12 +1,17 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 from py_eureka_client.eureka_client import EurekaClient
-import httpx
-import openai
+from utils import generate_answer
+# import httpx
+# import openai
 
 INSTANCE_PORT = 9002
 INSTANCE_HOST = "j9c108.p.ssafy.io"
 
 app = FastAPI()
+
+class Question(BaseModel):
+    message: str
 
 @app.on_event("startup")
 async def eureka_init():
@@ -27,3 +32,10 @@ async def destroy():
 def index():
     return {"message": "Welcome to chat server"}
 
+@app.post("/ask")
+async def answer(question: Question):
+    ans = generate_answer(question.message)
+    return {
+        "from_server": True,
+        "message": ans
+    }
