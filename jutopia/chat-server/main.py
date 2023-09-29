@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from py_eureka_client.cureka_client import EurekaClient
+from py_eureka_client.eureka_client import EurekaClient
 import httpx
 import openai
 
