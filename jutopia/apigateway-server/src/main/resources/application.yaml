@@ -38,6 +38,12 @@ spring:
           uri: lb://RENT-SERVER
           predicates:
             - Path=/rent-server/**
+        - id: chat-server
+          uri: lb://CHAT-SERVER
+          predicates:
+            - Path=/chat-server/**
+          filters:
+            - RewritePath=/chat-server/(?<segment>.*), /$\{segment}
 management:
   endpoints:
     web:
