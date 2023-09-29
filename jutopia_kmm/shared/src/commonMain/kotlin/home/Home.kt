@@ -15,37 +15,73 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import co.touchlab.kermit.Logger
 import common.TopPageBar
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.readText
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import stock.stocklist.StockListPage
 
+private val log = Logger.withTag("Home")
 val LightGray = Color(0xFFF6F6F6)
 
-//@Composable
-//fun Home(navigator: Navigator) {
-//    Column {
-//        TopPageBar("홈")
-//        BottomTabBar(navigator)
-//    }
-//}
+
+class Greeting {
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation){
+            json(
+                Json { ignoreUnknownKeys = true }
+            )
+        }
+    }
+
+    suspend fun getHome(): String {
+        val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/class-server/api/school/")
+        val body: String = response.bodyAsText()
+        log.i {"$body"}
+        return body
+    }
+}
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Home(navigator: Navigator) {
+
+    val coroutineScope = rememberCoroutineScope()
+
+    coroutineScope.launch {
+        var test = Greeting()
+        val result = test.getHome()
+//        log.i { "$result" }
+    }
+
+
+
     var bankImg = "drawable/bank.xml"
     var stockImg = "drawable/stock.xml"
     var rentImg = "drawable/rent.xml"
@@ -136,6 +172,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 1 },
                     contentAlignment = Alignment.Center
@@ -152,6 +189,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 2 },
                     contentAlignment = Alignment.Center
@@ -168,6 +206,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 3 },
                     contentAlignment = Alignment.Center
@@ -193,6 +232,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 4 },
                     contentAlignment = Alignment.Center
@@ -209,6 +249,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 5 },
                     contentAlignment = Alignment.Center
@@ -225,6 +266,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 6 },
                     contentAlignment = Alignment.Center

@@ -24,6 +24,7 @@ kotlin {
     }
 
     val ktorVersion = "2.3.4"
+    val serialization_version = "1.2.2"
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -45,7 +46,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version")
             }
         }
         val androidMain by getting {
@@ -55,6 +56,8 @@ kotlin {
                 api("androidx.core:core-ktx:1.10.1")
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
             }
+
+
         }
         val iosX64Main by getting
         val iosArm64Main by getting
@@ -90,5 +93,6 @@ android {
 dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview-android:1.5.1")
     implementation("androidx.compose.material3:material3:1.1.2")
+    implementation("com.google.android.gms:play-services-analytics-impl:18.0.3")
 
 }

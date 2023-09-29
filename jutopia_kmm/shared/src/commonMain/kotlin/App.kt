@@ -1,3 +1,4 @@
+import Sign.MainPage
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -52,8 +53,13 @@ fun App() {
                     pauseTransition = ExitTransition.None,
                     resumeTransition = EnterTransition.None
                 ),
-                initialRoute = "/home",
+                initialRoute = "/mainpage",
             ) {
+                scene(
+                    route = "/mainpage"
+                ) {
+                    MainPage(navigator)
+                }
                 scene(
                     route = "/home"
                 ) {
