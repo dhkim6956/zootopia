@@ -1,19 +1,35 @@
-
+server:
+#  port: 0
+  port: 8080
 spring:
   application:
     name: rent-server
   cloud:
     config:
+#      uri: http://127.0.0.1:8888
       uri: http://j9c108.p.ssafy.io:8888
+      name: rent-server
 
+#springdoc:
+#  api-docs:
+#    path: /rent-server/v3/api-docs
+#  swagger-ui:
+#    path: /rent-server/swagger-ui.html
+#
+#openapi:
+#  service:
+#    # API Gateway 포트
+#    url: http://localhost:8000
 
 eureka:
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
-    service-url:
-      defaultZone: http://j9c108.p.ssafy.io:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
-
+    service-url:
+#      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
 
 logging:
   level:
@@ -21,5 +37,4 @@ logging:
     org.springframework.web: WARN
     com.ssafy: DEBUG
 
-server:
-  port: 8050
+

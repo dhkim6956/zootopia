@@ -7,7 +7,7 @@ services:
     hostname: zoo1    
     networks:
       broker-bridge:
-        ipv4_address: 172.18.0.11
+        ipv4_address: 172.18.0.51
     ports:
       - "2181:2181"
     environment:
@@ -22,7 +22,7 @@ services:
     restart: always
     networks:
       broker-bridge:
-        ipv4_address: 172.18.0.12
+        ipv4_address: 172.18.0.52
     ports:
       - "2182:2181"
     environment:
@@ -37,7 +37,7 @@ services:
     restart: always
     networks:
       broker-bridge:
-        ipv4_address: 172.18.0.13
+        ipv4_address: 172.18.0.53
     ports:
       - "2183:2181"
     environment:
@@ -52,7 +52,7 @@ services:
     restart: always
     networks:
       broker-bridge:
-        ipv4_address: 172.18.0.21
+        ipv4_address: 172.18.0.61
     ports:
       - "9092:9092"
       - "19092:19092"
@@ -74,7 +74,7 @@ services:
     restart: always
     networks:
       broker-bridge:
-        ipv4_address: 172.18.0.32
+        ipv4_address: 172.18.0.62
     ports:
       - "9093:9092"
       - "19093:19093"
@@ -96,7 +96,7 @@ services:
     restart: always
     networks:
       broker-bridge:
-        ipv4_address: 172.18.0.33
+        ipv4_address: 172.18.0.63
     ports:
       - "9094:9092"
       - "19094:19094"
@@ -115,7 +115,7 @@ services:
     image: provectuslabs/kafka-ui
     container_name: kafka-ui
     ports:
-      - "10000:8080"
+      - "10000:8099"
     restart: always
     networks:
       - broker-bridge

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SaveActivity">
+
+    <TextView
+        android:id="@+id/save_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="적금정보"
+        tools:ignore="MissingConstraints" />
+
+    <View
+        android:id="@+id/save_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="#EBF5F7"
+        app:layout_constraintTop_toBottomOf="@id/save_text"/>
+
+    <TextView
+        android:id="@+id/save_first_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/save_view"
+        android:textSize="20dp"
+        android:text="아름다운 저축을 위한 습관,"
+        android:layout_marginTop="20dp"
+        tools:ignore="MissingConstraints" />
+
+    <TextView
+        android:id="@+id/save_second_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/save_first_comment"
+        android:textSize="20dp"
+        android:text="주토피아와 함께 실천해요"
+        tools:ignore="MissingConstraints" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        app:layout_constraintTop_toBottomOf="@id/save_first_comment"
+        android:layout_marginTop="25dp"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/rabbit_coin"
+            android:layout_marginRight="30dp"
+            tools:ignore="MissingConstraints" />
+    </TableRow>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

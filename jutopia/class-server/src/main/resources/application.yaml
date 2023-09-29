@@ -24,3 +24,14 @@ management:
     web:
       exposure:
         include: refresh, health, beans, busrefresh
+
+springdoc:
+  api-docs:
+    path: /class-server/v3/api-docs
+  swagger-ui:
+    path: /class-server/swagger-ui.html
+
+openapi:
+  service:
+    # API Gateway 포트
+    url: http://localhost:8000
