@@ -28,6 +28,13 @@ public class Api<T> {
         return api;
     }
 
+    public static <T> Api<T> NOT_FOUND(T data) {
+        var api = new Api<T>();
+        api.result = Result.NOT_FOUND();
+        api.body = data;
+        return api;
+    }
+
     public static Api<Object> ERROR(Result result){
         var api = new Api<Object>();
         api.result = result;

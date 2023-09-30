@@ -14,7 +14,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "memberstock")
-public class MembmerStock {
+public class MemberStock {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,8 +23,11 @@ public class MembmerStock {
 
     // 누구의 거래 인지
     private UUID memberId;
-
+    // 매입가
     private BigDecimal price;
+    // 매입 수량
+    private Long qty;
+    // 거래일
     private LocalTime tradeAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

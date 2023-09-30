@@ -18,7 +18,7 @@ public class StudentController {
     private final StudentService studentService;
 
     @Operation(summary = "학생 조회")
-    @GetMapping("")
+    @GetMapping("/")
     public ApiResponse getStudent(String id){
         return ApiResponse.success(studentService.getStudentInfo(UUID.fromString(id)));
     }
