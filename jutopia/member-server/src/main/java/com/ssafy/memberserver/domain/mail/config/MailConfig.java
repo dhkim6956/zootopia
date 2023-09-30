@@ -12,18 +12,18 @@ import java.util.Properties;
 @Configuration
 public class MailConfig {
 
-    @Value("${spring.mail.username}")
-    String id;
-    @Value("${spring.mail.password}")
-    String password;
+//    @Value("${spring.mail.username}")
+//    String id;
+//    @Value("${spring.mail.password}")
+//    String password;
 
     @Bean
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
 
         javaMailSender.setHost("smtp.naver.com");
-        javaMailSender.setUsername(id);
-        javaMailSender.setPassword(password);
+//        javaMailSender.setUsername(id);
+//        javaMailSender.setPassword(password);
 
         javaMailSender.setPort(465);
 

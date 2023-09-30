@@ -8,19 +8,18 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
-public record CreateInputResponse(
+public record HistoryIncomeResponse(
         Long id,
         BigDecimal amount,
-        String list,
         HistoryType historyType,
         UUID accountId
 ) {
-    public static CreateInputResponse from(History history){
-        return CreateInputResponse.builder()
+    public static HistoryIncomeResponse from(History history){
+        return HistoryIncomeResponse.builder()
                 .id(history.getId())
                 .amount(history.getAmount())
-                .list(history.getList())
                 .historyType(history.getHistoryType())
+                .accountId(history.getAccount().getId())
                 .build();
     }
 }
