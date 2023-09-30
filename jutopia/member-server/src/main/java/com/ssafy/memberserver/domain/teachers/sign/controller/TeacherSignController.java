@@ -40,3 +40,4 @@ public class TeacherSignController {
         return ApiResponse.success(mailService.sendSimpleMessage(email));
     }
 }
+

@@ -14,23 +14,23 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/member-server/api")
-    public class PointTransactionController {
-        private final PointTransactionService pointTransactionService;
+@RequestMapping("/member-server/api/pointtransaction")
+public class PointTransactionController {
+    private final PointTransactionService pointTransactionService;
 
-        @Operation(summary = "포인트 조회")
-        @GetMapping
-        public ApiResponse getAllpoint(@RequestParam String studentId) {
-            return ApiResponse.success(pointTransactionService.getPointAll(UUID.fromString(studentId)));
-        }
-        @Operation(summary = "포인트 입금")
-        @PostMapping("/point/deposit")
-        public ApiResponse deposit(@RequestBody PointDepositRequest pointDepositRequest, @RequestParam String studentId, @RequestParam BigDecimal deposit){
-            return ApiResponse.success(pointTransactionService.pointDeposit(pointDepositRequest,studentId,deposit));
-        }
-        @Operation(summary = "포인트 출금")
-        @PostMapping("/point/withdraw")
-        public ApiResponse withDraw(@RequestBody PointWithDrawRequest pointWithDrawRequest,@RequestParam String studentId,@RequestParam BigDecimal withDraw){
-            return ApiResponse.success(pointTransactionService.pointWithDraw(pointWithDrawRequest,studentId,withDraw));
-        }
+    @Operation(summary = "포인트 조회")
+    @GetMapping
+    public ApiResponse getAllpoint(@RequestParam String studentId) {
+        return ApiResponse.success(pointTransactionService.getPointAll(UUID.fromString(studentId)));
     }
+    @Operation(summary = "포인트 입금")
+    @PostMapping("/deposit")
+    public ApiResponse deposit(@RequestBody PointDepositRequest pointDepositRequest, @RequestParam String studentId, @RequestParam BigDecimal deposit){
+        return ApiResponse.success(pointTransactionService.pointDeposit(pointDepositRequest,studentId,deposit));
+    }
+    @Operation(summary = "포인트 출금")
+    @PostMapping("/withdraw")
+    public ApiResponse withDraw(@RequestBody PointWithDrawRequest pointWithDrawRequest,@RequestParam String studentId,@RequestParam BigDecimal withDraw){
+        return ApiResponse.success(pointTransactionService.pointWithDraw(pointWithDrawRequest,studentId,withDraw));
+    }
+}
