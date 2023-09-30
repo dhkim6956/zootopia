@@ -3,9 +3,7 @@ package com.ssafy.stockserver.domain.trading.controller;
 import com.ssafy.common.api.Api;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.service.StockService;
-import com.ssafy.stockserver.domain.stock.vo.response.ResponseStock;
 import com.ssafy.stockserver.domain.trading.entity.Trading;
-import com.ssafy.stockserver.domain.trading.kafka.KafkaProducer;
 import com.ssafy.stockserver.domain.trading.service.TradingService;
 import com.ssafy.stockserver.domain.trading.vo.request.RequestTrade;
 import com.ssafy.stockserver.domain.trading.vo.response.ResponseTrade;
@@ -25,13 +23,11 @@ public class TradingController {
 
     TradingService tradingService;
     StockService stockService;
-    KafkaProducer kafkaProducer;
     ModelMapper mapper;
 
-    public TradingController(TradingService tradingService, StockService stockService, KafkaProducer kafkaProducer) {
+    public TradingController(TradingService tradingService, StockService stockService) {
         this.tradingService = tradingService;
         this.stockService = stockService;
-        this.kafkaProducer = kafkaProducer;
         this.mapper = new ModelMapper();
         this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
