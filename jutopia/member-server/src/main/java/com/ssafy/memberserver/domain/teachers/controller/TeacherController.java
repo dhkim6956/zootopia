@@ -12,16 +12,17 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/member-server/api/teacher")
+@RequestMapping("member-server/api/teacher")
 public class TeacherController {
     private final TeacherService teacherService;
+
     @Operation(summary = "선생님 회원 수정")
-    @PutMapping
+    @PutMapping("/update")
     public ApiResponse teacherUpdate(@RequestBody TeacherUpdateRequest teacherUpdateRequest){
         return ApiResponse.success(teacherService.teacherUpdate(teacherUpdateRequest));
     }
     @Operation(summary = "선생님 회원 삭제")
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ApiResponse teacherDelete(@RequestBody TeacherDeleteRequest teacherDeleteRequest){
         return ApiResponse.success(teacherService.teacherDelete(teacherDeleteRequest));
     }

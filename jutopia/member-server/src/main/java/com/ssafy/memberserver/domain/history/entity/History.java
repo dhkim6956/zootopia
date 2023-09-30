@@ -2,7 +2,6 @@ package com.ssafy.memberserver.domain.history.entity;
 
 import com.ssafy.memberserver.common.enums.HistoryType;
 import com.ssafy.memberserver.domain.account.entity.Account;
-import com.ssafy.memberserver.domain.history.dto.request.CreateInputRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -20,20 +20,32 @@ public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String sender;
+    private String receiver;
     private BigDecimal amount;
-    private String list;
+    private BigDecimal balance;
     @Enumerated(EnumType.STRING)
     private HistoryType historyType;
+    private LocalDateTime createdAt;
     @ManyToOne
     private Account account;
 
-    public static History from(CreateInputRequest historyRequest, Account account){
-        return History.builder()
-                .id(historyRequest.id())
-                .amount(historyRequest.amount())
-                .list(historyRequest.list())
-                .historyType(historyRequest.historyType())
-                .account(account)
-                .build();
+    public void senderHistory(Account account,HistoryType type, String sender, String receiver, BigDecimal amount, BigDecimal balance){
+        this.account = account;
+        this.historyType = type;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.amount = amount;
+        this.balance = balance;
+        this.createdAt = LocalDateTime.now();
+    }
+    public void receiverHistory(Account account,HistoryType type, String receiver, String sender,BigDecimal amount, BigDecimal balance){
+        this.account = account;
+        this.historyType = type;
+        this.receiver = sender;
+        this.sender = receiver;
+        this.amount = amount;
+        this.balance = balance;
+        this.createdAt = LocalDateTime.now();
     }
 }
