@@ -6,8 +6,8 @@ spring:
     name: rent-server
   cloud:
     config:
-#      uri: http://127.0.0.1:8888
-      uri: http://j9c108.p.ssafy.io:8888
+      uri: http://127.0.0.1:8888
+#      uri: http://j9c108.p.ssafy.io:8888
       name: rent-server
 
 #springdoc:
@@ -28,8 +28,8 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-#      defaultZone: http://127.0.0.1:8761/eureka
-      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
+      defaultZone: http://127.0.0.1:8761/eureka
+#      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
 
 logging:
   level:
