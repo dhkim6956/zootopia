@@ -1,3 +1,6 @@
+import android.app.Application
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -31,4 +34,25 @@ actual fun formatDouble(value: Double, decimalPlaces: Int): String {
     }
     val formatter = DecimalFormat(formatString.toString())
     return formatter.format(value)
+}
+
+class AndroidApp : Application() {
+    companion object {
+        lateinit var INSTANCE: AndroidApp
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        INSTANCE = this
+    }
+}
+
+actual fun openUrl(url: String?) {
+    val uri = url?.let { Uri.parse(it) } ?: return
+    val intent = Intent().apply {
+        action = Intent.ACTION_VIEW
+        data = uri
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    AndroidApp.INSTANCE.startActivity(intent)
 }

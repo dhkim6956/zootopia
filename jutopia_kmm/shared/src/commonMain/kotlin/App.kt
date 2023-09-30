@@ -144,3 +144,5 @@ expect val icesiminFontFamily: FontFamily
 expect val icesotongFontFamily: FontFamily
 expect val pretendardFontFamily: FontFamily
 expect fun formatDouble(value: Double, decimalPlaces: Int): String
+
+expect fun openUrl(url: String?)

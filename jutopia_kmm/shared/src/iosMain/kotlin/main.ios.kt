@@ -1,17 +1,12 @@
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.Typeface
-import co.touchlab.kermit.Logger
 import moe.tlaster.precompose.PreComposeApplication
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Typeface
-import platform.Foundation.NSLocale
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
-import platform.Foundation.NSNumberFormatterDecimalStyle
-import platform.Foundation.NSString
-import platform.Foundation.currentLocale
-import platform.darwin.NSUInteger
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
 
 
 actual fun getPlatformName(): String = "iOS"
@@ -43,4 +38,9 @@ actual fun formatDouble(value: Double, decimalPlaces: Int): String {
     formatter.maximumFractionDigits = decimalPlaces.toULong()
     formatter.numberStyle = 1u //Decimal
     return formatter.stringFromNumber(NSNumber(value))!!
+}
+
+actual fun openUrl(url: String?) {
+    val nsUrl = url?.let { NSURL.URLWithString(it) } ?: return
+    UIApplication.sharedApplication.openURL(nsUrl)
 }

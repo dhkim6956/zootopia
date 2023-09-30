@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
+import openUrl
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -144,7 +145,7 @@ fun NewsList(viewModel: NewsViewModel, searchStr: String) {
             if (newsItem.title.contains(searchStr)) {
                 Column (
                     modifier = Modifier
-                        .clickable {  }
+                        .clickable { openUrl(newsItem.link) }
                 ) {
                     Text(
                         newsItem.title,
