@@ -1,6 +1,8 @@
 package com.ssafy.stockserver.domain.trading.controller;
 
 import com.ssafy.common.api.Api;
+import com.ssafy.stockserver.domain.client.MemberServerClient;
+import com.ssafy.stockserver.domain.client.ResponseMember;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.service.StockService;
 import com.ssafy.stockserver.domain.trading.entity.Trading;
@@ -23,11 +25,13 @@ public class TradingController {
 
     TradingService tradingService;
     StockService stockService;
+    MemberServerClient memberServerClient;
     ModelMapper mapper;
 
-    public TradingController(TradingService tradingService, StockService stockService) {
+    public TradingController(TradingService tradingService, StockService stockService, MemberServerClient memberServerClient) {
         this.tradingService = tradingService;
         this.stockService = stockService;
+        this.memberServerClient = memberServerClient;
         this.mapper = new ModelMapper();
         this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
@@ -39,15 +43,21 @@ public class TradingController {
         if (stock.isPresent()) {
             trade.setStock(stock.get());
             trade.setTotalPrice(trade.getPrice().multiply(BigDecimal.valueOf(trade.getVolume())));
-            System.out.println(trade);
-            trade = tradingService.save(trade);
+            trade.setMemberId(requestTrade.getMemberId());
 
+            ResponseMember member = mapper.map(memberServerClient.getStudent(requestTrade.getMemberId()).data(), ResponseMember.class);
+            // 주문이 가능한 경우
+            if(trade.getTotalPrice().compareTo(member.getPoint()) <= 0) {
+                trade = tradingService.save(trade);
+                ResponseTrade result = mapper.map(trade, ResponseTrade.class);
+                result.setStockName(stock.get().getStockName());
+                result.setStockCode(stock.get().getStockCode());
+                return Api.CREATED(result);
+            }
 //            kafkaProducer.send("member-point", requestTrade);
-
-            ResponseTrade result = mapper.map(trade, ResponseTrade.class);
-            result.setStockName(stock.get().getStockName());
-            result.setStockCode(stock.get().getStockCode());
-            return Api.CREATED(result);
+            else{
+                return Api.BAD_REQUEST(null, "포인트가 부족합니다.");
+            }
         } else {
             // Optional이 비어있는 경우에 대한 처리
             return Api.NOT_FOUND(null); // 예: 404 Not Found

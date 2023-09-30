@@ -57,4 +57,12 @@ public class Result {
                 .resultDescription("해당 값은 없습니다")
                 .build();
     }
+
+    public static Result BAD_REQUEST(String msg) {
+        return Result.builder()
+                .resultCode(ErrorCode.BAD_REQUEST.getErrorCode())
+                .resultMessage(ErrorCode.BAD_REQUEST.getDescription())
+                .resultDescription(msg)
+                .build();
+    }
 }
