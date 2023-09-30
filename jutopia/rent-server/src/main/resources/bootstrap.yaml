@@ -1,14 +1,18 @@
 server:
-#  port: 0
-  port: 8080
+  port: 0
+#  port: 8080
 spring:
   application:
     name: rent-server
   cloud:
     config:
-#      uri: http://127.0.0.1:8888
-      uri: http://j9c108.p.ssafy.io:8888
+      uri: http://127.0.0.1:8888
+#      uri: http://j9c108.p.ssafy.io:8888
       name: rent-server
+  # 빌드시 config 서버에서 불러오지 못하는 문제 발생 -> 직접 추가
+  data:
+    redis:
+      url: redis://j9c108.p.ssafy.io:46379/
 
 #springdoc:
 #  api-docs:
@@ -28,8 +32,8 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-#      defaultZone: http://127.0.0.1:8761/eureka
-      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
+      defaultZone: http://127.0.0.1:8761/eureka
+#      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
 
 logging:
   level:

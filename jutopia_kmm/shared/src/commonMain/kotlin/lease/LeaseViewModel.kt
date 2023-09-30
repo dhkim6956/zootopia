@@ -46,7 +46,7 @@ class LeaseViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                val response = apiService.getAllSeats("ssafy", 1, 1)
+                val response = apiService.getAllSeats("ssafy", 1, 2)
                 val apiResponse = Json.decodeFromString<ListResponse>(response.bodyAsText())
                 val seatList: List<Seat>? = apiResponse.body
                 log.i{"${seatList}"}
