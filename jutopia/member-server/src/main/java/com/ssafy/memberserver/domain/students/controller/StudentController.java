@@ -1,6 +1,7 @@
 package com.ssafy.memberserver.domain.students.controller;
 
 import com.ssafy.memberserver.common.api.ApiResponse;
+import com.ssafy.memberserver.domain.students.dto.request.MemberPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
@@ -35,8 +36,21 @@ public class StudentController {
         return ApiResponse.success(studentService.studentDelete(studentDeleteRequest));
     }
     @Operation(summary = "학생 포인트 차감")
-    @PutMapping("/student/point")
+    @PutMapping("/point")
     public ApiResponse studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest,String seatId){
         return ApiResponse.success(studentService.studentPointUpdate(studentPointUpdateRequest, UUID.fromString(seatId)));
     }
+
+
+    // Feign ---------------------------------------------------
+    @GetMapping("/feign/{userId}")
+    public ApiResponse getMember(@PathVariable UUID userId){
+        return ApiResponse.success(studentService.getMemberInfo(userId));
+    }
+
+    @PutMapping("/feign/point")
+    public ApiResponse memberPointUpdate(@RequestBody MemberPointUpdateRequest memberPointUpdateRequest){
+        return ApiResponse.success(studentService.memberPointUpdate(memberPointUpdateRequest));
+    }
+
 }

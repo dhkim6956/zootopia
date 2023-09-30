@@ -2,8 +2,7 @@ package com.ssafy.stockserver.domain.client;
 
 import com.ssafy.stockserver.common.api.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +11,9 @@ import java.util.UUID;
 @FeignClient(name="member-server")
 public interface MemberServerClient {
 
-    @GetMapping("/member-server/api/student/{userId}")
+    @GetMapping("/member-server/api/student/feign/{userId}")
     ApiResponse getStudent(@PathVariable("userId") UUID userId);
+
+    @PutMapping("/member-server/api/student/feign/point")
+    ApiResponse memberPointUpdate(@RequestBody MemberPointUpdateRequest memberPointUpdateRequest);
 }

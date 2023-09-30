@@ -1,6 +1,7 @@
 package com.ssafy.memberserver.domain.students.service;
 
 import com.ssafy.memberserver.common.enums.MemberStatus;
+import com.ssafy.memberserver.domain.students.dto.request.MemberPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
@@ -32,6 +33,7 @@ public class StudentService {
                 .map(StudentInfoResponse::from)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
     }
+
     @Transactional
     public StudentUpdateResponse studentUpdate(StudentUpdateRequest studentUpdateRequest){
         return studentRepository.findByStudentId(studentUpdateRequest.studentId())
@@ -58,6 +60,26 @@ public class StudentService {
                 .map(it ->{
                     log.info("{}","ewffwefwewefefewf");
                     it.pointUpdate(studentPointUpdateRequest);
+                    return StudentPointUpdateResponse.of("200");
+                })
+                .orElseThrow(()->new NoSuchElementException("kk"));
+    }
+
+
+    // Feign -------------------------------------------------------------------------------
+    @Transactional(readOnly = true)
+    public StudentInfoResponse getMemberInfo(UUID userId){
+        return studentRepository.findById(userId)
+                .map(StudentInfoResponse::from)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+    }
+
+    @Transactional
+    public StudentPointUpdateResponse memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest) {
+        return studentRepository.findById(memberPointUpdateRequest.id())
+                .map(it ->{
+                    log.info("{}","ewffwefwewefefewf");
+                    it.memberPointUpdate(memberPointUpdateRequest);
                     return StudentPointUpdateResponse.of("200");
                 })
                 .orElseThrow(()->new NoSuchElementException("kk"));
