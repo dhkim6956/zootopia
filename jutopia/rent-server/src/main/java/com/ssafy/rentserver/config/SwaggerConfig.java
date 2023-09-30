@@ -22,7 +22,7 @@ public class SwaggerConfig {
     private final ObjectMapperConfig objectMapperConfig;
     @Bean
     public GroupedOpenApi chatOpenApi() {
-        String[] paths = {"/api/**"};
+        String[] paths = {"/seat-service/api/**"};
 
         return GroupedOpenApi.builder()
                 .group("class server API v3")
