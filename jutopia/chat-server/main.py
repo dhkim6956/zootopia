@@ -47,7 +47,7 @@ def index():
 @app.post("/ask")
 async def answer(question: Question):
     ans = generate_answer(question.message)
-    now = datetime.now()
+    now = datetime.now(timezone.kst)
     return { 
             "from_server": True, 
             "message": ans, 
