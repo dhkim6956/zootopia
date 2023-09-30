@@ -46,7 +46,7 @@ public class TradingController {
             System.out.println(trade);
             trade = tradingService.save(trade);
 
-            kafkaProducer.send("member-point", requestTrade);
+//            kafkaProducer.send("member-point", requestTrade);
 
             ResponseTrade result = mapper.map(trade, ResponseTrade.class);
             result.setStockName(stock.get().getStockName());
