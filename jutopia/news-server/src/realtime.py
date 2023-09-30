@@ -14,7 +14,7 @@ test_collection = db['test']
 
 @router.get("/dbtest")
 def dbtest():
-    return test_collection.find_one({"test": "test"})
+    return test_collection.find()
 
 @router.get("/chart/{stock_name}/{time_frame}") # time_frame: day, hour, minute
 def get_chart(stock_name: str, time_frame: str):
