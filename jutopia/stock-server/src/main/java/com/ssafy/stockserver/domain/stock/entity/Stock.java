@@ -7,11 +7,8 @@ import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @Entity
+@Data
 @Table(name = "stock")
 public class Stock {
     @Id
@@ -22,13 +19,13 @@ public class Stock {
     private String stockCode;
     private String stockName;
 
-    private String stockFullnumber;
-
-    private String country;
-    private String market;
-    private String sector;
-    private String sectorCode;
-    private IndexType indexType;
+//    private String stockFullnumber;
+//
+//    private String country;
+//    private String market;
+//    private String sector;
+//    private String sectorCode;
+//    private IndexType indexType;
 
 
 }
