@@ -9,6 +9,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+  security:
+    user:
+      name: ssafy
+      password: ssafy
+
 
 eureka:
   instance:

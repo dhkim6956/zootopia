@@ -19,7 +19,6 @@ public record HistoryResponse(
         return HistoryResponse.builder()
                 .id(history.getId())
                 .amount(history.getAmount())
-                .list(history.getList())
                 .historyType(history.getHistoryType())
                 .build();
     }

@@ -23,8 +23,8 @@ public class TeacherService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public TeacherUpdateResponse teacherUpdate(TeacherUpdateRequest teacherUpdateRequest, UUID id){
-        return teacherRepository.findById(id)
+    public TeacherUpdateResponse teacherUpdate(TeacherUpdateRequest teacherUpdateRequest){
+        return teacherRepository.findByTeacherId(teacherUpdateRequest.teacherId())
                 .filter(teacher -> passwordEncoder.matches(teacherUpdateRequest.teacherPwd(),teacher.getTeacherPwd()))
                 .map(teacher -> {
                     teacher.update(teacherUpdateRequest,passwordEncoder);
@@ -33,11 +33,11 @@ public class TeacherService {
                 .orElseThrow(() -> new NoSuchElementException("비밀번호가 다릅니다."));
     }
     @Transactional
-    public TeacherDeleteResponse teacherDelete(TeacherDeleteRequest teacherDeleteRequest, UUID id) {
-        return teacherRepository.findById(id)
+    public TeacherDeleteResponse teacherDelete(TeacherDeleteRequest teacherDeleteRequest) {
+        return teacherRepository.findByTeacherId(teacherDeleteRequest.teacherId())
                 .filter(teacher -> passwordEncoder.matches(teacherDeleteRequest.teacherPwd(),teacher.getTeacherPwd()))
                 .map(teacher -> {
-                    teacher.delete(teacherDeleteRequest,passwordEncoder);
+                    teacher.delete(teacherDeleteRequest);
                     return TeacherDeleteResponse.of(true);
                 })
                 .orElseThrow(() -> new NoSuchElementException("비밀번호가 일치하지 않습니다"));

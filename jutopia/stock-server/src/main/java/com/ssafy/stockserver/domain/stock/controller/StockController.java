@@ -8,6 +8,7 @@ import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.service.StockService;
 import com.ssafy.stockserver.domain.stock.vo.request.RequestStock;
 import com.ssafy.stockserver.domain.stock.vo.response.ResponseStock;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/stock-server/api/stock")
+@Tag(name = "Stock", description = "주식 종목 조회")
 public class StockController {
 
     StockService stockService;
@@ -32,7 +34,6 @@ public class StockController {
         this.memberStockService = memberStockService;
         this.mapper = new ModelMapper();
         this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
     }
 
     @GetMapping("/")
@@ -60,20 +61,5 @@ public class StockController {
             // Optional이 비어있는 경우에 대한 처리
             return Api.NOT_FOUND(null); // 예: 404 Not Found
         }
-    }
-
-    @GetMapping("/member/{memberId}")
-    public Api<List<ResponseMemberStock>> getMemberStock(@PathVariable UUID memberId) {
-        Iterable<MemberStock> memberStocks = memberStockService.getMemberStock(memberId);
-        List<ResponseMemberStock> result = new ArrayList<>();
-
-        memberStocks.forEach(m -> result.add(mapper.map(m, ResponseMemberStock.class)));
-        return Api.OK(result);
-    }
-
-    @PostMapping("/{stockId}/{memberId}")
-    public Api<ResponseMemberStock> createMemberStock(@PathVariable UUID stockId, @PathVariable UUID memberId) {
-//        Optional<Stock> stock = stockService.getStock(stockId);
-        return null;
     }
 }

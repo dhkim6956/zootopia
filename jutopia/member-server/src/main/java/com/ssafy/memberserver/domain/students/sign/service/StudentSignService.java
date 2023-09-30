@@ -25,8 +25,11 @@ public class StudentSignService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public StudentSignUpResponse studentSignUp(StudentSignUpRequest studentSignUpRequest){
-        Student student = studentRepository.save(Student.from(studentSignUpRequest,passwordEncoder));
+    public StudentSignUpResponse studentSignUp(StudentSignUpRequest studentSignUpRequest) {
+        if (studentRepository.findByStudentId(studentSignUpRequest.studentId()).isPresent()) {
+            throw new IllegalStateException("아이디 중복입니다.");
+        }
+        Student student = studentRepository.save(Student.from(studentSignUpRequest, passwordEncoder));
         studentRepository.flush();
         return StudentSignUpResponse.from(student);
     }
