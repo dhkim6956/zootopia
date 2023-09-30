@@ -24,7 +24,7 @@ private val log = Logger.withTag("LeaseAPI")
 class LeaseApiService {
 
     private companion object {
-        const val BASE_URL = "http://10.0.2.2:8080"
+        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/seat-service/api/seat"
     }
     private val client = HttpClient(CIO) {
         install(ContentNegotiation){
@@ -42,7 +42,7 @@ class LeaseApiService {
 
     suspend fun getAllSeats(school: String, grade: Int, clazzNumber: Int): HttpResponse {
         return client.get{
-            apiUrl("api/seats")
+            apiUrl("seats")
             url.parameters.append("school", school)
             url.parameters.append("grade", grade.toString())
             url.parameters.append("clazzNumber", clazzNumber.toString())
@@ -52,7 +52,7 @@ class LeaseApiService {
 
     suspend fun getSeat(seatId: String): HttpResponse{
         return client.get {
-            apiUrl("api/seats/$seatId")
+            apiUrl("seats/$seatId")
         }
     }
 
@@ -63,7 +63,7 @@ class LeaseApiService {
         val jsonData = Json.encodeToString(seatRequest);
 
         return client.put{
-            apiUrl("api/seats/$seatId")
+            apiUrl("seats/$seatId")
             header("Content-Type", ContentType.Application.Json.toString())
             body = jsonData
 
