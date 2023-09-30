@@ -134,11 +134,11 @@ def get_compnay_name():
             print(total)
             
             # MongoDB에 저장
-            realtime_collection.insert_one(total)
+            # realtime_collection.insert_one(total)
             
-            # with open("realtime.txt", "a", encoding="utf-8") as f:
-            #     f.write(str(total))
-            #     f.write(",\n")
+            with open("realtime.txt", "a", encoding="utf-8") as f:
+                f.write(str(total))
+                f.write(",\n")
 def start():
     get_compnay_name()
     
