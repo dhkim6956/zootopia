@@ -19,6 +19,9 @@ public class TeacherSignService {
     private final PasswordEncoder passwordEncoder;
     @Transactional
     public TeacherSignUpResponse teacherSignUp(TeacherSignUpRequest teacherSignUpRequest){
+        if (teacherRepository.findByTeacherId(teacherSignUpRequest.teacherId()).isPresent()){
+            throw new IllegalStateException("아이디 중복입니다.");
+        }
         Teacher teacher = teacherRepository.save(Teacher.from(teacherSignUpRequest, passwordEncoder));
         teacherRepository.flush();
         return TeacherSignUpResponse.from(teacher);
@@ -35,29 +38,4 @@ public class TeacherSignService {
     public boolean checkTeacherIdDuplicated(String teacherId){
         return teacherRepository.existsByTeacherId(teacherId);
     }
-    //TODO: email 구현 서비스 파트
-//    private void checkDuplicatedEmail(String email){
-//        Optional<Teacher> teacher = Optional.ofNullable(teacherRepository.findByTeacherEmail(email))
-//                .filter(it -> it.isPresent())
-//                .orElseThrow(() -> new IllegalArgumentException("존재하는 이메일 입니다"));
-//    }
-//
-//    private String createCode(){
-//        int length = 6;
-//        try{
-//            Random random = SecureRandom.getInstanceStrong();
-//            StringBuilder sb = new StringBuilder();
-//            for (int i = 0; i < length; i++) {
-//                sb.append(random.nextInt(10));
-//            }
-//            return sb.toString();
-//        }catch (NoSuchAlgorithmException e){
-//            throw new IllegalArgumentException("생성 오류");
-//        }
-//    }
-//    public EmailVerificationResult verifiedCode(String email, String authCode){
-//        this.checkDuplicatedEmail(email);
-//        String redisAuthCode = redisService.getValues(AUTH_CODE_PREFIX + email);
-//        boolean
-//    }
 }

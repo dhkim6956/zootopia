@@ -3,6 +3,7 @@ package com.ssafy.memberserver.domain.students.entity;
 import com.ssafy.memberserver.common.enums.MemberBioStatus;
 import com.ssafy.memberserver.common.enums.MemberRole;
 import com.ssafy.memberserver.common.enums.MemberStatus;
+import com.ssafy.memberserver.common.enums.SeatOwnershipStatus;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointDepositRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointWithDrawRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.response.PointDepositResponse;
@@ -43,6 +44,8 @@ public class Student {
     MemberRole memberRole;
     @Enumerated(EnumType.STRING)
     MemberStatus memberStatus;
+    @Enumerated(EnumType.STRING)
+    SeatOwnershipStatus seatOwnershipStatus;
     private Integer school;
     private Integer grade;
     private Integer classRoom;
@@ -62,11 +65,12 @@ public class Student {
                 .school(studentSignUpRequest.school())
                 .grade(studentSignUpRequest.grade())
                 .classRoom(studentSignUpRequest.classRoom())
+                .seatOwnershipStatus(SeatOwnershipStatus.NOTOWNED)
                 .build();
     }
     public void update(StudentUpdateRequest studentUpdateRequest, PasswordEncoder passwordEncoder){
-        if(studentUpdateRequest.StudentNewPwd() != null || !studentUpdateRequest.StudentPwd().isBlank()){
-            this.studentPwd = passwordEncoder.encode(studentUpdateRequest.StudentNewPwd());
+        if(studentUpdateRequest.studentNewPwd() != null || !studentUpdateRequest.studentPwd().isBlank()){
+            this.studentPwd = passwordEncoder.encode(studentUpdateRequest.studentNewPwd());
         }
     }
     public void pointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
@@ -83,7 +87,7 @@ public class Student {
             this.point = subtractPoint;
         }
     }
-    public void delete(StudentDeleteRequest studentDeleteRequest,PasswordEncoder passwordEncoder){
+    public void delete(StudentDeleteRequest studentDeleteRequest){
         if(studentDeleteRequest.memberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }
