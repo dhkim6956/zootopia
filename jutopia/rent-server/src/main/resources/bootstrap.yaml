@@ -1,14 +1,23 @@
 server:
-#  port: 0
-  port: 8080
+  port: 0
+#  port: 8080
 spring:
   application:
     name: rent-server
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
   cloud:
     config:
-#      uri: http://127.0.0.1:8888
-      uri: http://j9c108.p.ssafy.io:8888
+      uri: http://127.0.0.1:8888
+#      uri: http://j9c108.p.ssafy.io:8888
       name: rent-server
+  # 빌드시 config 서버에서 불러오지 못하는 문제 발생 -> 직접 추가
+  data:
+    redis:
+      url: redis://j9c108.p.ssafy.io:46379/
 
 #springdoc:
 #  api-docs:
@@ -16,10 +25,17 @@ spring:
 #  swagger-ui:
 #    path: /rent-server/swagger-ui.html
 #
-#openapi:
-#  service:
-#    # API Gateway 포트
-#    url: http://localhost:8000
+openapi:
+  service:
+    # API Gateway 포트
+    url: http://localhost:8000
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh, health, beans, busrefresh
 
 eureka:
   instance:
@@ -28,8 +44,8 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-#      defaultZone: http://127.0.0.1:8761/eureka
-      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
+      defaultZone: http://127.0.0.1:8761/eureka
+#      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
 
 logging:
   level:

@@ -50,4 +50,11 @@ public class Result {
     }
 
 
+    public static Result NOT_FOUND() {
+        return Result.builder()
+                .resultCode(ErrorCode.NOT_FOUND.getErrorCode())
+                .resultMessage(ErrorCode.NOT_FOUND.getDescription())
+                .resultDescription("해당 값은 없습니다")
+                .build();
+    }
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import asset.Asset
+import chatbot.ChatbotScreen
 import com.svenjacobs.reveal.RevealCanvas
 import com.svenjacobs.reveal.rememberRevealCanvasState
 import home.Bank
@@ -152,6 +153,11 @@ fun App() {
                     route = "/send_detail"
                 ) {
                     Send_detail(navigator)
+                }
+                scene(
+                    route = "/chatbot"
+                ){
+                    ChatbotScreen(navigator)
                 }
             }
         }

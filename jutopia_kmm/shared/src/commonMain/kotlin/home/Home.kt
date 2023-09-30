@@ -240,7 +240,7 @@ fun Home(navigator: Navigator) {
             }
 
             2 -> {
-                navigator.navigate("/stock")
+                navigator.navigate("/stocklist")
             }
 
             3 -> {
