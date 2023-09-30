@@ -1,24 +1,27 @@
 import uvicorn
+import threading
 from fastapi import FastAPI
 from py_eureka_client.eureka_client import EurekaClient
-# from pymongo import MongoClient
-# from pydantic import BaseModel
-import httpx
-import openai
+from news import router as news_router
+from realtime import router as realtime_router
+# from scraper import start as scraper_start
+
+# 스크래퍼 관련 변수
+# stop_thread_event = threading.Event()
+# scraper_thread = None
 
 # 유레카 관련 변수
 INSTANCE_PORT = 9001
 INSTANCE_HOST = "j9c108.p.ssafy.io"
 
-NAVER_API_URL = "https://openapi.naver.com/v1/search/news.json"
-CLIENT_ID = "OCDILfuJhLKAdvqraNNy"
-CLIENT_SECRET = "pi8ZEzmb8L"
-
 app = FastAPI()
 
+app.include_router(news_router)
+app.include_router(realtime_router)
+
 @app.on_event("startup")
-async def eureka_init():
-    global client
+async def startup_event():
+    global client, scraper_thread
     client = EurekaClient(
         eureka_server=f"http://{INSTANCE_HOST}:8761/eureka",
         app_name="news-server",
@@ -27,8 +30,15 @@ async def eureka_init():
     )
     await client.start()
     
+    # 스크래퍼 스레드 시작
+    # scraper_thread = threading.Thread(target=scraper_start, args=(stop_thread_event,))
+    # scraper_thread.start()
+    
 @app.on_event("shutdown")
 async def destroy():
+    # global scraper_thread
+    # stop_thread_event.set()
+    # scraper_thread.join()
     await client.stop()
     
 @app.get("/index")
@@ -38,33 +48,3 @@ def index():
 @app.get("/health")
 def health_check():
     return {"status": "UP"}
-
-# -------------------------- 뉴스 API 시작 ---------------------------
-
-@app.get("/{stock_name}/{display}/{start}/{sort}")
-async def fetch_news(stock_name: str, display: int, start: int, sort: str):
-    params = {
-        "query": stock_name, # 검색할 주식 이름 (전체는 '시황' 으로 검색 추천)
-        "display": display, # 검색할 뉴스 개수
-        "start": start, # 뉴스 검색 시작점 (1부터 시작, 100까지 가능)
-        "sort": sort # 'sim': 정확도 내림차순, 'date': 날짜 내림차순
-    }
-    headers = {
-        "X-Naver-Client-Id": CLIENT_ID,
-        "X-Naver-Client-Secret": CLIENT_SECRET
-    }
-    
-    async with httpx.AsyncClient() as client:
-        response = await client.get(NAVER_API_URL, params=params, headers=headers)
-        
-        # Error handling
-        if response.status_code != 200:
-            raise HTTPException(status_code=response.status_code, detail="Naver API call failed")
-    
-    return response.json()
-
-# ------------------------- 챗봇 API 시작 -------------------------
-
-
-
-# @app.get("/fs/{stock_name}")
