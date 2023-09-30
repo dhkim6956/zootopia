@@ -59,6 +59,6 @@ public class StudentService {
                     it.pointUpdate(studentPointUpdateRequest);
                     return StudentPointUpdateResponse.of("200");
                 })
-                .orElseThrow(()->new NoSuchElementException("1002"));
+                .orElseThrow(()->new NoSuchElementException("kk"));
     }
 }
