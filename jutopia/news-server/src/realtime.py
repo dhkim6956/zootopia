@@ -10,6 +10,11 @@ client = MongoClient(connection_string)
 db = client['jutopia']
 pykrx_collection = db['pykrx']
 realtime_collection = db['realtime']
+test_collection = db['test']
+
+@router.get("/dbtest")
+def dbtest():
+    return test_collection.find_one({"test": "test"})
 
 @router.get("/chart/{stock_name}/{time_frame}") # time_frame: day, hour, minute
 def get_chart(stock_name: str, time_frame: str):
