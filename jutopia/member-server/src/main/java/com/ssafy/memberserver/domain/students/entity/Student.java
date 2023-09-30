@@ -7,6 +7,7 @@ import com.ssafy.memberserver.common.enums.SeatOwnershipStatus;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointDepositRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointWithDrawRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.response.PointDepositResponse;
+import com.ssafy.memberserver.domain.students.dto.request.MemberPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
 import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
@@ -91,5 +92,10 @@ public class Student {
         if(studentDeleteRequest.memberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }
+    }
+
+    // feign -----------------------------------------------------------------
+    public void memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest){
+        this.point = point.subtract(memberPointUpdateRequest.point());
     }
 }
