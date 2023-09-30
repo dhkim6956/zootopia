@@ -17,7 +17,7 @@ import lease.ListResponse
 import lease.Seat
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-private val log = Logger.withTag("ChatbotView")
+private val log = Logger.withTag("chatbot")
 
 sealed class ApiResponse {
 
@@ -30,32 +30,39 @@ class ChatbotViewModel : ViewModel() {
     private val _isSending = MutableStateFlow(false)
     val isSending: StateFlow<Boolean> = _isSending.asStateFlow()
 
-    private val serverDummyReplies = listOf(
-        "안녕하세요, 어떻게 도와드릴까요?",
-        "네, 알겠습니다.",
-        "죄송합니다, 다시 한번 말씀해주실 수 있나요?"
-    )
+    private val chatApiService: ChatbotApiService = ChatbotApiService()
+
     //Message를 받아서 넣어준다
     fun addMessage(message: ChatMessage) {
-        _messages.value = _messages.value + message
+//        _messages.value = _messages.value + message
+        ChatRepository.addMessage(message)
+        _messages.value = ChatRepository.messages
     }
 
     suspend fun addAndRespond(message: String) {
         _isSending.value = true
-        addMessage(ChatMessage("newId", message, "newItem", false))
+        addMessage(ChatMessage( message, false))
 
-        delay(10000) //가상의 딜레이
-
-        val reply = serverDummyReplies.random()
-        addMessage(ChatMessage("server", reply, "newTime", true))
+        try {
+            val reply = chatApiService.sendMessage(message)
+            log.i{
+                "응답 : ${reply.body<ChatMessage>()}"
+            }
+            addMessage(reply.body())
+        } catch (e:Exception) {
+            log.i{
+                e.toString()
+            }
+        }
 
         _isSending.value = false
     }
 
     init {
         val dummyData = listOf(
-            ChatMessage("1", "안녕하세요, 무엇을 도와드릴까요?", "12:01", true),
+            ChatMessage( "안녕하세요, 무엇을 도와드릴까요?",  true),
         )
-        _messages.value = dummyData
+//        _messages.value = dummyData
+        _messages.value = ChatRepository.messages
     }
 }

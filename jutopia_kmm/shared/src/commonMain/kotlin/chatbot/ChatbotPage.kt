@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,6 +24,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,6 +67,12 @@ fun ChatbotPage(
         start = Offset(0f, 0f),
         end = Offset(0f, 1000f)
     )
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(messages.size) {
+        listState.animateScrollToItem(messages.size - 1)
+    }
+
 
     Box(modifier = Modifier.fillMaxSize().background(brush = gradient)) {
         Column(
@@ -72,6 +80,7 @@ fun ChatbotPage(
             modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.weight(1f),
             ) {
                 items(messages) { message ->
@@ -142,24 +151,24 @@ fun ChatbotPage(
 fun ChatMessageRow(message: ChatMessage) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(8.dp),
-        horizontalArrangement = if (message.isFromBot) Arrangement.Start else Arrangement.End
+        horizontalArrangement = if (message.fromServer) Arrangement.Start else Arrangement.End
     ) {
         Box(
             modifier = Modifier
                 .padding(16.dp)
                 .background(
-                    color = if (message.isFromBot) Color.White else Color.Gray,
+                    color = if (message.fromServer) Color.White else Color.Gray,
                     shape = RoundedCornerShape(8.dp)
                 )
 
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
-                Text(message.content, color = if (message.isFromBot) Color.Black else Color.White)
-                Text(
-                    message.timestamp,
-                    fontSize = 10.sp,
-                    color = if (message.isFromBot) Color.Black else Color.White
-                )
+                Text(message.message, color = if (message.fromServer) Color.Black else Color.White)
+//                Text(
+//                    message.timestamp,
+//                    fontSize = 10.sp,
+//                    color = if (message.from_server) Color.Black else Color.White
+//                )
             }
         }
     }
