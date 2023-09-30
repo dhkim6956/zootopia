@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from py_eureka_client.eureka_client import EurekaClient
 from utils import generate_answer
+from datetime import datetime
 # import httpx
 # import openai
 
@@ -12,6 +13,17 @@ app = FastAPI()
 
 class Question(BaseModel):
     message: str
+
+class Document(BaseModel):
+    role: str
+    from_server : bool
+    message: str
+    time: datetime
+
+class Answer(BaseModel):
+    from_server: bool
+    message: str
+    parsed_time: str
 
 @app.on_event("startup")
 async def eureka_init():
@@ -35,7 +47,9 @@ def index():
 @app.post("/ask")
 async def answer(question: Question):
     ans = generate_answer(question.message)
-    return {
-        "from_server": True,
-        "message": ans
-    }
+    now = datetime.now()
+    return { 
+            "from_server": True, 
+            "message": ans, 
+            "parsed_time": f"{'오전' if now.hour < 12 else '오후'} {now.strftime('%I:%M')}" 
+            }
