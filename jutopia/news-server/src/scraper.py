@@ -6,7 +6,7 @@ import os
 from datetime import datetime
 from pymongo import MongoClient
 
-connection_string = "mongodb://mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=jutopia-repl"
+connection_string = "mongodb://juto:juto1234@mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=jutopia-repl"
 
 client = MongoClient(connection_string)
 db = client['jutopia']
