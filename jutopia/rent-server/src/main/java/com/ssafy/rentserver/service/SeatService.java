@@ -142,7 +142,7 @@ public class SeatService {
             }
 
             seat.changeStatus(SeatStatus.INUSE);
-            seat.changeUserId(UUID.fromString(userId));
+            seat.changeUserId(userId);
             var newSeat = SeatResponse.toResponse(seatRepository.save(seat));
 
             String key = seatCacheRepository.getListKey(seat.getSchool(), seat.getGrade(), seat.getClazzNumber());
