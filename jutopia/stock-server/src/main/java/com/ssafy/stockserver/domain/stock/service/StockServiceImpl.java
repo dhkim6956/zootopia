@@ -30,6 +30,9 @@ public class StockServiceImpl implements StockService{
 
     @Override
     public Iterable<Stock> getAllStocks() {
+        Iterable<Stock> stock = stockRepository.findAll();
+
+
         return stockRepository.findAll();
     }
 
