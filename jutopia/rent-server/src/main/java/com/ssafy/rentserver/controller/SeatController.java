@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/seat-service/api/seat")
-//@RequestMapping("/api")
+@RequestMapping("/api/seat")
 
 @Slf4j
 public class SeatController {
