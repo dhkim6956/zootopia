@@ -2,13 +2,8 @@ package com.ssafy.memberserver.domain.students.service;
 
 import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
-import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.response.StudentDeleteResponse;
-import com.ssafy.memberserver.domain.students.dto.response.StudentInfoResponse;
-import com.ssafy.memberserver.domain.students.dto.response.StudentPointUpdateResponse;
-import com.ssafy.memberserver.domain.students.dto.response.StudentUpdateResponse;
+import com.ssafy.memberserver.domain.students.dto.request.*;
+import com.ssafy.memberserver.domain.students.dto.response.*;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,5 +56,35 @@ public class StudentService {
                     return StudentPointUpdateResponse.of(true);
                 })
                 .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_POINT_ERROR,"포인트가 부족합니다."));
+    }
+
+    // Feign -------------------------------------------------------------------------------
+    @Transactional(readOnly = true)
+    public StudentInfoResponse getMemberInfo(UUID userId){
+        return studentRepository.findById(userId)
+                .map(StudentInfoResponse::from)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 회원입니다."));
+    }
+
+    @Transactional
+    public MemberPointUpdateResponse memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest) {
+        return studentRepository.findById(memberPointUpdateRequest.id())
+                .map(it ->{
+                    log.info("{}","ewffwefwewefefewf");
+                    it.memberPointUpdate(memberPointUpdateRequest);
+                    return MemberPointUpdateResponse.of(true);
+                })
+                .orElseThrow(()->new NoSuchElementException("kk"));
+    }
+
+    @Transactional
+    public MemberMoneyUpdateResponse memberMoneyUpdate(MemberMoneyUpdateRequest memberMoneyUpdateRequest) {
+        return studentRepository.findById(memberMoneyUpdateRequest.id())
+                .map(it ->{
+                    log.info("{}","ewffwefwewefefewf");
+                    it.memberMoneyUpdate(memberMoneyUpdateRequest);
+                    return MemberMoneyUpdateResponse.of(true);
+                })
+                .orElseThrow(()->new NoSuchElementException("kk"));
     }
 }

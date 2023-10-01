@@ -8,9 +8,7 @@ import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointIncomeRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointExpenseRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
+import com.ssafy.memberserver.domain.students.dto.request.*;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -97,5 +95,13 @@ public class Student {
         if(pointExpenseRequest.expense() != null){
             this.point = subtractPoint;
         }
+    }
+
+    // feign -----------------------------------------------------------------
+    public void memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest){
+        this.point = point.subtract(memberPointUpdateRequest.point());
+    }
+    public void memberMoneyUpdate(MemberMoneyUpdateRequest memberMoneyUpdateRequest){
+        this.money = money.subtract(memberMoneyUpdateRequest.money());
     }
 }

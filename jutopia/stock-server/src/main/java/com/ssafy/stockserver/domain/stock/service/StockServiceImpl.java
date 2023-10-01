@@ -1,22 +1,19 @@
 package com.ssafy.stockserver.domain.stock.service;
 
 import com.ssafy.stockserver.domain.client.NewsServerClient;
+import com.ssafy.stockserver.domain.client.ResponseFeignStock;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.repository.StockRepository;
 import com.ssafy.stockserver.domain.stock.vo.request.RequestStock;
 import com.ssafy.stockserver.domain.stock.vo.response.ResponseStock;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
-import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,30 +34,37 @@ public class StockServiceImpl implements StockService{
     }
 
     @Override
-    public Iterable<Stock> getAllStocks() {
+    public List<ResponseStock> getAllStocks() {
         Iterable<Stock> stock = stockRepository.findAll();
         List<ResponseStock> resList = new ArrayList<>();
 
-        String res = newsServerClient.getStocks();
-        System.out.println(res);
+        // news-server 로부터 실시간 주식 데이터 가져와 가공
+        List<ResponseFeignStock> res = newsServerClient.getStocks();
+        res.stream().forEach(r -> {
+            r.setNowMoney(r.getNowMoney().replaceAll(",",""));
+            r.setPrevMoney(r.getPrevMoney().replaceAll(",",""));
+        });
 
-//        ResponseEntity<List<ResponseOrder>> ordersListResponse =
-//        restTemplate.exchange(newsURL, HttpMethod.GET, null,
-//            new ParameterizedTypeReference<List<ResponseOrder>>() {
-//        });
-//        // 받아온 값의 body로 orders 가져오기
-//        List<ResponseOrder> ordersList = ordersListResponse.getBody();
-//        userDto.setOrders(ordersList);
+        // response 객체 가공
+        stock.forEach(s -> {
+            ResponseStock newStock = mapper.map(s, ResponseStock.class);
 
-//        stock.forEach(s -> {
-//            ResponseStock res = mapper.map(s, ResponseStock.class);
-//
-//
-//        });
-//
+            Optional<ResponseFeignStock> tmp = res.stream().filter(e -> e.getStockName().equals(s.getStockName())).findFirst();
+            BigDecimal nowMoney = new BigDecimal(tmp.get().getNowMoney());
+            BigDecimal prevMoney = new BigDecimal(tmp.get().getPrevMoney());
 
+            newStock.setNowMoney(nowMoney);
+            newStock.setPrevMoney(prevMoney);
+            newStock.setChangeMoney(nowMoney.subtract(prevMoney));
+            newStock.setChangeRate(nowMoney.subtract(prevMoney).divide(prevMoney,3, RoundingMode.HALF_UP)
+                                    .multiply(new BigDecimal("100")).doubleValue());
+            if(nowMoney.compareTo(prevMoney) > 0) newStock.setType(1);
+            else if (nowMoney.compareTo(prevMoney) < 0) newStock.setType(-1);
+            else newStock.setType(0);
 
-        return stockRepository.findAll();
+            resList.add(newStock);
+        });
+        return resList;
     }
 
     @Override

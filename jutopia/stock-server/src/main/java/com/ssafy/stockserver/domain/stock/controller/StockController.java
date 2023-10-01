@@ -36,11 +36,8 @@ public class StockController {
 
     @GetMapping("/")
     public Api<List<ResponseStock>> getAllStocks() {
-        Iterable<Stock> stockList = stockService.getAllStocks();
-        List<ResponseStock> result = new ArrayList<>();
-
-        stockList.forEach(s -> result.add(mapper.map(s, ResponseStock.class)));
-        return Api.OK(result);
+        List<ResponseStock> stockList = stockService.getAllStocks();
+        return Api.OK(stockList);
     }
 
     @PostMapping("/")
