@@ -22,7 +22,7 @@ public class SeatResponse {
 
     private BigDecimal price;
 
-    private UUID userId; //TODO: 유저네임을 받아서 리스폰스 해주는게 맞지않나?
+    private String userId;
 
     private SeatStatus seatStatus;
 
