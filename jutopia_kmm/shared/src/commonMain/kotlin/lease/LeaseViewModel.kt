@@ -64,8 +64,9 @@ class LeaseViewModel : ViewModel() {
                 val response = apiService.setSeat(id)
                 val apiResponse = Json.decodeFromString<Response>(response.bodyAsText())
                 log.i { "${apiResponse.result}" }
-
+                log.i { " 결과 코드 $apiResponse.result.resultCode" }
                 when (apiResponse.result.resultCode) {
+
                     200 -> {
                         this@LeaseViewModel.apiResponse.emit(ApiResponse.Success)
                         val seat: Seat? = apiResponse.body

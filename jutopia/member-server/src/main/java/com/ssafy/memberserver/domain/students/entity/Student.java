@@ -34,6 +34,7 @@ public class Student {
     private String studentId;
     private String studentPwd;
     private String studentName;
+    private String seatId;
     private BigDecimal point;
     private BigDecimal money;
     private LocalDateTime createdAt;
@@ -97,5 +98,9 @@ public class Student {
         if(pointExpenseRequest.expense() != null){
             this.point = subtractPoint;
         }
+    }
+
+    public void changeSeat(String seatId){
+        this.seatId = seatId;
     }
 }

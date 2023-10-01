@@ -42,7 +42,7 @@ public class StudentController {
     }
     @Operation(summary = "임대 학생 포인트 차감")
     @PutMapping("/point")
-    public Api<StudentPointUpdateResponse> studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest){
-        return Api.OK(studentService.studentPointUpdate(studentPointUpdateRequest));
+    public Api<?> studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest){
+        return studentService.studentPointUpdate(studentPointUpdateRequest);
     }
 }
