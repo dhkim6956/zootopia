@@ -122,12 +122,16 @@ public class SeatService {
                 return Api.ERROR(ErrorCode.BAD_REQUEST, "신청할 수 없는 좌석입니다.");
             }
 
-            Api<?> pointResponse = userServerClient.reducePoint();
+            Api<?> pointResponse = userServerClient.reducePointAndSetSeat();
 
             var errorCode = pointResponse.getResult().getResultCode();
 
             if (errorCode == 1002) {
                 return Api.ERROR(RentErrorCode.POINT_LACK, "포인트가 부족합니다.");
+            }
+
+            if (errorCode != 200) {
+                return Api.ERROR(RentErrorCode.SERVER_ERROR, "멤버 서버에서 에러 발생");
             }
 
             seat.changeStatus(SeatStatus.INUSE);
