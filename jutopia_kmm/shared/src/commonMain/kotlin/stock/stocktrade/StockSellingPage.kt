@@ -20,15 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import stock.stocklist.Stock
-import stock.stocklist.StockRequest
+import stock.common.Stock
+import stock.common.StockRequest
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -40,7 +39,7 @@ fun StockSellingPage(
 ) {
     //Todo: 판매, 구매 둘 다 현재 가격과 비교해 미체결로 갈지, 구매, 판매로 갈지 정해야한다.
     var orderQuantity by remember { mutableStateOf("1") }
-    val stockPrice = stock.price
+    val stockPrice = stock.nowMoney
     var orderPrice by remember { mutableStateOf("${stockPrice}") }
     val keyboardController = LocalSoftwareKeyboardController.current
     var showDialog by remember { mutableStateOf(false) }
@@ -138,7 +137,7 @@ fun StockSellingPage(
                         viewModel.tradeStock(request)
                         myStockCount -= orderQuantity.toInt()
                         orderQuantity = "1"
-                        orderPrice = "${stock.price}"
+                        orderPrice = "${stock.nowMoney}"
                         showDialog = false
                     }) {
                         Text("판매")

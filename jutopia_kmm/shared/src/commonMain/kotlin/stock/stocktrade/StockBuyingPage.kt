@@ -24,8 +24,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import stock.stocklist.Stock
-import stock.stocklist.StockRequest
+import stock.common.Stock
+import stock.common.StockRequest
 
 @Composable
 @OptIn(ExperimentalComposeUiApi::class)
@@ -37,7 +37,7 @@ fun StockBuyingPage(
 ) {
 
     var orderQuantity by remember { mutableStateOf("1") }
-    val stockPrice = stock.price
+    val stockPrice = stock.nowMoney
     var orderPrice by remember { mutableStateOf("${stockPrice}") }
     val keyboardController = LocalSoftwareKeyboardController.current
     var showDialog by remember { mutableStateOf(false) }
@@ -131,7 +131,7 @@ fun StockBuyingPage(
                         )
                         viewModel.tradeStock(request)
                         orderQuantity = "1"
-                        orderPrice = "${stock.price}"
+                        orderPrice = "${stock.nowMoney}"
                         showDialog = false
                     }) {
                         Text("구매")

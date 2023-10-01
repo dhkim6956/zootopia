@@ -9,10 +9,10 @@ import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
 import stock.common.StockApiService
-import stock.stocklist.MyStock
-import stock.stocklist.MyStocksResponse
-import stock.stocklist.StockRequest
-import stock.stocklist.StockTradeResponse
+import stock.common.MyStock
+import stock.common.MyStocksResponse
+import stock.common.StockRequest
+import stock.common.StockTradeResponse
 
 enum class TradeType {
     BUY,

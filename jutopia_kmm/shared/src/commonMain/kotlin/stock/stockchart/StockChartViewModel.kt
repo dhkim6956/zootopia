@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import stock.stocklist.Stock
 import kotlin.random.Random
 
 class StockChartViewModel(stockId: String) : ViewModel() {

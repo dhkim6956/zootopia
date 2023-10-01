@@ -1,4 +1,4 @@
-package stock.stocklist
+package stock.common
 
 import kotlinx.serialization.Serializable
 import stock.stocktrade.TradeType
@@ -8,11 +8,12 @@ data class Stock(
     val id: String,
     val stockCode: String,
     val stockName: String,
-    val price: Int = 1000,
-    val changePercent: Double = 0.0,
+    val nowMoney: Int = 1000,
+    val prevMoney: Int = 1000,
+    val changeRate: Double = 0.0,
     val isOwnedByUser: Boolean = false,
-    val changeAmount: Double = 0.0,
-    val type: TradeType? = null
+    val changeMoney: Int = 0,
+    val type: Int = 0, // 1증가 -1감소 0 그대로
 )
 
 @Serializable

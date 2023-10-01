@@ -8,8 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import stock.stocklist.Stock
-import stock.stocklist.StockResponse
 
 
 enum class PageType {
@@ -43,6 +41,7 @@ class StockViewModel(stockId: String) :ViewModel() {
                 _loadingState.emit(StockLoadingState.LOADING)
                 val response = stockApiService.getStock(stockId)
                 val apiResponse = Json.decodeFromString<StockResponse>(response.bodyAsText())
+                // TODO: 왜 여기는 가격변동 추가 안된거야..
                 _currentStock.emit(apiResponse.body!!)
                 _loadingState.emit(StockLoadingState.LOADED)
             } catch (e: Exception){
