@@ -60,7 +60,7 @@ def get_chart(stock_name: str, time_frame: str):
     # 데이터 변환
     if time_frame != "day":
         stocks_temp = list(results)
-        stockes = []
+        stocks = []
         for stock in stocks_temp:
             stock_info = {
                 "stock_name": stock["stock_name"],
