@@ -1,5 +1,6 @@
 package com.ssafy.memberserver.domain.students.service;
 
+import com.ssafy.memberserver.common.api.Api;
 import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
 import com.ssafy.memberserver.domain.students.dto.request.*;
@@ -49,13 +50,20 @@ public class StudentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"아이디 또는 비밀번호가 틀렸습니다."));
     }
     @Transactional
-    public StudentPointUpdateResponse studentPointUpdate(StudentPointUpdateRequest studentPointUpdateRequest, UUID seatId){
-        return studentRepository.findByStudentId(studentPointUpdateRequest.getStudentId())
-                .map(it ->{
-                    it.pointUpdate(studentPointUpdateRequest);
-                    return StudentPointUpdateResponse.of(true);
-                })
-                .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_POINT_ERROR,"포인트가 부족합니다."));
+    public Api<?> studentPointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
+        var student = studentRepository.findByStudentId(studentPointUpdateRequest.getStudentId());
+        if (student.isEmpty()) {
+            return Api.ERROR(ErrorCode.STUDENT_NOT_FOUND, "존재하지 않는 학생입니다.");
+        }
+        try {
+            var studentInfo = student.get();
+            studentInfo.pointUpdate(studentPointUpdateRequest);
+            studentInfo.changeSeat(studentPointUpdateRequest.getSeatId());
+            return Api.OK(StudentPointUpdateResponse.of(true));
+        } catch (ApiException e){
+            return Api.ERROR(ErrorCode.STUDENT_POINT_ERROR, "포인트가 부족합니다.");
+        }
+
     }
 
     // Feign -------------------------------------------------------------------------------

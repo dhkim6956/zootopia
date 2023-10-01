@@ -2,7 +2,6 @@ package com.ssafy.memberserver.domain.students.sign.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.memberserver.common.api.Api;
-import com.ssafy.memberserver.common.api.ApiResponse;
 import com.ssafy.memberserver.domain.students.sign.dto.signIn.StudentSignInRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signIn.StudentSignInResponse;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;

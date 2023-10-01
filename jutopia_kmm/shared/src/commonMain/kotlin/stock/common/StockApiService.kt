@@ -1,11 +1,10 @@
-package lease
+package stock.common
 
 import co.touchlab.kermit.Logger
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
-import io.ktor.client.plugins.json.Json
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
@@ -18,18 +17,19 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import lease.SeatRequest
+import stock.stocklist.StockRequest
 
-private val log = Logger.withTag("LeaseAPI")
-
-class LeaseApiService {
+private val log = Logger.withTag("StockAPI")
+class StockApiService {
 
     private companion object {
-        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/api"
+        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/stock-server/api"
     }
     private val client = HttpClient(CIO) {
-        install(ContentNegotiation){
+        install(ContentNegotiation) {
             json(
-                kotlinx.serialization.json.Json { ignoreUnknownKeys = true }
+                Json { ignoreUnknownKeys = true }
             )
         }
         defaultRequest {
@@ -40,33 +40,36 @@ class LeaseApiService {
         url("$BASE_URL/$path")
     }
 
-    suspend fun getAllSeats(school: String, grade: Int, clazzNumber: Int): HttpResponse {
+    suspend fun getAllStocks(): HttpResponse{
         return client.get{
-            apiUrl("seats")
-            url.parameters.append("school", school)
-            url.parameters.append("grade", grade.toString())
-            url.parameters.append("clazzNumber", clazzNumber.toString())
-            log.i { "$url" }
+            apiUrl("stock/")
         }
     }
 
-    suspend fun getSeat(seatId: String): HttpResponse{
-        return client.get {
-            apiUrl("seats/$seatId")
+    suspend fun getStock(stockId: String): HttpResponse {
+        return client.get{
+            apiUrl("stock/$stockId")
+        }
+    }
+
+    suspend fun getMyAllStocks(memberId: String): HttpResponse {
+        return client.get{
+            apiUrl("memberstock/$memberId")
         }
     }
 
     @OptIn(InternalAPI::class)
-    suspend fun setSeat(seatId: String): HttpResponse{
-        val userId = "test"
-        val seatRequest = SeatRequest(seatId, userId)
-        val jsonData = Json.encodeToString(seatRequest);
-
-        return client.put{
-            apiUrl("seats/$seatId")
+    suspend fun tradeStock(stockRequest: StockRequest): HttpResponse {
+        val jsonData = Json.encodeToString(stockRequest)
+        return client.post {
+            apiUrl("trade/")
             header("Content-Type", ContentType.Application.Json.toString())
             body = jsonData
-
         }
     }
+
+
+
+
+
 }

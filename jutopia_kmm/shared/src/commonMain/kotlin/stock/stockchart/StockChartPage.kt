@@ -36,15 +36,13 @@ fun StockChartPage(
         StockChartViewModel(stockId)
     },
     stockViewModel: StockViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockViewModel::class) {
-        StockViewModel()
+        StockViewModel(stockId)
     },
     navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
     val chartData by viewModel.chartData.collectAsState()
     val clickedPoints = remember { mutableStateListOf<Pair<Float, Float>>() }
-    val stocks by StockListViewModel().stocks.collectAsState()
-    val stock = stocks.filter { it.id.equals(stockId) }.first()
     Box(
         modifier = Modifier.height(350.dp)
     ){

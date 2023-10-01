@@ -15,6 +15,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import stock.stocklist.Stock
+import stock.stocklist.StockRequest
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -42,7 +44,8 @@ fun StockSellingPage(
     var orderPrice by remember { mutableStateOf("${stockPrice}") }
     val keyboardController = LocalSoftwareKeyboardController.current
     var showDialog by remember { mutableStateOf(false) }
-    var myStockCount by remember { mutableStateOf(13) }
+    val myStocksCount by viewModel.myStocksCount.collectAsState()
+    var myStockCount = myStocksCount.firstOrNull{it.first == stock.id}?.second ?:0
 
     val totalAmount: Double =
         if (orderQuantity.isNotBlank() && orderPrice.isNotBlank()) {
@@ -125,11 +128,14 @@ fun StockSellingPage(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
                     Button(onClick = {
-                        viewModel.tradeStock(
-                            stock.copy(type = TradeType.SELL),
-                            orderPrice.toDouble(),
-                            orderQuantity.toInt()
+                        val request = StockRequest(
+                            memberId = "d79eb207-290c-4d6c-9a1e-41dd4e831692",
+                            stockId = stock.id,
+                            type = TradeType.SELL,
+                            volume = orderQuantity.toLong(),
+                            price = orderPrice.toInt(),
                         )
+                        viewModel.tradeStock(request)
                         myStockCount -= orderQuantity.toInt()
                         orderQuantity = "1"
                         orderPrice = "${stock.price}"
@@ -146,7 +152,7 @@ fun StockSellingPage(
                 title = { Text("판매 확인") },
                 text = {
                     Column {
-                        Text("${stock.name}")
+                        Text("${stock.stockName}")
                         Text("가격: ${orderPrice}")
                         Text("판매량: ${orderQuantity}")
                         Text("총 금액: ${totalAmount}")
