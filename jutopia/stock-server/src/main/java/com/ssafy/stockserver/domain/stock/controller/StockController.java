@@ -2,8 +2,6 @@ package com.ssafy.stockserver.domain.stock.controller;
 
 import com.ssafy.common.api.Api;
 import com.ssafy.stockserver.domain.memberStock.service.MemberStockService;
-import com.ssafy.stockserver.domain.memberStock.entity.MemberStock;
-import com.ssafy.stockserver.domain.memberStock.vo.response.ResponseMemberStock;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.service.StockService;
 import com.ssafy.stockserver.domain.stock.vo.request.RequestStock;
