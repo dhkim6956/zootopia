@@ -4,6 +4,7 @@ import com.ssafy.common.api.Api;
 import com.ssafy.common.error.ErrorCode;
 import com.ssafy.common.error.RentErrorCode;
 import com.ssafy.common.exception.ApiException;
+import com.ssafy.rentserver.dto.PointReductionRequest;
 import com.ssafy.rentserver.dto.SeatChangeRequest;
 import com.ssafy.rentserver.dto.SeatRequest;
 import com.ssafy.rentserver.dto.SeatResponse;
@@ -122,7 +123,13 @@ public class SeatService {
                 return Api.ERROR(ErrorCode.BAD_REQUEST, "신청할 수 없는 좌석입니다.");
             }
 
-            Api<?> pointResponse = userServerClient.reducePointAndSetSeat();
+            var request = PointReductionRequest.builder()
+                    .studentId(userId)
+                    .seatId(seatId)
+                    .point(seat.getPrice())
+                    .build();
+
+            Api<?> pointResponse = userServerClient.reducePointAndSetSeat(request);
 
             var errorCode = pointResponse.getResult().getResultCode();
 
