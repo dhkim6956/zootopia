@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,11 +43,17 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.content.TextContent
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.InternalAPI
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -55,6 +62,7 @@ import kotlin.js.JsName
 
 @Serializable
 data class Product(
+    val id: String,
     val productName: String,
     val productDetail: String,
     val interestRate: Double,
@@ -77,6 +85,7 @@ data class Result(
 
 private val log = Logger.withTag("Save")
 val classroomId = "6600f67c-85f4-46f9-9c66-5c5148f20040"
+
 class saveAPI {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation){
@@ -94,6 +103,18 @@ class saveAPI {
         // result.body 에 있는 List<Product> 반환
         return result.body
     }
+
+    @OptIn(InternalAPI::class)
+    suspend fun subscriptionSave(memberId: String, productId: String?, money: String) {
+        val money = money.toDouble()
+        val requestBody = mapOf("money" to money)
+        val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/class-server/api/bank/product/$memberId/$productId") {
+            contentType(ContentType.Application.Json)
+            body = Json.encodeToString(requestBody)
+        }
+        log.i {"$response"}
+        log.i { "$response" }
+    }
 }
 
 val skyBlue = Color(0xFFEBF5F7)
@@ -105,14 +126,16 @@ enum class Keys { subscript }
 fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
     var firstProduct by remember { mutableStateOf<Product?>(null) }
     val coroutineScope = rememberCoroutineScope()
+    val memberId = "e1f2f129-b317-42e0-9c87-4d98ce6cf35b"
 
 
     coroutineScope.launch {
         var test = saveAPI()
         var products = test.getSave()
+        log.i {"$products"}
         firstProduct = products[0]
     }
-
+    var productId  = firstProduct?.id
     var minMoney = firstProduct?.minMoney?.toInt()
     var maxMoney = firstProduct?.maxMoney?.toInt()
     var productName = firstProduct?.productName
@@ -129,7 +152,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
     val formattedMinMoney = formatThousandSeparator(minMoney)
     val formattedMaxMoney = formatThousandSeparator(maxMoney)
 
-    log.i { "minMoney = $minMoney, maxMoney = $maxMoney, productName = $productName, productDetail = $productDetail, interestRate = $interestRate, term = $term"}
+    log.i { "productId = $productId, minMoney = $minMoney, maxMoney = $maxMoney, productName = $productName, productDetail = $productDetail, interestRate = $interestRate, term = $term"}
 
     val revealState = rememberRevealState()
     val scope = rememberCoroutineScope()
@@ -145,7 +168,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
 
     var showDialog by remember { mutableStateOf(false) }
     var money by remember { mutableStateOf("") }
-
+    var showLimitWarningDialog by remember { mutableStateOf(false) }
 
     Reveal(
         revealCanvasState = revealCanvasState,
@@ -276,11 +299,40 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                                         scope.launch {
                                             revealState.hide()
                                         }
+
+                                        // money 값이 minMoney와 maxMoney 사이에 있는지 확인
+                                        val min = minMoney ?: 0
+                                        val max = maxMoney ?: Int.MAX_VALUE
+                                        val moneyValue = money.toDoubleOrNull()
+
+                                        if (moneyValue != null && moneyValue in min.toDouble()..max.toDouble()) {
+                                            val api = saveAPI()
+                                            coroutineScope.launch {
+                                                api.subscriptionSave(memberId, productId, money)
+                                            }
+                                        } else {
+                                            // 저축 한도를 확인해주세요 다이얼로그 띄우기
+                                            showLimitWarningDialog = true
+                                        }
+
                                     },
                                         colors = ButtonDefaults.buttonColors(deepSky)
                                     ) {
                                         Text("확인")
                                     }
+                                }
+                            )
+                        }
+
+                        if (showLimitWarningDialog) {  // if the state is true, show the dialog
+                            AlertDialog(
+                                onDismissRequest = { showLimitWarningDialog = false },  // when dismissed, set the state to hide the dialog
+                                title= {"경고"},
+                                text={
+                                    Text("저축한도를 확인해주세요.", style = TextStyle(color = Color.Black, fontSize = 20.sp))
+                                },
+                                confirmButton={
+                                    Button(onClick={showLimitWarningDialog=false}){Text("확인")}
                                 }
                             )
                         }

@@ -76,8 +76,7 @@ fun Home(navigator: Navigator) {
 
     coroutineScope.launch {
         var test = Greeting()
-        val result = test.getHome()
-//        log.i { "$result" }
+        test.getHome()
     }
 
 
