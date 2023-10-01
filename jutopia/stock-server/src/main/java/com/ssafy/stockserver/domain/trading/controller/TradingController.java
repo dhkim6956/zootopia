@@ -15,13 +15,11 @@ import com.ssafy.stockserver.domain.trading.vo.response.ResponseTrade;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/stock-server/api/trade")
@@ -34,6 +32,7 @@ public class TradingController {
     MemberStockService memberStockService;
     ModelMapper mapper;
 
+    @Autowired
     public TradingController(TradingService tradingService, StockService stockService,
                              MemberServerClient memberServerClient, MemberStockService memberStockService) {
         this.tradingService = tradingService;
