@@ -59,7 +59,6 @@ public class ProductsController {
     @GetMapping("/{classroomId}/product")
     public Api<List<ResponseProduct>> getAllProducts(@PathVariable UUID classroomId) {
         Iterable<SavingProductsEntity> plist = bankService.getAllProducts(classroomId);
-        System.out.println("controller: " + plist);
         List<ResponseProduct> resultList = new ArrayList<>();
 
         plist.forEach(p -> resultList.add(new ModelMapper().map(p, ResponseProduct.class)));
