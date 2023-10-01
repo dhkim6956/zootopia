@@ -19,11 +19,11 @@ import org.springframework.context.annotation.Configuration;
 // 스웨거 페이지 만들기
 public class SwaggerConfig {
 
-    private final ObjectMapperConfig objectMapperConfig;
+
     @Bean
     public GroupedOpenApi chatOpenApi() {
-        String[] paths = {"api/**"};
-
+        String[] paths = {"/rent-server/api/**", "/api/**", "/rent-server/api/**/**"};
+ 
         return GroupedOpenApi.builder()
                 .group("class server API v3")
                 .pathsToMatch(paths)
@@ -31,6 +31,6 @@ public class SwaggerConfig {
     }
     @Bean
     public ModelResolver modelResolver(ObjectMapper objectMapper){
-        return new ModelResolver(objectMapperConfig.objectMapper());
+        return new ModelResolver(objectMapper);
     }
 }
