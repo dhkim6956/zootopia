@@ -107,5 +107,5 @@ fun Send_detail(navigator: Navigator) {
             }
         }
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }

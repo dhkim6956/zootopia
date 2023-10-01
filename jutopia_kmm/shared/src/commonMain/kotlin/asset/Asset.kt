@@ -59,7 +59,7 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
             else -> Text("Error Page")
         }
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 1)
 }
 
 @Composable

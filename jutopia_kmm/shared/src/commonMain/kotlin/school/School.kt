@@ -33,7 +33,7 @@ fun School(navigator: Navigator, viewModel : SchoolViewModel = viewModel(modelCl
         Notification(viewModel, navigator)
 
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 2)
 }
 
 @Composable

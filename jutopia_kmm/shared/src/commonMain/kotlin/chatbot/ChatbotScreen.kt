@@ -17,6 +17,6 @@ fun ChatbotScreen(navigator: Navigator) {
         TopPageBar("챗봇", navigator = navigator)
         ChatbotPage()
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }
 

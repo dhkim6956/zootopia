@@ -38,7 +38,7 @@ fun NotiContents(navigator: Navigator, idx: Int) {
 
         Contents(contentViewModel)
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 2)
 }
 
 @Composable

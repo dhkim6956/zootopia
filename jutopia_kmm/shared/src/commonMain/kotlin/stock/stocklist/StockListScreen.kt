@@ -17,5 +17,5 @@ fun StockListScreen(navigator: Navigator) {
         TopPageBar("주식", navigator)
         StockListPage(navigator = navigator)
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }

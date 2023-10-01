@@ -56,7 +56,7 @@ fun StockScreen(
 
         }
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }
 
 @Composable

@@ -51,7 +51,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun News(navigator: Navigator) {
     Contents()
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 3)
 }
 
 @OptIn(ExperimentalResourceApi::class)

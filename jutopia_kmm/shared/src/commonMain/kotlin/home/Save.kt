@@ -235,5 +235,5 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
             }
         }
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }

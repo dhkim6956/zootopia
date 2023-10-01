@@ -20,5 +20,5 @@ fun StockChartScreen(stockId: String, navigator: Navigator) {
         TopPageBar(stockId, navigator)
         StockChartPage(stockId, navigator=navigator)
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }

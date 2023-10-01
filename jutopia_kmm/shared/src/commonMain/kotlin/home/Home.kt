@@ -269,6 +269,6 @@ fun Home(navigator: Navigator) {
 
         }
 
-        BottomTabBar(navigator)
+        BottomTabBar(navigator, 0)
     }
 }
