@@ -1,7 +1,6 @@
 package com.ssafy.rentserver.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.common.objectmapper.ObjectMapperConfig;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -23,7 +22,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi chatOpenApi() {
         String[] paths = {"/rent-server/api/**", "/api/**", "/rent-server/api/**/**"};
- 
+
         return GroupedOpenApi.builder()
                 .group("class server API v3")
                 .pathsToMatch(paths)
