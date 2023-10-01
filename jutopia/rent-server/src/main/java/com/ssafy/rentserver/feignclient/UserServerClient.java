@@ -1,6 +1,7 @@
 package com.ssafy.rentserver.feignclient;
 
 import com.ssafy.common.api.Api;
+import com.ssafy.rentserver.dto.PointReductionRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -10,6 +11,6 @@ import java.util.UUID;
 public interface UserServerClient {
 
     @PutMapping("/point")
-    Api<?> reducePointAndSetSeat(); //userId와 point를 보내서 차감 결과를 리턴받는다.
+    Api<?> reducePointAndSetSeat(PointReductionRequest request); //userId와 point를 보내서 차감 결과를 리턴받는다.
 
 }

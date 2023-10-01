@@ -41,7 +41,7 @@ public class StudentController {
         return Api.OK(studentService.studentDelete(studentDeleteRequest));
     }
     @Operation(summary = "임대 학생 포인트 차감")
-    @PutMapping("/student/point")
+    @PutMapping("/point")
     public Api<StudentPointUpdateResponse> studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest){
         return Api.OK(studentService.studentPointUpdate(studentPointUpdateRequest));
     }
