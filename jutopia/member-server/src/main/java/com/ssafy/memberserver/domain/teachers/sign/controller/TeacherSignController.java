@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("api")
+@RequestMapping("/member-server/api/teacher")
 public class TeacherSignController {
     private final TeacherSignService teacherSignService;
     private final MailService mailService;
@@ -40,3 +40,4 @@ public class TeacherSignController {
         return ApiResponse.success(mailService.sendSimpleMessage(email));
     }
 }
+

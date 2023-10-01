@@ -38,10 +38,35 @@ spring:
           uri: lb://RENT-SERVER
           predicates:
             - Path=/rent-server/**
+        - id: chat-server
+          uri: lb://CHAT-SERVER
+          predicates:
+            - Path=/chat-server/**
+          filters:
+            - RewritePath=/chat-server/(?<segment>.*), /$\{segment}
         - id: stock-server
           uri: lb://STOCK-SERVER
           predicates:
             - Path=/stock-server/**
+
+#springdoc:
+#  enable-native-support: true
+#  api-docs:
+#    enabled: true
+#  swagger-ui:
+#    enabled: true
+#    path: /swagger-ui.html
+#    config-url: /v3/api-docs/swagger-config
+#    urls:
+#      - url: /class-server/v3/api-docs
+#        name: class-server
+#      - url: /member-server/v3/api-docs
+#        name: member-server
+#      - url: /rent-server/v3/api-docs
+#        name: rent-server
+#      - url: /stock-server/v3/api-docs
+#        name: stock-server
+
 management:
   endpoints:
     web:
