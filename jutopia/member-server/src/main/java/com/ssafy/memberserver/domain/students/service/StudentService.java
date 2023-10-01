@@ -1,10 +1,7 @@
 package com.ssafy.memberserver.domain.students.service;
 
 import com.ssafy.memberserver.common.enums.MemberStatus;
-import com.ssafy.memberserver.domain.students.dto.request.MemberPointUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
+import com.ssafy.memberserver.domain.students.dto.request.*;
 import com.ssafy.memberserver.domain.students.dto.response.StudentDeleteResponse;
 import com.ssafy.memberserver.domain.students.dto.response.StudentInfoResponse;
 import com.ssafy.memberserver.domain.students.dto.response.StudentPointUpdateResponse;
@@ -80,6 +77,17 @@ public class StudentService {
                 .map(it ->{
                     log.info("{}","ewffwefwewefefewf");
                     it.memberPointUpdate(memberPointUpdateRequest);
+                    return StudentPointUpdateResponse.of("200");
+                })
+                .orElseThrow(()->new NoSuchElementException("kk"));
+    }
+
+    @Transactional
+    public StudentPointUpdateResponse memberMoneyUpdate(MemberMoneyUpdateRequest memberMoneyUpdateRequest) {
+        return studentRepository.findById(memberMoneyUpdateRequest.id())
+                .map(it ->{
+                    log.info("{}","ewffwefwewefefewf");
+                    it.memberMoneyUpdate(memberMoneyUpdateRequest);
                     return StudentPointUpdateResponse.of("200");
                 })
                 .orElseThrow(()->new NoSuchElementException("kk"));
