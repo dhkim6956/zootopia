@@ -34,10 +34,10 @@ spring:
             - Path=/news-server/**
           filters:
             - RewritePath=/news-server/(?<segment>.*), /$\{segment}
-        - id: lease-server
-          uri: lb://LEASE-SERVER
+        - id: rent-server
+          uri: lb://RENT-SERVER
           predicates:
-            - Path=/lease-server/**
+            - Path=/rent-server/**
         - id: chat-server
           uri: lb://CHAT-SERVER
           predicates:
