@@ -26,6 +26,7 @@ company_list = []
 total = {}
 
 def flags(to_exday):
+    print('flags')
     to_exday_noup = to_exday.find_elements(By.CLASS_NAME,"no_up")
     if not to_exday_noup:
         flag = "하락"
@@ -39,6 +40,7 @@ def flags(to_exday):
     return flag
 
 def plus_minus_flags(flag):
+    print('plus_minus_flags')
     flag_mapping = {
         "no_up": "+",
         "no_down": "-"
@@ -47,6 +49,7 @@ def plus_minus_flags(flag):
     return flag
 
 def reverse_flags(flag):
+    print('reverse_flags')
     flag_mapping = {
         "no_up": "상승",
         "no_down": "하락",
@@ -57,6 +60,7 @@ def reverse_flags(flag):
     return flag
 
 def to_exday_parser(to_exday):
+    print('to_exday_parser')
     result_list = []
     flag = flags(to_exday)
     to_exday_noup = to_exday.find_elements(By.CLASS_NAME,flag)
@@ -68,6 +72,7 @@ def to_exday_parser(to_exday):
     return result_list
         
 def currently_stock_price(to_day,to_exday):
+    print('currently_stock_price')
     flag = flags(to_exday)
     stock_price_list = []
     tag_name_list = to_day.find_element(By.CLASS_NAME,flag)
@@ -80,6 +85,7 @@ def currently_stock_price(to_day,to_exday):
     return price
         
 def calculate_daily_change(to_exday):
+    print('calcluate_daily_change')
     flag = flags(to_exday)
     flag = plus_minus_flags(flag)
     data_list = to_exday_parser(to_exday)
@@ -88,12 +94,14 @@ def calculate_daily_change(to_exday):
     reverse_flags(flag)
     return price
 def sign(to_exday):
+    print('sign')
     flag = flags(to_exday)
     sign = plus_minus_flags(flag)
     reverse_flags(flag)
     return sign
 
 def stock_price_percent_change(to_exday):
+    print('debug: stock_price_percent_change')
     flag = flags(to_exday)
     flag = plus_minus_flags(flag)
     data_list = to_exday_parser(to_exday)
@@ -104,10 +112,12 @@ def stock_price_percent_change(to_exday):
     return price
 
 def currently_time():
+    print('debug: currently_time')
     timestemp = time.strftime('%c', time.localtime(time.time()))
     return timestemp
 
 def get_compnay_name():
+    time.sleep(20)
     for n,i in enumerate(find_list):
         search_box = driver.find_element(By.NAME,'query')
         time.sleep(0.8)
@@ -134,15 +144,16 @@ def get_compnay_name():
             print(total)
             
             # MongoDB에 저장
-            # realtime_collection.insert_one(total)
+            realtime_collection.insert_one(total.copy())
             
-            with open("realtime.txt", "a", encoding="utf-8") as f:
-                f.write(str(total))
-                f.write(",\n")
+            # with open("realtime.txt", "a", encoding="utf-8") as f:
+            #     f.write(str(total))
+            #     f.write(",\n")
 def start():
     get_compnay_name()
     
 while True:
+    print('while True')
     try :
         start()
             
