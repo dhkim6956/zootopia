@@ -91,7 +91,7 @@ def get_chart(stock_name_param: str, time_frame: str):
         print(f"debug stocks before return : {stocks}")
     return stocks
 
-@router.get("/stocks")
+@router.get("/stocks/")
 def get_latest_stocks():
     company_names = ['삼성전자', '현대차', 'NAVER', '에스엠', '한화']
 
@@ -138,5 +138,66 @@ def get_latest_stocks():
         for item in result:
             item.pop("_id", None)
         return JSONResponse(content=result)
+    except Exception as e:
+        return HTTPException(detail=str(e), status_code=500)
+
+@router.get("/stocks/{ticker}")
+def get_latest_stocks(ticker: str):
+    ticker_to_name = {
+        '005930': '삼성전자',
+        '005380': '현대차',
+        '035420': 'NAVER',
+        '041510': '에스엠',
+        '000880': '한화'
+    }
+    
+    company_name = ticker_to_name.get(ticker)
+    if not company_name:
+        raise HTTPException(status_code=404, detail=f"No data found for ticker: {ticker}")
+
+    pipeline = [
+        {
+            "$match": {
+                "회사명": company_name
+            }
+        },
+        {
+            "$sort": {
+                "시간": -1
+            }
+        },
+        {
+            "$group": {
+                "_id": "$회사명",
+                "data": {
+                    "$push": {
+                        "currentPrice": "$현재 주식 가격",
+                        "timestamp": "$시간"
+                    }
+                }
+            }
+        },
+        {
+            "$project": {
+                "stockName": "$_id",
+                "nowMoney": {
+                    "$arrayElemAt": ["$data.currentPrice", 0]
+                },
+                "prevMoney": {
+                    "$arrayElemAt": ["$data.currentPrice", 1]
+                }
+            }
+        }
+    ]
+
+    try:
+        result = list(realtime_collection.aggregate(pipeline))
+        # Check if a result was found
+        if not result:
+            raise HTTPException(status_code=404, detail=f"No data found for ticker: {ticker}")
+        # Return the first item in the result
+        stock_data = result[0]
+        stock_data.pop("_id", None)
+        return JSONResponse(content=stock_data)
     except Exception as e:
         return HTTPException(detail=str(e), status_code=500)
