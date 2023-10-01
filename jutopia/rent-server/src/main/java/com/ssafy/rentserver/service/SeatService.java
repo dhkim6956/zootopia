@@ -3,10 +3,8 @@ package com.ssafy.rentserver.service;
 import com.ssafy.common.api.Api;
 import com.ssafy.common.error.ErrorCode;
 import com.ssafy.common.error.RentErrorCode;
-import com.ssafy.common.exception.ApiException;
 import com.ssafy.rentserver.dto.PointReductionRequest;
 import com.ssafy.rentserver.dto.SeatChangeRequest;
-import com.ssafy.rentserver.dto.SeatRequest;
 import com.ssafy.rentserver.dto.SeatResponse;
 import com.ssafy.rentserver.enums.SeatStatus;
 import com.ssafy.rentserver.feignclient.UserServerClient;
@@ -16,15 +14,15 @@ import com.ssafy.rentserver.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
