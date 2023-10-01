@@ -1,7 +1,6 @@
 package com.ssafy.memberserver.domain.students.sign.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.memberserver.common.api.Api;
 import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
 import com.ssafy.memberserver.domain.security.TokenProvider;
@@ -37,7 +36,6 @@ public class StudentSignService {
     }
     @Transactional
     public StudentSignInResponse studentSignIn(StudentSignInRequest studentSignInRequest) throws JsonProcessingException {
-        // test
 //        Student student =
                 Optional.ofNullable(studentRepository.findByStudentId(studentSignInRequest.getStudentId()))
                 .orElseThrow(()-> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"존재하지 않는 아이디입니다."))
