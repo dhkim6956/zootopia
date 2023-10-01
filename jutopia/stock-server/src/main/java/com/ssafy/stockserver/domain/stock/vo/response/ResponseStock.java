@@ -20,6 +20,8 @@ public class ResponseStock {
 
     private Double changeRate;
 
-    // 분/시/일 단위
+    private Boolean isOwnedByUser;
+
+    // + / -
     private int type;
 }

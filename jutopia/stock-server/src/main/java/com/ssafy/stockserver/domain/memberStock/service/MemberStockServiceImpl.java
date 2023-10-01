@@ -86,4 +86,9 @@ public class MemberStockServiceImpl implements MemberStockService{
         }
     }
 
+    @Override
+    public Optional<MemberStock> getMemberOneStock(UUID memberId, UUID stockId) {
+        return memberStockRepository.findByMemberIdAndStockId(memberId, stockId);
+    }
+
 }

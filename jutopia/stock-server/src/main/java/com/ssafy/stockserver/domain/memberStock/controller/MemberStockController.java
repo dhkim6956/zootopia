@@ -53,4 +53,20 @@ public class MemberStockController {
         });
         return Api.OK(result);
     }
+
+    @GetMapping("/{memberId}/{stockId}")
+    public Api<ResponseMemberStock> getMemberOneStocks(@PathVariable("memberId") UUID memberId,
+                                                          @PathVariable("stockId") UUID stockId) {
+
+        Optional<MemberStock> memberStock = memberStockService.getMemberOneStock(memberId, stockId);
+
+        if (!memberStock.isPresent()) return Api.NOT_FOUND(null);
+
+        ResponseMemberStock responseMemberStock = mapper.map(memberStock.get(), ResponseMemberStock.class);
+        responseMemberStock.setStockId(memberStock.get().getStock().getId());
+        responseMemberStock.setStockName(memberStock.get().getStock().getStockName());
+        responseMemberStock.setStockCode(memberStock.get().getStock().getStockCode());
+
+        return Api.OK(responseMemberStock);
+    }
 }
