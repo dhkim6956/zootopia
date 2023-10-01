@@ -2,11 +2,14 @@ package com.ssafy.classserver.controller.bank;
 
 import com.ssafy.classserver.dto.ClassRoomDto;
 import com.ssafy.classserver.dto.ProductDto;
+import com.ssafy.classserver.jpa.entity.MemberSavingEntity;
 import com.ssafy.classserver.jpa.entity.SavingProductsEntity;
 import com.ssafy.classserver.service.BankService;
 import com.ssafy.classserver.service.SchoolService;
+import com.ssafy.classserver.vo.request.RequestMemberSaving;
 import com.ssafy.classserver.vo.request.RequestProduct;
 import com.ssafy.classserver.vo.response.ResponseClassRoom;
+import com.ssafy.classserver.vo.response.ResponseMemberSaving;
 import com.ssafy.classserver.vo.response.ResponseProduct;
 import com.ssafy.common.api.Api;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -63,5 +67,34 @@ public class ProductsController {
         return Api.OK(resultList);
     }
 
+    @PostMapping("/product/{memberId}/{productId}")
+    public Api<RequestMemberSaving> createMemberSaving(@RequestBody RequestMemberSaving request,
+                                                      @PathVariable UUID memberId,
+                                                      @PathVariable UUID productId) {
+        Optional<SavingProductsEntity> product = bankService.getProduct(productId);
 
+        if (!product.isPresent()) return Api.NOT_FOUND(null);
+        MemberSavingEntity memRequest = mapper.map(request, MemberSavingEntity.class);
+        memRequest.setSavingProduct(product.get());
+        memRequest.setMemberId(memberId);
+
+        MemberSavingEntity result = bankService.createMemProduct(memRequest);
+        System.out.println(result);
+        return Api.OK(request);
+    }
+
+    @GetMapping("/product/{memberId}")
+    public Api<ResponseMemberSaving> getMemberSaving(@PathVariable UUID memberId) {
+        Optional<MemberSavingEntity> memberSaving = bankService.getMemSaving(memberId);
+        if (!memberSaving.isPresent()) return Api.NOT_FOUND(null);
+
+        ResponseMemberSaving res = mapper.map(memberSaving.get(), ResponseMemberSaving.class);
+        res.setProductId(memberSaving.get().getSavingProduct().getId());
+        res.setProductName(memberSaving.get().getSavingProduct().getProductName());
+        res.setProductDetail(memberSaving.get().getSavingProduct().getProductDetail());
+        res.setTerm(memberSaving.get().getSavingProduct().getTerm());
+        res.setInterestRate(memberSaving.get().getSavingProduct().getInterestRate());
+
+        return Api.OK(res);
+    }
 }
