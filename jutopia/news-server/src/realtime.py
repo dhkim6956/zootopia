@@ -17,8 +17,21 @@ test_collection = db['test']
 def dbtest():
     return test_collection.find()
 
-@router.get("/chart/{stock_name}/{time_frame}") # time_frame: day, hour, minute
-def get_chart(stock_name: str, time_frame: str):
+# stock_name_param: samsung, hanhwa, naver, sm, hyundai
+# time_frame: day, hour, minute
+@router.get("/chart/{stock_name_param}/{time_frame}") 
+def get_chart(stock_name_param: str, time_frame: str):
+    stock_name = ''
+    if (stock_name_param == 'samsung'):
+        stock_name = '삼성전자'
+    elif (stock_name_param == 'hanhwa'):
+        stock_name = '한화'
+    elif (stock_name_param == 'hyundai'):
+        stock_name = '현대차'
+    elif (stock_name_param == 'naver'):
+        stock_name = 'NAVER'
+    elif (stock_name_param == 'sm'):
+        stock_name = '에스엠'
     now = datetime.now()
     
     if time_frame == "day":
@@ -43,33 +56,39 @@ def get_chart(stock_name: str, time_frame: str):
         # 지난 24시간 동안의 시간별 마지막 데이터
         start_date = now - timedelta(hours=24)
         results = realtime_collection.find({
-            "회사명": stock_name,
-            "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
+            "회사명": stock_name
+            # "시간": {"$gte": start_date.strftime('%a %b  %d %H:%M:%S %Y')}
         }).sort("시간", -1).limit(24)
 
     elif time_frame == "minute":
         # 지난 60분 동안의 분별 마지막 데이터
         start_date = now - timedelta(minutes=60)
+        print(f"debug start_date : {start_date}")
         results = realtime_collection.find({
-            "회사명": stock_name,
-            "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
+            "회사명": stock_name
+            # "시간": {"$gte": start_date.strftime('%a %b  %d %H:%M:%S %Y')}
         }).sort("시간", -1).limit(60)
+        print(f"debug results : {results}")
+        print(f"debug list(results) : {list(results)}")
 
     else:
         raise HTTPException(status_code=400, detail="Invalid time_frame value")
 
     # 데이터 변환
     if time_frame != "day":
+        print(f"debug time_frame : {time_frame}")
         stocks_temp = list(results)
+        print(f"debug stocks_temp : {stocks_temp}")
         stocks = []
         for stock in stocks_temp:
+            print(f"debug stock in stocks_temp : {stock}")
             stock_info = {
                 "회사명": stock["회사명"],
                 "시간": stock["시간"],
                 "현재 주식 가격": stock["현재 주식 가격"]
             }
             stocks.append(stock_info)
-
+        print(f"debug stocks before return : {stocks}")
     return stocks
 
 @router.get("/stocks")
@@ -102,11 +121,11 @@ def get_latest_stocks():
         },
         {
             "$project": {
-                "company_name": "$_id",
-                "latest_price": {
+                "stockName": "$_id",
+                "nowMoney": {
                     "$arrayElemAt": ["$data.currentPrice", 0]
                 },
-                "previous_price": {
+                "prevMoney": {
                     "$arrayElemAt": ["$data.currentPrice", 1]
                 }
             }
