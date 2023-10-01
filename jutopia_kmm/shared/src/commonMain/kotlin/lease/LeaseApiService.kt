@@ -24,7 +24,7 @@ private val log = Logger.withTag("LeaseAPI")
 class LeaseApiService {
 
     private companion object {
-        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/seat-service/api/seat"
+        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/api"
     }
     private val client = HttpClient(CIO) {
         install(ContentNegotiation){
