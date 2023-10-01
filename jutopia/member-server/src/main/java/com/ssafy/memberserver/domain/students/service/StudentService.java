@@ -54,7 +54,7 @@ public class StudentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"아이디 또는 비밀번호가 틀렸습니다."));
     }
     @Transactional
-    public StudentPointUpdateResponse studentPointUpdate(StudentPointUpdateRequest studentPointUpdateRequest, UUID seatId){
+    public StudentPointUpdateResponse studentPointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
         return studentRepository.findByStudentId(studentPointUpdateRequest.getStudentId())
                 .map(it ->{
                     it.pointUpdate(studentPointUpdateRequest);
