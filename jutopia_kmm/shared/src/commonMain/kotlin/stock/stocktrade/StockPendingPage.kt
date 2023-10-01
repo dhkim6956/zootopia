@@ -50,21 +50,21 @@ fun StockPendingPage(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = stockTriple.first.type.toString(),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Start
-                )
-                Text(
-                    text = stockTriple.second.toString(),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    text = stockTriple.third.toString(),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.End
-                )
+//                Text(
+//                    text = stockTriple.first.type.toString(),
+//                    fontSize = 18.sp,
+//                    textAlign = TextAlign.Start
+//                )
+//                Text(
+//                    text = stockTriple.second.toString(),
+//                    fontSize = 18.sp,
+//                    textAlign = TextAlign.Center
+//                )
+//                Text(
+//                    text = stockTriple.third.toString(),
+//                    fontSize = 18.sp,
+//                    textAlign = TextAlign.End
+//                )
             }
         }
     }
