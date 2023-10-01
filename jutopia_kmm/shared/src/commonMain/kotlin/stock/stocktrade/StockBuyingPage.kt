@@ -18,15 +18,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import stock.stocklist.Stock
+import stock.stocklist.StockRequest
 
 @Composable
 @OptIn(ExperimentalComposeUiApi::class)
@@ -123,11 +122,14 @@ fun StockBuyingPage(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
                     Button(onClick = {
-                        viewModel.tradeStock(
-                            stock.copy(type = TradeType.Buy),
-                            orderPrice.toDouble(),
-                            orderQuantity.toInt()
+                        val request = StockRequest(
+                            memberId = "d79eb207-290c-4d6c-9a1e-41dd4e831692",
+                            stockId = stock.id,
+                            type = TradeType.BUY,
+                            volume = orderQuantity.toLong(),
+                            price = orderPrice.toInt(),
                         )
+                        viewModel.tradeStock(request)
                         orderQuantity = "1"
                         orderPrice = "${stock.price}"
                         showDialog = false
@@ -143,7 +145,7 @@ fun StockBuyingPage(
                 title = { Text("구매 확인") },
                 text = {
                     Column {
-                        Text("${stock.name}")
+                        Text("${stock.stockName}")
                         Text("가격: ${orderPrice}")
                         Text("구매량: ${orderQuantity}")
                         Text("총 금액: ${totalAmount}")
