@@ -25,7 +25,7 @@ public record StudentInfoResponse(
         @Schema(description = "학생 화폐 총량")
         BigDecimal money,
         @Schema(description = "학생의 학교")
-        Integer school,
+        String school,
         @Schema(description = "학생의 학년")
         Integer grade,
         @Schema(description = "학생의 반")

@@ -1,6 +1,9 @@
 package com.ssafy.memberserver.domain.students.sign.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.ssafy.memberserver.common.api.Api;
+import com.ssafy.memberserver.common.error.ErrorCode;
+import com.ssafy.memberserver.common.exception.ApiException;
 import com.ssafy.memberserver.domain.security.TokenProvider;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
@@ -23,11 +26,10 @@ public class StudentSignService {
     private final StudentRepository studentRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-
     @Transactional
     public StudentSignUpResponse studentSignUp(StudentSignUpRequest studentSignUpRequest) {
-        if (studentRepository.findByStudentId(studentSignUpRequest.studentId()).isPresent()) {
-            throw new IllegalStateException("아이디 중복입니다.");
+        if (studentRepository.findByStudentId(studentSignUpRequest.getStudentId()).isPresent()) {
+            throw new ApiException(ErrorCode.BAD_REQUEST,"아이디가 중복입니다.");
         }
         Student student = studentRepository.save(Student.from(studentSignUpRequest, passwordEncoder));
         studentRepository.flush();
@@ -36,10 +38,10 @@ public class StudentSignService {
     @Transactional
     public StudentSignInResponse studentSignIn(StudentSignInRequest studentSignInRequest) throws JsonProcessingException {
 //        Student student =
-                Optional.ofNullable(studentRepository.findByStudentId(studentSignInRequest.StudentId()))
-                .orElseThrow(()-> new IllegalArgumentException("존재하지 않는 아이디입니다."))
-                .filter(student -> passwordEncoder.matches(studentSignInRequest.StudentPwd(),student.getStudentPwd()))
-                .orElseThrow(() -> new IllegalArgumentException("비밀번호가 틀렸습니다"));
+                Optional.ofNullable(studentRepository.findByStudentId(studentSignInRequest.getStudentId()))
+                .orElseThrow(()-> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"존재하지 않는 아이디입니다."))
+                .filter(student -> passwordEncoder.matches(studentSignInRequest.getStudentPwd(),student.getStudentPwd()))
+                .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"비밀번호가 틀렸습니다"));
                 String accessToken = tokenProvider.createAccessToken("test");
                 log.info("accessToken:"+"{}",accessToken);
                 log.info("decodeJwtPayloadSubject:"+"{}",tokenProvider.decodeJwtPayloadSubject(accessToken));
