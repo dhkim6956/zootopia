@@ -73,8 +73,8 @@ public class BankServiceImpl implements BankService{
     }
 
     @Override
-    public Optional<MemberSavingEntity> getMemSaving(UUID memberId) {
-        return memberSavingRepository.findByMemberId(memberId);
+    public Iterable<MemberSavingEntity> getMemSaving(UUID memberId) {
+        return memberSavingRepository.findAllByMemberId(memberId);
     }
 
 }

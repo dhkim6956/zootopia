@@ -84,8 +84,6 @@ public class ProductsController {
         MemberSavingEntity memRequest = mapper.map(request, MemberSavingEntity.class);
 
         // memberserver에 회원 보유 화폐 요청
-        System.out.println(memberServerClient.getStudent(memberId));
-        System.out.println(memberServerClient.getStudent(memberId).data());
         ResponseMember member = mapper.map(memberServerClient.getStudent(memberId).data(), ResponseMember.class);
         // 회원이 보유한 돈이 부족하면
         if (member.getMoney().compareTo(memRequest.getMoney()) < 0) return Api.BAD_REQUEST(null, "화폐가 부족합니다");
@@ -103,17 +101,22 @@ public class ProductsController {
     }
 
     @GetMapping("/product/{memberId}")
-    public Api<ResponseMemberSaving> getMemberSaving(@PathVariable UUID memberId) {
-        Optional<MemberSavingEntity> memberSaving = bankService.getMemSaving(memberId);
-        if (!memberSaving.isPresent()) return Api.NOT_FOUND(null);
+    public Api<List<ResponseMemberSaving>> getMemberSaving(@PathVariable UUID memberId) {
+        Iterable<MemberSavingEntity> memberSaving = bankService.getMemSaving(memberId);
 
-        ResponseMemberSaving res = mapper.map(memberSaving.get(), ResponseMemberSaving.class);
-        res.setProductId(memberSaving.get().getSavingProduct().getId());
-        res.setProductName(memberSaving.get().getSavingProduct().getProductName());
-        res.setProductDetail(memberSaving.get().getSavingProduct().getProductDetail());
-        res.setTerm(memberSaving.get().getSavingProduct().getTerm());
-        res.setInterestRate(memberSaving.get().getSavingProduct().getInterestRate());
+        List<ResponseMemberSaving> result = new ArrayList<>();
+        memberSaving.forEach(m -> {
+            ResponseMemberSaving res = mapper.map(m, ResponseMemberSaving.class);
 
-        return Api.OK(res);
+            res.setProductId(m.getSavingProduct().getId());
+            res.setProductName(m.getSavingProduct().getProductName());
+            res.setProductDetail(m.getSavingProduct().getProductDetail());
+            res.setTerm(m.getSavingProduct().getTerm());
+            res.setInterestRate(m.getSavingProduct().getInterestRate());
+
+            result.add(res);
+        });
+
+        return Api.OK(result);
     }
 }

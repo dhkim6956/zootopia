@@ -16,6 +16,7 @@ public class ResponseStock {
 
     private BigDecimal nowMoney;
     private BigDecimal prevMoney;
+    private BigDecimal changeMoney;
 
     private Double changeRate;
 
