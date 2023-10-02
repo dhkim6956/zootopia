@@ -111,5 +111,13 @@ public class SchoolController {
         return Api.OK(mapper.map(classroom, ResponseClassRoom.class));
     }
 
+    @GetMapping("/{schoolName}/{grade}/{classNum}")
+    public UUID getClassroomId(@PathVariable("schoolName") String schoolName,
+                                           @PathVariable("grade") int grade,
+                                           @PathVariable("classNum") int classNum) {
 
+        System.out.println("1. class-server : 요청 받아옴!!!" + schoolName + " : " + grade + " : " + classNum);
+        UUID classroomId = schoolService.getClassRoomId(schoolName, grade, classNum);
+        return classroomId;
+    }
 }

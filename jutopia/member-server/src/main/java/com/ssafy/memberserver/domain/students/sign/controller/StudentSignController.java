@@ -2,6 +2,7 @@ package com.ssafy.memberserver.domain.students.sign.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.memberserver.common.api.Api;
+import com.ssafy.memberserver.domain.students.client.ClassServerClient;
 import com.ssafy.memberserver.domain.students.sign.dto.signIn.SignInRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signIn.SignInResponse;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
@@ -12,12 +13,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @RestController
 @Slf4j
 @RequestMapping("/member-server/api/student")
 public class StudentSignController {
     private final StudentSignService studentSignService;
+    private final ClassServerClient classServerClient;
     @Operation(summary = "학생 로그인")
     @PostMapping("/sign-in")
     public Api<SignInResponse> StudentSignIn(@RequestBody SignInRequest signInRequest){
@@ -33,4 +37,15 @@ public class StudentSignController {
     public Api<?> checkStudentIdDuplicated(@PathVariable String studentId){
         return Api.OK(studentSignService.checkStudentIdDuplicated(studentId));
     }
+
+    // Feign-------------------------
+    // 회원가입 할때 학교 조회 하기
+    @GetMapping("/{schoolName}/{grade}/{classNum}")
+    public Api<UUID> getClassroomId(@PathVariable("schoolName") String schoolName,
+                                    @PathVariable("grade") int grade,
+                                    @PathVariable("classNum") int classNum) {
+
+        return Api.OK(classServerClient.getClassroomId(schoolName, grade, classNum));
+    }
 }
+

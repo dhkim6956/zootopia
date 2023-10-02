@@ -74,8 +74,8 @@ public class AccountService {
         return new SendMoneyResponse("송금이 성공적으로 완료되었습니다.");
     }
     @Transactional(readOnly = true)
-    public List<ClassRoomListResponse> classRoomList(String school, Integer grade, Integer classRoom){
-        List<Student> students = studentRepository.findBySchoolAndGradeAndClassRoom(school, grade, classRoom);
+    public List<ClassRoomListResponse> classRoomList(UUID classroomId){
+        List<Student> students = studentRepository.findAllByClassroomId(classroomId);
         return students.stream()
                 .map(ClassRoomListResponse::from)
                 .collect(Collectors.toList());
