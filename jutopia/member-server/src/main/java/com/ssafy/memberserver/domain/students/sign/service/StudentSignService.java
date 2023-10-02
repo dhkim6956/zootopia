@@ -43,7 +43,9 @@ public class StudentSignService {
     @Transactional
     public SignInResponse signIn(SignInRequest signInRequest) {
         Optional<Student> temp = studentRepository.findByStudentIdAndMemberRole(signInRequest.getMemberId(),MemberRole.STUDENT);
+        log.info("{}",temp);
         Optional<Teacher> temp2 = teacherRepository.findByTeacherIdAndMemberRole(signInRequest.getMemberId(),MemberRole.TEACHER);
+        log.info("{}",temp2);
         if (!temp.isEmpty()) {
             Student student =
                     Optional.ofNullable(studentRepository.findByStudentId(signInRequest.getMemberId()))
