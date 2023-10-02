@@ -53,11 +53,19 @@ import moe.tlaster.precompose.navigation.Navigator
 private val log = Logger.withTag("SignUp")
 
 @Serializable
+data class ResultData(
+    @SerialName("result_code")
+    val resultCode: Int,
+    @SerialName("result_message")
+    val resultMessage: String,
+    @SerialName("result_description")
+    val resultDescription: String
+)
+
+@Serializable
 data class DuplicatedResponse(
-    @SerialName("api_status")
-    val apiStatus: String,
-    val message: String?, // 이 필드가 null이 될 수 있으므로 String?로 지정합니다.
-    val data: Boolean
+    val result: ResultData,
+    val body: Boolean
 )
 
 class SignUpAPI {
@@ -71,13 +79,10 @@ class SignUpAPI {
 
     suspend fun duplicated(studentId: String): DuplicatedResponse {
         val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/member-server/api/student/sign-up/$studentId/duplicated")
-        val body: String = response.bodyAsText()
-        val result = Json.decodeFromString<DuplicatedResponse>(body)
-        log.i { "apiStatus: ${result.apiStatus}, data: ${result.data}" }
-        return result
+        return Json.decodeFromString<DuplicatedResponse>(response.bodyAsText())
     }
-
 }
+
 @Composable
 fun SignUp(navigator: Navigator) {
     var ID by remember { mutableStateOf("") }
@@ -106,7 +111,7 @@ fun SignUp(navigator: Navigator) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(100.dp)
+                    .height(130.dp)
                     .background(sky)
             )
             Row(
@@ -157,7 +162,9 @@ fun SignUp(navigator: Navigator) {
                                 coroutineScope.launch {
                                     var duplication = SignUpAPI()
                                     var result = duplication.duplicated(ID)
-                                    if (!result.data) {
+                                    var bodyValue = result.body
+                                    log.i { "result == $result" }
+                                    if (!bodyValue) {
                                         duplicationCheck = false
                                         alertMessageForDuplication = "사용 가능한 ID입니다."
                                     } else {

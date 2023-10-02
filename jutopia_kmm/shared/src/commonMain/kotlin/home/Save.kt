@@ -112,7 +112,6 @@ class saveAPI {
             contentType(ContentType.Application.Json)
             body = Json.encodeToString(requestBody)
         }
-        log.i {"$response"}
         log.i { "$response" }
     }
 }

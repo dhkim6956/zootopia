@@ -56,7 +56,7 @@ fun App() {
                     pauseTransition = ExitTransition.None,
                     resumeTransition = EnterTransition.None
                 ),
-                initialRoute = "/home",
+                initialRoute = "/mainpage",
             ) {
                 scene(
                     route = "/mainpage"
