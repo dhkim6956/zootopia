@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 from pydantic import BaseModel
+from pykrx import stock
 import pandas as pd
 
 router = APIRouter()
@@ -36,22 +37,43 @@ def get_chart(ticker: str, time_frame: str):
     now = datetime.now()
     
     if time_frame == "day":
+        end_date = datetime.today().strftime('%Y%m%d')
+        start_date = (datetime.today() - timedelta(days=30)).strftime('%Y%m%d')
+        
+        df = stock.get_market_ohlcv_by_date(start_date, end_date, ticker)
+        df['날짜'] = df.index.strftime('%m월 %d일')
+        df = df[['날짜', '종가']].tail(30) # 최근 30일 데이터만 추출
+        
+        # DataFrame을 dict 로 변환
+        data_to_return = []
+        for index, row in df.iterrows():
+            data_to_return.append({
+                "회사명": stock_name,
+                "시간": row['날짜'],
+                "현재 주식 가격": row['종가'],
+                "부호": None,
+                "전일대비 변화 가격": None,
+                "퍼센트": None
+            })
+        
+        return data_to_return
+        
         # 최근 30개의 일별 종가 데이터
-        pykrx_data = pykrx_collection.find_one({"_id": stock_name})
-        if not pykrx_data or "OHLCV" not in pykrx_data:
-            raise HTTPException(status_code=404, detail="pykrx's OHLCV data not found")
+        # pykrx_data = pykrx_collection.find_one({"_id": stock_name})
+        # if not pykrx_data or "OHLCV" not in pykrx_data:
+        #     raise HTTPException(status_code=404, detail="pykrx's OHLCV data not found")
         
-        daily_data = list(pykrx_data["OHLCV"].items())
-        daily_data.sort(key=lambda x: x[0], reverse=True) # 날짜 기준 내림차순 정렬
-        latest_data = daily_data[:30]
+        # daily_data = list(pykrx_data["OHLCV"].items())
+        # daily_data.sort(key=lambda x: x[0], reverse=True) # 날짜 기준 내림차순 정렬
+        # latest_data = daily_data[:30]
         
-        stocks = [{"회사명": stock_name, "시간": date, "현재 주식 가격": data["종가"]} for date, data in latest_data]
+        # stocks = [{"회사명": stock_name, "시간": date, "현재 주식 가격": data["종가"]} for date, data in latest_data]
         
-        # start_date = now - timedelta(days=30)
-        # results = realtime_collection.find({
-        #     "회사명": stock_name,
-        #     "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
-        # }).sort("시간", -1).limit(30)
+        # # start_date = now - timedelta(days=30)
+        # # results = realtime_collection.find({
+        # #     "회사명": stock_name,
+        # #     "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
+        # # }).sort("시간", -1).limit(30)
 
     elif time_frame == "hour": # 지난 24시간간 1시간 단위 종가 데이터
         results = realtime_collection.find({ # results의 타입은 cursor -> MongoDB find()의 결과
