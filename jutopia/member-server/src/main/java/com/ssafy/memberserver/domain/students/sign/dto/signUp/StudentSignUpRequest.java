@@ -14,13 +14,6 @@ public class StudentSignUpRequest {
     private String studentId;
     private String studentPwd;
     private String studentName;
-    private BigDecimal point;
-    private BigDecimal money;
-    private MemberBioStatus memberBioStatus;
-    private LocalDateTime createTimeAt;
-    private LocalDateTime updateTimeAt;
-    private MemberRole memberRole;
-    private MemberStatus memberStatus;
     private String school;
     private Integer grade;
     private Integer classRoom;
