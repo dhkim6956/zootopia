@@ -37,20 +37,13 @@ def get_chart(ticker: str, time_frame: str):
     now = datetime.now()
     
     if time_frame == "day":
-    # 최근 30개의 일별 종가 데이터
-        pykrx_data = pykrx_collection.find_one({"_id": stock_name})
-        if not pykrx_data or "OHLCV" not in pykrx_data:
-            raise HTTPException(status_code=404, detail="pykrx's OHLCV data not found")
-        
-        daily_data = list(pykrx_data["OHLCV"].items())
-        daily_data.sort(key=lambda x: x[0], reverse=True) # 날짜 기준 내림차순 정렬
-        latest_data = daily_data[:30]
-        
-        # DataFrame 생성 후, 인덱스 설정 및 정렬
-        df = pd.DataFrame(latest_data, columns=["timestamp", "data"])
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
-        df.set_index('timestamp', inplace=True)
-        df.sort_index(inplace=True)
+        # pykrx에서 주식 데이터 받아오기
+        try:
+            data = stock.get_market_ohlcv_by_date((datetime.now() - timedelta(days=30)).strftime('%Y%m%d'), 
+                                                datetime.now().strftime('%Y%m%d'), 
+                                                ticker)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error getting data from pykrx: {e}")
         
         # 결과 반환을 위한 Dictionary 생성
         result = {
@@ -62,10 +55,10 @@ def get_chart(ticker: str, time_frame: str):
         }
         
         # 데이터 파싱 및 적재
-        for index, row in df.iterrows():
+        for index, row in data.iterrows():
             timestamp_str = index.strftime('%m월 %d일')
             result["name"][timestamp_str] = stock_name
-            result["price"][timestamp_str] = row['data']['종가']
+            result["price"][timestamp_str] = str(int(round(row['종가'])))
             result["sign"][timestamp_str] = None
             result["price_change_prevday"][timestamp_str] = None
             result["percent"][timestamp_str] = None
