@@ -39,7 +39,9 @@ public class StudentSignService {
         studentRepository.flush();
         return StudentSignUpResponse.from(student);
     }
+    ///###########
 
+    
     @Transactional
     public SignInResponse signIn(SignInRequest signInRequest) {
         Optional<Student> temp = studentRepository.findByStudentIdAndMemberRole(signInRequest.getMemberId(),MemberRole.STUDENT);
