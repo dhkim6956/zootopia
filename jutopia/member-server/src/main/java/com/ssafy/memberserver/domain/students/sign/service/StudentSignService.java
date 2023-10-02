@@ -46,7 +46,7 @@ public class StudentSignService {
         log.info("{}",temp);
         Optional<Teacher> temp2 = teacherRepository.findByTeacherIdAndMemberRole(signInRequest.getMemberId(),MemberRole.TEACHER);
         log.info("{}",temp2);
-        if (!temp.isEmpty()) {
+        if (temp.isPresent()) {
             Student student =
                     Optional.ofNullable(studentRepository.findByStudentId(signInRequest.getMemberId()))
                             .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "존재하지 않는 아이디입니다."))
@@ -54,7 +54,7 @@ public class StudentSignService {
                             .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "비밀번호가 틀렸습니다"));
             String token = tokenProvider.createToken(String.format("%s:%s,", student.getStudentId(), student.getStudentName()));
             return SignInResponse.studentFrom(student, token);
-        } else if (!temp2.isEmpty()) {
+        } else if (temp2.isPresent()) {
             Teacher teacher =
                     Optional.ofNullable(teacherRepository.findByTeacherId(signInRequest.getMemberId()))
                             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디 입니다."))
