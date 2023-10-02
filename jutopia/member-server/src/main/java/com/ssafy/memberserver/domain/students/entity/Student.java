@@ -46,9 +46,9 @@ public class Student {
     @Enumerated(EnumType.STRING)
     SeatOwnershipStatus seatOwnershipStatus;
     private String school;
-    private Integer grade;
-    private Integer classRoom;
-    private Integer studentNumber;
+    private int grade;
+    private int classRoom;
+    private int studentNumber;
 
     public static Student from(StudentSignUpRequest studentSignUpRequest, PasswordEncoder passwordEncoder){
         return  Student.builder()

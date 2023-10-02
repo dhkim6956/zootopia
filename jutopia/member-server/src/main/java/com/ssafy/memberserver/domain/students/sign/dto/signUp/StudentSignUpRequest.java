@@ -15,7 +15,7 @@ public class StudentSignUpRequest {
     private String studentPwd;
     private String studentName;
     private String school;
-    private Integer grade;
-    private Integer classRoom;
-    private Integer studentNumber;
+    private int grade;
+    private int classRoom;
+    private int studentNumber;
 }
