@@ -5,16 +5,16 @@ import com.ssafy.memberserver.common.enums.MemberRole;
 import com.ssafy.memberserver.common.enums.MemberStatus;
 import com.ssafy.memberserver.common.enums.SeatOwnershipStatus;
 import com.ssafy.memberserver.domain.students.entity.Student;
-import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpResponse;
+import com.ssafy.memberserver.domain.teachers.entity.Teacher;
 import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
-public record StudentSignInResponse(
+public record SignInResponse(
         UUID id,
-        String studentId,
+        String MemberId,
         String name,
         MemberBioStatus memberBioStatus,
         BigDecimal money,
@@ -28,10 +28,10 @@ public record StudentSignInResponse(
         SeatOwnershipStatus seatOwnershipStatus,
         String token
 ) {
-    public static StudentSignInResponse from(Student student, String token){
-        return StudentSignInResponse.builder()
+    public static SignInResponse studentFrom(Student student, String token){
+        return SignInResponse.builder()
                 .id(student.getId())
-                .studentId(student.getStudentId())
+                .MemberId(student.getStudentId())
                 .name(student.getStudentName())
                 .memberStatus(student.getMemberStatus())
                 .memberRole(student.getMemberRole())
@@ -43,6 +43,16 @@ public record StudentSignInResponse(
                 .classroom(student.getClassRoom())
                 .studentNumber(student.getStudentNumber())
                 .seatOwnershipStatus(student.getSeatOwnershipStatus())
+                .token(token)
+                .build();
+    }
+    public static SignInResponse teacherFrom(Teacher teacher, String token){
+        return SignInResponse.builder()
+                .id(teacher.getId())
+                .MemberId(teacher.getTeacherId())
+                .name(teacher.getTeacherName())
+                .memberStatus(teacher.getMemberStatus())
+                .memberRole(teacher.getMemberRole())
                 .token(token)
                 .build();
     }
