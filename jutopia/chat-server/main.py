@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from py_eureka_client.eureka_client import EurekaClient
 from utils import generate_answer
-from datetime import datetime
+from datetime import datetime, timedelta
 # import httpx
 # import openai
 
@@ -47,7 +47,7 @@ def index():
 @app.post("/ask")
 async def answer(question: Question):
     ans = generate_answer(question.message)
-    now = datetime.now(timezone.kst)
+    now = datetime.now() + timedelta(hours=9)
     return { 
             "from_server": True, 
             "message": ans, 
