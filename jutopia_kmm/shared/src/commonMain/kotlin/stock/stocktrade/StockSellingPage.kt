@@ -35,7 +35,7 @@ fun StockSellingPage(
     stock: Stock,
     viewModel: StockTradeViewModel = moe.tlaster.precompose.viewmodel.viewModel(
         StockTradeViewModel::class
-    ) { StockTradeViewModel() }
+    ) { StockTradeViewModel(stock.id) }
 ) {
     //Todo: 판매, 구매 둘 다 현재 가격과 비교해 미체결로 갈지, 구매, 판매로 갈지 정해야한다.
     var orderQuantity by remember { mutableStateOf("1") }
@@ -43,8 +43,10 @@ fun StockSellingPage(
     var orderPrice by remember { mutableStateOf("${stockPrice}") }
     val keyboardController = LocalSoftwareKeyboardController.current
     var showDialog by remember { mutableStateOf(false) }
-    val myStocksCount by viewModel.myStocksCount.collectAsState()
-    var myStockCount = myStocksCount.firstOrNull{it.first == stock.id}?.second ?:0
+    val myStockCount by viewModel.myStockCount.collectAsState()
+    val tradeStatus by viewModel.tradeStatus.collectAsState()
+
+
 
     val totalAmount: Double =
         if (orderQuantity.isNotBlank() && orderPrice.isNotBlank()) {
@@ -128,14 +130,13 @@ fun StockSellingPage(
                 confirmButton = {
                     Button(onClick = {
                         val request = StockRequest(
-                            memberId = "d79eb207-290c-4d6c-9a1e-41dd4e831692",
+                            memberId = "e602882e-30ea-42d5-9fdc-631d2ffb07c1",
                             stockId = stock.id,
                             type = TradeType.SELL,
                             volume = orderQuantity.toLong(),
                             price = orderPrice.toInt(),
                         )
                         viewModel.tradeStock(request)
-                        myStockCount -= orderQuantity.toInt()
                         orderQuantity = "1"
                         orderPrice = "${stock.nowMoney}"
                         showDialog = false
@@ -156,6 +157,33 @@ fun StockSellingPage(
                         Text("판매량: ${orderQuantity}")
                         Text("총 금액: ${totalAmount}")
                     }
+                }
+            )
+        }
+        if (tradeStatus == TradeStatus.SUCCESS) {
+            AlertDialog(
+                onDismissRequest = { viewModel.resetTradeStatus() },
+                confirmButton = {
+                    Button(onClick = { viewModel.resetTradeStatus() }) {
+                        Text("확인")
+                    }
+                },
+                title = { Text("판매 성공!") },
+                text = {
+                    Text("판매가 성공적으로 이루어졌습니다.")
+                }
+            )
+        } else if (tradeStatus == TradeStatus.FAILURE){
+            AlertDialog(
+                onDismissRequest = { viewModel.resetTradeStatus() },
+                confirmButton = {
+                    Button(onClick = { viewModel.resetTradeStatus() }) {
+                        Text("확인")
+                    }
+                },
+                title = { Text("판매 실패") },
+                text = {
+                    Text("판매가 실패했습니다.")
                 }
             )
         }

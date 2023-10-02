@@ -22,6 +22,7 @@ class StockApiService {
 
     private companion object {
         const val BASE_URL = "http://j9c108.p.ssafy.io:8000/stock-server/api"
+        const val JWT_TOKEN = "test" //실제 토큰을 넣어야 하지만 임시로 userId를 넣는
     }
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -31,6 +32,8 @@ class StockApiService {
         }
         defaultRequest {
             url(BASE_URL)
+//            header("Authorization", "Bearer $JWT_TOKEN")
+            header("Authorization", "$JWT_TOKEN")
         }
     }
     private fun HttpRequestBuilder.apiUrl(path: String){
@@ -55,6 +58,11 @@ class StockApiService {
         }
     }
 
+    suspend fun getMyStock(memberId: String, stockId: String): HttpResponse {
+        return client.get{
+            apiUrl("memberstock/$memberId/$stockId")
+        }
+    }
     @OptIn(InternalAPI::class)
     suspend fun tradeStock(stockRequest: StockRequest): HttpResponse {
         val jsonData = Json.encodeToString(stockRequest)

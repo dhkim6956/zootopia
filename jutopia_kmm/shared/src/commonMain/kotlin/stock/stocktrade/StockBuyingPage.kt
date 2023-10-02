@@ -14,6 +14,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +34,7 @@ fun StockBuyingPage(
     stock: Stock,
     viewModel: StockTradeViewModel = moe.tlaster.precompose.viewmodel.viewModel(
         StockTradeViewModel::class
-    ) { StockTradeViewModel() }
+    ) { StockTradeViewModel(stock.id) }
 ) {
 
     var orderQuantity by remember { mutableStateOf("1") }
@@ -41,6 +42,7 @@ fun StockBuyingPage(
     var orderPrice by remember { mutableStateOf("${stockPrice}") }
     val keyboardController = LocalSoftwareKeyboardController.current
     var showDialog by remember { mutableStateOf(false) }
+    val tradeStatus by viewModel.tradeStatus.collectAsState()
 
     val totalAmount: Double =
         if (orderQuantity.isNotBlank() && orderPrice.isNotBlank()) {
@@ -123,7 +125,7 @@ fun StockBuyingPage(
                 confirmButton = {
                     Button(onClick = {
                         val request = StockRequest(
-                            memberId = "d79eb207-290c-4d6c-9a1e-41dd4e831692",
+                            memberId = "e602882e-30ea-42d5-9fdc-631d2ffb07c1",
                             stockId = stock.id,
                             type = TradeType.BUY,
                             volume = orderQuantity.toLong(),
@@ -150,6 +152,34 @@ fun StockBuyingPage(
                         Text("구매량: ${orderQuantity}")
                         Text("총 금액: ${totalAmount}")
                     }
+                }
+            )
+        }
+
+        if (tradeStatus == TradeStatus.SUCCESS) {
+            AlertDialog(
+                onDismissRequest = { viewModel.resetTradeStatus() },
+                confirmButton = {
+                    Button(onClick = { viewModel.resetTradeStatus() }) {
+                        Text("확인")
+                    }
+                },
+                title = { Text("구매 성공!") },
+                text = {
+                    Text("구매가 성공적으로 이루어졌습니다.")
+                }
+            )
+        } else if (tradeStatus == TradeStatus.FAILURE) {
+            AlertDialog(
+                onDismissRequest = { viewModel.resetTradeStatus() },
+                confirmButton = {
+                    Button(onClick = { viewModel.resetTradeStatus() }) {
+                        Text("확인")
+                    }
+                },
+                title = { Text("구매 실패") },
+                text = {
+                    Text("구매가 실패했습니다.")
                 }
             )
         }

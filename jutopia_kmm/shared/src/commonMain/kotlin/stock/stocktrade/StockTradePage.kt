@@ -20,7 +20,7 @@ fun StockTradePage(
     stockId: String,
     stockViewModel: StockViewModel,
     viewModel: StockTradeViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockTradeViewModel::class) {
-        StockTradeViewModel()
+        StockTradeViewModel(stockId = stockId)
     },
     navigator: Navigator,
     modifier: Modifier = Modifier

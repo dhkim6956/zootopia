@@ -1,5 +1,6 @@
 package stock.common
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import stock.stocktrade.TradeType
 
@@ -87,4 +88,10 @@ data class MyStock(
 data class MyStocksResponse(
     val result: ApiResult,
     val body: List<MyStock>
+)
+
+@Serializable
+data class MyStockResponse(
+    val result: ApiResult,
+    val body: MyStock
 )
