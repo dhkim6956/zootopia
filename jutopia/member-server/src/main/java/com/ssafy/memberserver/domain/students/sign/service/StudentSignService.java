@@ -41,8 +41,10 @@ public class StudentSignService {
                 .orElseThrow(()-> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"존재하지 않는 아이디입니다."))
                 .filter(it -> passwordEncoder.matches(studentSignInRequest.getStudentPwd(),it.getStudentPwd()))
                 .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"비밀번호가 틀렸습니다"));
-                String accessToken = tokenProvider.createAccessToken("test");
-                return new StudentSignInResponse(student.getId());
+            String token = tokenProvider.createToken(String.format("%s:%s,",student.getStudentId(),student.getStudentName()));
+            String temp = tokenProvider.decodeJwtPayloadSubject(token);
+            log.info("{}",temp);
+            return StudentSignInResponse.from(student,token);
     }
     public boolean checkStudentIdDuplicated(String studentId){
         return studentRepository.existsByStudentId(studentId);
