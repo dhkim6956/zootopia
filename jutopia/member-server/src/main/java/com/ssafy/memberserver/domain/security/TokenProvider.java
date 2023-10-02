@@ -3,8 +3,11 @@ package com.ssafy.memberserver.domain.security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.memberserver.common.config.YamlLoadFactory;
+import com.ssafy.memberserver.domain.students.entity.Student;
+import com.ssafy.memberserver.domain.students.repository.StudentRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -13,44 +16,54 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 
+@RequiredArgsConstructor
 @Service
 @PropertySource(value = {"token.yaml"}, factory = YamlLoadFactory.class)
 public class TokenProvider {
+    private final StudentRepository studentRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Value("${secret-key}")
     String secretKey;
     @Value("${expiration-minutes}")
     long expirationMinutes;
-//    @Value("${secret-key}")
-//    String secretKey;
-//    @Value("${secret-key}")
-//    String secretKey;
 
-    //TODO: subject를 유니크한 값으로 넣기
-    public String createAccessToken(String memberSpecification){
+    public String createToken(String userSpecification){
+        String[] userInfo = userSpecification.split(":");
+        String studentId = userInfo[0];
+        Optional<Student> student = studentRepository.findByStudentId(studentId);
+        Student temp = student.get();
+        String subject = student.get().getSchool() + student.get().getGrade() + student.get().getClassRoom() + student.get().getStudentNumber();
+
+        Map<String, String> tokenSub = new HashMap<>();
+        tokenSub.put("school",temp.getSchool());
+        tokenSub.put("grade", String.valueOf(temp.getGrade()));
+        tokenSub.put("classroom", String.valueOf(temp.getClassRoom()));
+        tokenSub.put("studentNumber", String.valueOf(temp.getStudentNumber()));
+
         return Jwts.builder()
-                        .setIssuer("test")
-                        .setIssuedAt(new Date())
-                        .setSubject("test")
-                        .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
-                        .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
+                .setIssuer("jutopia")
+                .setIssuedAt(new Date())
+                .setSubject(tokenSub.toString())
+                .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
+                .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
                 .compact();
     }
-//    public String createRefreshToken(){
-//
-//    }
-    //디코더 후 "sub"값만 가져 오는 함수
-    //split[0]은 header, split[1] = payload
+
+public String validateTokenAndGetSubject(String token) {
+    return Jwts.parserBuilder()
+            .setSigningKey(secretKey.getBytes())
+            .build()
+            .parseClaimsJws(token)
+            .getBody()
+            .getSubject();
+}
     public String decodeJwtPayloadSubject(String oldAccessToken) throws JsonProcessingException {
         return objectMapper.readValue(
                 new String(Base64.getDecoder().decode(oldAccessToken.split("\\.")[1]), StandardCharsets.UTF_8),
                 Map.class
         ).get("sub").toString();
-
     }
 }

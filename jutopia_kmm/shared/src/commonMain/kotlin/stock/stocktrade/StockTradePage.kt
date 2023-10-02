@@ -11,26 +11,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import moe.tlaster.precompose.navigation.Navigator
 import stock.common.StockRow
+import stock.common.StockViewModel
 import stock.stocklist.StockListViewModel
 
 
 @Composable
 fun StockTradePage(
     stockId: String,
+    stockViewModel: StockViewModel,
     viewModel: StockTradeViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockTradeViewModel::class) {
         StockTradeViewModel()
     },
     navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
-    val stocks by StockListViewModel().stocks.collectAsState()
-    val stock = stocks.filter { it.id.equals(stockId) }.first()
+    val stock by stockViewModel.currentStock.collectAsState()
 
     val tradeType by viewModel.tradeType.collectAsState()
 
     Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
         Button(
-            onClick = { viewModel.changeTradeType(TradeType.Buy) },
+            onClick = { viewModel.changeTradeType(TradeType.BUY) },
             modifier = Modifier.weight(1f)
         ) {
             Text("구매")
@@ -50,16 +51,16 @@ fun StockTradePage(
 
     }
     when (tradeType) {
-        TradeType.Buy -> {
-            StockBuyingPage(stock)
+        TradeType.BUY -> {
+            StockBuyingPage(stock!!)
         }
 
         TradeType.SELL -> {
-            StockSellingPage(stock)
+            StockSellingPage(stock!!)
         }
 
         TradeType.Pending -> {
-            StockPendingPage(stock)
+            StockPendingPage(stock!!)
         }
     }
 }

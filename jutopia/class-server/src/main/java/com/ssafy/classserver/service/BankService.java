@@ -17,5 +17,5 @@ public interface BankService {
 
     MemberSavingEntity createMemProduct(MemberSavingEntity request);
 
-    Optional<MemberSavingEntity> getMemSaving(UUID memberId);
+    Iterable<MemberSavingEntity> getMemSaving(UUID memberId);
 }

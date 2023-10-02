@@ -26,7 +26,7 @@ fun StockRow(stock: Stock, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(stock.name, fontSize = 20.sp)
+        Text(stock.stockName, fontSize = 20.sp)
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -34,7 +34,7 @@ fun StockRow(stock: Stock, onClick: () -> Unit) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("${formatDouble(stock.price, 3)}", fontSize = 20.sp)
+                Text("${stock.price}", fontSize = 20.sp)
                 val arrowAndColor =
                     if (stock.changePercent!! > 0) "↑" to Color.Red else "↓" to Color.Blue
                 Text(arrowAndColor.first, color = arrowAndColor.second, fontSize = 20.sp)

@@ -37,20 +37,18 @@ fun StockListPage(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(13.dp),
         horizontalArrangement = Arrangement.End
     ) {
         Text("보유 주식만 보기", fontWeight = FontWeight.Bold, modifier = Modifier.padding(top = 11.dp))
         Switch(checked = showOwnedOnly, onCheckedChange = { showOwnedOnly = it })
     }
 
-    LazyColumn(modifier = Modifier.padding(16.dp)) {
+    LazyColumn(modifier = Modifier.padding(13.dp)) {
         items(filteredStocks) { stock ->
             StockRow(stock) {
-                //페이지 이동 로직
                 log.i { stock.id }
                 navigator.navigate("/stockChart/${stock.id}")
-                log.i { "이동 실패" }
             }
         }
     }

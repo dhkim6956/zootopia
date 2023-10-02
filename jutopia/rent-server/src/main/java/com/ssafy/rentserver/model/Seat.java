@@ -27,7 +27,7 @@ public class Seat {
     private int position;
     @Column(precision = 30, scale = 4, nullable = false)
     private BigDecimal price;
-    private UUID userId;
+    private String userId;
 
     @Column(nullable = false)
     private int clazzNumber;
@@ -52,7 +52,7 @@ public class Seat {
     public void changeStatus(SeatStatus status){
         this.seatStatus = status;
     }
-    public void changeUserId(UUID userId){
+    public void changeUserId(String userId){
         this.userId = userId;
     }
 }
