@@ -4,6 +4,7 @@ import Variables.ColorsOnPrimary
 import Variables.ColorsOnPrimaryVariant
 import Variables.ColorsPrimary
 import Variables.ColorsPrimaryVariant
+import addComma
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +38,6 @@ import org.jetbrains.compose.resources.painterResource
 fun MyAccount(viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
     MyAccountViewModel()
 }) {
-
     AccountInfo()
     History(viewModel)
 }
@@ -129,7 +129,7 @@ fun History(viewModel: MyAccountViewModel) {
             ) {
                 Text(detail.memo, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    detail.amount.toString() + "원",
+                    addComma(detail.amount.toDouble()) + "원",
                     fontSize = 20.sp,
                     color = if (detail.type == transactionType.Deposit) Color(0xFFCB0B47) else Color(
                         0xFF167BDF
@@ -142,7 +142,7 @@ fun History(viewModel: MyAccountViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Text(detail.changes.toString() + "원", color = Color(0xFF7B7B7B))
+                Text(addComma(detail.changes.toDouble()) + "원", color = Color(0xFF7B7B7B))
             }
         }
     }

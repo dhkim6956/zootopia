@@ -40,6 +40,10 @@ actual fun formatDouble(value: Double, decimalPlaces: Int): String {
     return formatter.stringFromNumber(NSNumber(value))!!
 }
 
+actual fun addComma(value: Double): String {
+    return "test"
+}
+
 actual fun openUrl(url: String?) {
     val nsUrl = url?.let { NSURL.URLWithString(it) } ?: return
     UIApplication.sharedApplication.openURL(nsUrl)
