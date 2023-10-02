@@ -39,14 +39,12 @@ public class StudentSignService {
         studentRepository.flush();
         return StudentSignUpResponse.from(student);
     }
+
     @Transactional
     public SignInResponse signIn(SignInRequest signInRequest) {
         Optional<Student> temp = studentRepository.findByStudentIdAndMemberRole(signInRequest.getMemberId(),MemberRole.STUDENT);
         Optional<Teacher> temp2 = teacherRepository.findByTeacherIdAndMemberRole(signInRequest.getMemberId(),MemberRole.TEACHER);
         if (!temp.isPresent()) {
-
-        log.info("{}",temp2);
-        if (temp.isPresent()) {
             Student student =
                     Optional.ofNullable(studentRepository.findByStudentId(signInRequest.getMemberId()))
                             .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "존재하지 않는 아이디입니다."))
@@ -55,7 +53,6 @@ public class StudentSignService {
             String token = tokenProvider.createToken(String.format("%s:%s,", student.getStudentId(), student.getStudentName()));
             return SignInResponse.studentFrom(student, token);
         } else if (!temp2.isPresent()) {
-        } else if (temp2.isPresent()) {
             Teacher teacher =
                     Optional.ofNullable(teacherRepository.findByTeacherId(signInRequest.getMemberId()))
                             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디 입니다."))
