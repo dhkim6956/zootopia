@@ -55,8 +55,8 @@ def get_chart(ticker: str, time_frame: str):
 
     elif time_frame == "hour": # 지난 24시간간 1시간 단위 종가 데이터
         results = realtime_collection.find({ # results의 타입은 cursor -> MongoDB find()의 결과
-            "회사명 ": stock_name,
-            "시간" : {"gte": datetime.now() - timedelta(hours=24)} # (now - 24h) ~ now
+            "회사명": stock_name,
+            "시간" : {"$gte": datetime.now() - timedelta(hours=24)} # (now - 24h) ~ now
         })
         df = pd.DataFrame(list(results)) # list(cursor)를 df로 변환
         
@@ -66,7 +66,7 @@ def get_chart(ticker: str, time_frame: str):
         df['시간'] = pd.to_datetime(df['시간']) # ISODate 타입을 datetime 타입으로 변환
         df.set_index('시간', inplace=True) # 시간을 인덱스로 설정
         resampled_data = df.resample('1H').last() # 1시간 단위로 resample
-        cleaned_data = resampled_data[:24] # 최근 24개의 데이터만 추출
+        cleaned_data = resampled_data[-24:] # 최근 24개의 데이터만 추출
         
         cleaned_data.rename(columns= {"부호": "sign", 
                             "회사명": "name", 
@@ -74,7 +74,7 @@ def get_chart(ticker: str, time_frame: str):
                             "전일대비 변화 가격":"price_change_prevday", 
                             "퍼센트":"percent"
                             }, inplace=True)
-        
+                
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
 
     elif time_frame == "minute": # 지난 60분간 1분 단위 종가 데이터
@@ -90,14 +90,16 @@ def get_chart(ticker: str, time_frame: str):
         df['시간'] = pd.to_datetime(df['시간']) # ISODate 타입을 datetime 타입으로 변환
         df.set_index('시간', inplace=True) # 시간을 인덱스로 설정
         resampled_data = df.resample('1T').last() # 1분 단위로 resample
-        cleaned_data = resampled_data[:60] # 최근 60개의 데이터만 추출
+        cleaned_data = resampled_data[-60:] # 최근 60개의 데이터만 추출
         
-        cleaned_data.rename(columns= {"부호": "sign", 
+        df.rename(columns= {"부호": "sign", 
                             "회사명": "name", 
                             "현재 주식 가격":"price", 
                             "전일대비 변화 가격":"price_change_prevday", 
                             "퍼센트":"percent"
                             }, inplace=True)
+        
+        cleaned_data.index = df.index.strftime('%H:%M') # 시간 파싱
         
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
         
