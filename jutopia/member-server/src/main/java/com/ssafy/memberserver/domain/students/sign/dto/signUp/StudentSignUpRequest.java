@@ -18,5 +18,4 @@ public class StudentSignUpRequest {
     private Integer grade;
     private Integer classRoom;
     private Integer studentNumber;
-    private SeatOwnershipStatus seatOwnershipStatus;
 }
