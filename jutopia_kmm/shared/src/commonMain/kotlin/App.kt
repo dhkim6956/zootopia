@@ -128,16 +128,18 @@ fun App() {
                     StockListScreen(navigator)
                 }
                 scene(
-                    route = "/stockChart/{stockId}?"
+                    route = "/stockChart/{stockId}/{stockCode}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockScreen(stockId!!, navigator)
+                    val stockCode: String? = backStackEntry.path<String>("stockCode")
+                    StockScreen(stockId!!,stockCode!!, navigator)
                 }
                 scene(
-                    route = "/stocktrade/{stockId}?"
+                    route = "/stocktrade/{stockId}/{stockCode}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockScreen(stockId!!, navigator)
+                    val stockCode: String? = backStackEntry.path<String>("stockCode")
+                    StockScreen(stockId!!,stockCode!!, navigator)
                 }
                 scene(
                     route = "/send"

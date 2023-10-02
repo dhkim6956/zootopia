@@ -96,8 +96,12 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
                 log.i {
                     "트레이드 결과: ${apiResponse.body}"
                 }
-                _tradeStatus.value = TradeStatus.SUCCESS
-                getMyStockInfo()
+                if (apiResponse.body == null) {
+                    _tradeStatus.value = TradeStatus.FAILURE
+                } else {
+                    _tradeStatus.value = TradeStatus.SUCCESS
+                    getMyStockInfo()
+                }
             } catch (e: Exception) {
                 log.i{"trade 에러 : ${e}"}
                 _tradeStatus.value = TradeStatus.FAILURE

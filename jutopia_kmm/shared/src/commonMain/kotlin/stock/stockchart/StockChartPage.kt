@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,33 +33,40 @@ import stock.stocklist.StockListViewModel
 @Composable
 fun StockChartPage(
     stockId: String,
+    stockCode: String,
     viewModel: StockChartViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockChartViewModel::class) {
-        StockChartViewModel(stockId)
+        StockChartViewModel(stockId, stockCode)
     },
     stockViewModel: StockViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockViewModel::class) {
-        StockViewModel(stockId)
+        StockViewModel(stockId, stockCode)
     },
     navigator: Navigator,
     modifier: Modifier = Modifier
 ) {
     val chartData by viewModel.chartData.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
     val clickedPoints = remember { mutableStateListOf<Pair<Float, Float>>() }
-    Box(
-        modifier = Modifier.height(350.dp)
-    ){
-        chart(
-            chartData, clickedPoints,
-        )
-    }
-    Button(
-        onClick = {
-            stockViewModel.changePage(PageType.TRADE)
-        },
-        modifier = Modifier
-            .fillMaxWidth()
 
-    ) {
-        Text("주문")
+    if (isLoading) {
+        CircularProgressIndicator()
+    } else{
+        Box(
+            modifier = Modifier.height(350.dp)
+        ){
+            chart(
+                chartData, clickedPoints,
+            )
+        }
+        Button(
+            onClick = {
+                stockViewModel.changePage(PageType.TRADE)
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+
+        ) {
+            Text("주문")
+        }
     }
 
 
@@ -66,7 +74,7 @@ fun StockChartPage(
 
 @Composable
 fun chart(
-    chartData: List<Pair<Int, Double>>,
+    chartData: List<Pair<String, Double>>,
     clickedPoints: MutableList<Pair<Float, Float>>,
     modifier: Modifier = Modifier
 ) {

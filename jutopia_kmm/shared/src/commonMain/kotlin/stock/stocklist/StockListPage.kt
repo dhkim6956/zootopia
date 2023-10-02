@@ -47,8 +47,7 @@ fun StockListPage(
     LazyColumn(modifier = Modifier.padding(13.dp)) {
         items(filteredStocks) { stock ->
             StockRow(stock) {
-                log.i { stock.id }
-                navigator.navigate("/stockChart/${stock.id}")
+                navigator.navigate("/stockChart/${stock.id}/${stock.stockCode}")
             }
         }
     }

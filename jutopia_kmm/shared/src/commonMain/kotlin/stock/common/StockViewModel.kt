@@ -23,7 +23,7 @@ enum class StockLoadingState {
 
 private val log = Logger.withTag("StockAPI")
 
-class StockViewModel(stockId: String) :ViewModel() {
+class StockViewModel(stockId: String, stockCode: String) :ViewModel() {
     private val _currentPage = MutableStateFlow(PageType.CHART)
     val currentPage: StateFlow<PageType> = _currentPage
 
@@ -41,7 +41,6 @@ class StockViewModel(stockId: String) :ViewModel() {
                 _loadingState.emit(StockLoadingState.LOADING)
                 val response = stockApiService.getStock(stockId)
                 val apiResponse = Json.decodeFromString<StockResponse>(response.bodyAsText())
-                // TODO: 왜 여기는 가격변동 추가 안된거야..
                 _currentStock.emit(apiResponse.body!!)
                 _loadingState.emit(StockLoadingState.LOADED)
             } catch (e: Exception){

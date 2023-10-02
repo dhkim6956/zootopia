@@ -2,6 +2,7 @@ package stock.common
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import stock.stocktrade.TradeType
 
 @Serializable
@@ -79,6 +80,11 @@ data class MyStock(
     val stockId: String,
     val stockName: String,
     val stockCode: String,
+    val nowMoney: Int,
+    val prevMoney: Int,
+    val changeMoney: Int,
+    val changeRate: Double,
+    val type: Int,
     val qty: Int,
     val totalPrice: Double,
     val avgPrice: Double
@@ -91,7 +97,18 @@ data class MyStocksResponse(
 )
 
 @Serializable
+data class StockChart(
+    val sign: Map<String, String?>,
+    val name: Map<String, String?>,
+    val price: Map<String, String?>,
+    @JsonNames("price_change_prevday")val priceChangePrevDay:Map<String, String?>,
+    val percent: Map<String, String?>
+)
+
+
+@Serializable
 data class MyStockResponse(
     val result: ApiResult,
     val body: MyStock
 )
+
