@@ -68,12 +68,12 @@ def get_chart(ticker: str, time_frame: str):
         resampled_data = df.resample('1H').last() # 1시간 단위로 resample
         cleaned_data = resampled_data[:24] # 최근 24개의 데이터만 추출
         
-        df.rename(columns={"부호": "sign", 
-                    "회사명": "name", 
-                    "현재 주식 가격":"price", 
-                    "전일대비 변화 가격":"price_change_prevday", 
-                    "퍼센트":"percent"
-                    }, inplace=True)
+        df.rename(columns= {"부호": "sign", 
+                            "회사명": "name", 
+                            "현재 주식 가격":"price", 
+                            "전일대비 변화 가격":"price_change_prevday", 
+                            "퍼센트":"percent"
+                            }, inplace=True)
         
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
 
@@ -92,12 +92,12 @@ def get_chart(ticker: str, time_frame: str):
         resampled_data = df.resample('1T').last() # 1분 단위로 resample
         cleaned_data = resampled_data[:60] # 최근 60개의 데이터만 추출
         
-        df.rename(columns={"부호": "sign", 
-                           "회사명": "name", 
-                           "현재 주식 가격":"price", 
-                           "전일대비 변화 가격":"price_change_prevday", 
-                           "퍼센트":"percent"
-                           }, inplace=True)
+        df.rename(columns= {"부호": "sign", 
+                            "회사명": "name", 
+                            "현재 주식 가격":"price", 
+                            "전일대비 변화 가격":"price_change_prevday", 
+                            "퍼센트":"percent"
+                            }, inplace=True)
         
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
         
