@@ -55,20 +55,21 @@ public class Student {
                 .studentId(studentSignUpRequest.getStudentId())
                 .studentPwd(passwordEncoder.encode(studentSignUpRequest.getStudentPwd()))
                 .studentName(studentSignUpRequest.getStudentName())
-                .point(studentSignUpRequest.getPoint())
-                .money(studentSignUpRequest.getMoney())
                 .memberBioStatus(MemberBioStatus.INACTIVE)
+                .money(BigDecimal.ZERO)
+                .point(BigDecimal.ZERO)
                 .createdAt(LocalDateTime.now())
-                .updatedAt(studentSignUpRequest.getUpdateTimeAt())
-                .memberRole(studentSignUpRequest.getMemberRole())
-                .memberStatus(studentSignUpRequest.getMemberStatus())
+                .updatedAt(LocalDateTime.now())
+                .memberRole(MemberRole.STUDENT)
+                .memberStatus(MemberStatus.ACTIVE)
                 .school(studentSignUpRequest.getSchool())
                 .grade(studentSignUpRequest.getGrade())
                 .classRoom(studentSignUpRequest.getClassRoom())
                 .studentNumber(studentSignUpRequest.getStudentNumber())
-                .seatOwnershipStatus(studentSignUpRequest.getSeatOwnershipStatus())
+                .seatOwnershipStatus(SeatOwnershipStatus.NOTOWNED)
                 .build();
     }
+    //##############
     public void update(StudentUpdateRequest studentUpdateRequest, PasswordEncoder passwordEncoder){
         if(studentUpdateRequest.getStudentNewPwd() != null || !studentUpdateRequest.getStudentPwd().isBlank()){
             this.studentPwd = passwordEncoder.encode(studentUpdateRequest.getStudentNewPwd());
