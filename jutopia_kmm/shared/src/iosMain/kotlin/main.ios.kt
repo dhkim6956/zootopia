@@ -3,9 +3,12 @@ import androidx.compose.ui.text.platform.Typeface
 import moe.tlaster.precompose.PreComposeApplication
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Typeface
+import platform.Foundation.NSLocale
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
+import platform.Foundation.NSNumberFormatterDecimalStyle
 import platform.Foundation.NSURL
+import platform.Foundation.currentLocale
 import platform.UIKit.UIApplication
 
 
@@ -36,12 +39,17 @@ actual fun formatDouble(value: Double, decimalPlaces: Int): String {
     val formatter = NSNumberFormatter()
     formatter.minimumFractionDigits = 0u
     formatter.maximumFractionDigits = decimalPlaces.toULong()
-    formatter.numberStyle = 1u //Decimal
-    return formatter.stringFromNumber(NSNumber(value))!!
+    formatter.numberStyle = 1u
+
+    return formatter.stringFromNumber(NSNumber(value)) ?: "unsupported format"
 }
 
 actual fun addComma(value: Double): String {
-    return "test"
+    val formatter = NSNumberFormatter()
+    formatter.locale = NSLocale(localeIdentifier = "ko_KR")
+    formatter.numberStyle = NSNumberFormatterDecimalStyle
+
+    return formatter.stringFromNumber(NSNumber(value)) ?: "unsupported format"
 }
 
 actual fun openUrl(url: String?) {
