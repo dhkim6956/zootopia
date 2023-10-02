@@ -7,6 +7,7 @@ import com.ssafy.stockserver.domain.client.ResponseMember;
 import com.ssafy.stockserver.domain.memberStock.service.MemberStockService;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.service.StockService;
+import com.ssafy.stockserver.domain.stock.vo.response.ResponseStock;
 import com.ssafy.stockserver.domain.trading.entity.TradeType;
 import com.ssafy.stockserver.domain.trading.entity.Trading;
 import com.ssafy.stockserver.domain.trading.service.TradingService;
@@ -18,6 +19,7 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.util.Optional;
 
@@ -47,44 +49,42 @@ public class TradingController {
     public Api<ResponseTrade> createTrade(@RequestBody RequestTrade requestTrade) {
         Trading trade = mapper.map(requestTrade, Trading.class);
         trade.setTotalPrice(requestTrade.getPrice().multiply(BigDecimal.valueOf(requestTrade.getVolume())));
-        Optional<Stock> stock = stockService.getStock(requestTrade.getStockId());
 
-        if (stock.isPresent()) {    // 해당 종목이 있으면
-            trade.setStock(stock.get());
-            trade.setMemberId(requestTrade.getMemberId());
+        Optional<Stock> stock = stockService.getOneStock(requestTrade.getStockId());
 
-            // 멤버 보유 포인트 정보를 요청한다 (Member-server)
-            ResponseMember member = mapper.map(memberServerClient.getStudent(requestTrade.getMemberId()).data(), ResponseMember.class);
+        if (!stock.isPresent()) return Api.NOT_FOUND(null); // 예: 404 Not Found
 
-            if(requestTrade.getType() == TradeType.BUY && trade.getTotalPrice().compareTo(member.getPoint()) > 0) {
-                // 매수인데 포인트가 부족한 경우
-                return Api.BAD_REQUEST(null, "포인트가 부족합니다.");
-            }
+        trade.setStock(stock.get());
+        trade.setMemberId(requestTrade.getMemberId());
 
-            if (requestTrade.getType() == TradeType.SELL) {
-                // 매도인 경우
-                trade.setTotalPrice(trade.getTotalPrice().negate());
-            }
+        // 멤버 보유 포인트 정보를 요청한다 (Member-server)
+        ResponseMember member = mapper.map(memberServerClient.getStudent(requestTrade.getMemberId()).data(), ResponseMember.class);
 
-            // 주식 주문
-            trade = tradingService.save(trade);
-            // 학생 포인트 변동 요청
-            MemberPointUpdateRequest requestMember = new MemberPointUpdateRequest(requestTrade.getMemberId(), trade.getTotalPrice());
-            memberServerClient.memberPointUpdate(requestMember);
-            // 학생 보유 주식 종목 업데이트
-            // 프론트에서 보유 종목 있는걸 걸렀다 전재하에 작성
-            memberStockService.updateStock(trade);
-
-
-
-            // 결과 반환
-            ResponseTrade result = mapper.map(trade, ResponseTrade.class);
-            result.setStockName(stock.get().getStockName());
-            result.setStockCode(stock.get().getStockCode());
-            return Api.CREATED(result);
-        } else {
-            // Optional이 비어있는 경우에 대한 처리
-            return Api.NOT_FOUND(null); // 예: 404 Not Found
+        if(requestTrade.getType() == TradeType.BUY && trade.getTotalPrice().compareTo(member.getPoint()) > 0) {
+            // 매수인데 포인트가 부족한 경우
+            return Api.BAD_REQUEST(null, "포인트가 부족합니다.");
         }
+
+        if (requestTrade.getType() == TradeType.SELL) {
+            // 매도인 경우
+            trade.setTotalPrice(trade.getTotalPrice().negate());
+        }
+
+        // 주식 주문
+        trade = tradingService.save(trade);
+        // 학생 포인트 변동 요청
+        MemberPointUpdateRequest requestMember = new MemberPointUpdateRequest(requestTrade.getMemberId(), trade.getTotalPrice());
+        memberServerClient.memberPointUpdate(requestMember);
+        // 학생 보유 주식 종목 업데이트
+        // 프론트에서 보유 종목 있는걸 걸렀다 전재하에 작성
+        memberStockService.updateStock(trade);
+
+
+
+        // 결과 반환
+        ResponseTrade result = mapper.map(trade, ResponseTrade.class);
+        result.setStockName(stock.get().getStockName());
+        result.setStockCode(stock.get().getStockCode());
+        return Api.CREATED(result);
     }
 }

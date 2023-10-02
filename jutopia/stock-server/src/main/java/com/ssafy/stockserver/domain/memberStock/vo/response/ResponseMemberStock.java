@@ -16,12 +16,23 @@ public class ResponseMemberStock {
     private UUID stockId;
     private String stockName;
     private String stockCode;
+    private BigDecimal nowMoney;
+    private BigDecimal prevMoney;
+    private BigDecimal changeMoney;
+    private Double changeRate;
+    // + / -
+    private int type;
 
-    // 총 보유 수량
+    /**
+     * 보유 주식의 총 수량입니다.
+     */
     private Long qty;
-    // 총 보유 금액
+    /**
+     * 보유 주식의 매입금액 입니다.
+     */
     private BigDecimal totalPrice;
-    // 평단가
+    /**
+     * 보유 주식의 평단가격입니다.
+     */
     private BigDecimal avgPrice;
-
 }

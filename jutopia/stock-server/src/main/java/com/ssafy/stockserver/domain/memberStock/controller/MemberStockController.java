@@ -6,6 +6,7 @@ import com.ssafy.stockserver.domain.memberStock.service.MemberStockService;
 import com.ssafy.stockserver.domain.memberStock.vo.response.ResponseMemberStock;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.service.StockService;
+import com.ssafy.stockserver.domain.stock.vo.response.ResponseStock;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -43,12 +44,17 @@ public class MemberStockController {
         List<ResponseMemberStock> result = new ArrayList<>();
 
         memberStockList.forEach(s -> {
-            Optional<Stock> stock = stockService.getStock(s.getStock().getId());
+            ResponseStock stock = stockService.getStock(s.getStock().getId());
 
             ResponseMemberStock responseMemberStock = mapper.map(s, ResponseMemberStock.class);
-            responseMemberStock.setStockId(stock.get().getId());
-            responseMemberStock.setStockName(stock.get().getStockName());
-            responseMemberStock.setStockCode(stock.get().getStockCode());
+            responseMemberStock.setStockId(stock.getId());
+            responseMemberStock.setStockName(stock.getStockName());
+            responseMemberStock.setStockCode(stock.getStockCode());
+            responseMemberStock.setNowMoney(stock.getNowMoney());
+            responseMemberStock.setPrevMoney(stock.getPrevMoney());
+            responseMemberStock.setChangeMoney(stock.getChangeMoney());
+            responseMemberStock.setChangeRate(stock.getChangeRate());
+            responseMemberStock.setType(stock.getType());
             result.add(responseMemberStock);
         });
         return Api.OK(result);
@@ -62,11 +68,18 @@ public class MemberStockController {
 
         if (!memberStock.isPresent()) return Api.NOT_FOUND(null);
 
+
         ResponseMemberStock responseMemberStock = mapper.map(memberStock.get(), ResponseMemberStock.class);
         responseMemberStock.setStockId(memberStock.get().getStock().getId());
         responseMemberStock.setStockName(memberStock.get().getStock().getStockName());
         responseMemberStock.setStockCode(memberStock.get().getStock().getStockCode());
 
+        ResponseStock stock = stockService.getStock(stockId);
+        responseMemberStock.setNowMoney(stock.getNowMoney());
+        responseMemberStock.setPrevMoney(stock.getPrevMoney());
+        responseMemberStock.setChangeMoney(stock.getChangeMoney());
+        responseMemberStock.setChangeRate(stock.getChangeRate());
+        responseMemberStock.setType(stock.getType());
         return Api.OK(responseMemberStock);
     }
 }
