@@ -36,15 +36,13 @@ public class StudentSignService {
     }
     @Transactional
     public StudentSignInResponse studentSignIn(StudentSignInRequest studentSignInRequest) throws JsonProcessingException {
-//        Student student =
+        Student student =
                 Optional.ofNullable(studentRepository.findByStudentId(studentSignInRequest.getStudentId()))
                 .orElseThrow(()-> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"존재하지 않는 아이디입니다."))
-                .filter(student -> passwordEncoder.matches(studentSignInRequest.getStudentPwd(),student.getStudentPwd()))
+                .filter(it -> passwordEncoder.matches(studentSignInRequest.getStudentPwd(),it.getStudentPwd()))
                 .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"비밀번호가 틀렸습니다"));
                 String accessToken = tokenProvider.createAccessToken("test");
-                log.info("accessToken:"+"{}",accessToken);
-                log.info("decodeJwtPayloadSubject:"+"{}",tokenProvider.decodeJwtPayloadSubject(accessToken));
-        return new StudentSignInResponse();
+                return new StudentSignInResponse(student.getId());
     }
     public boolean checkStudentIdDuplicated(String studentId){
         return studentRepository.existsByStudentId(studentId);

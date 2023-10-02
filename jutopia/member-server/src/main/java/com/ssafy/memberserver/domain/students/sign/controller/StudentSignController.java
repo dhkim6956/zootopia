@@ -9,10 +9,12 @@ import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRespo
 import com.ssafy.memberserver.domain.students.sign.service.StudentSignService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 @RequestMapping("/member-server/api/student")
 public class StudentSignController {
     private final StudentSignService studentSignService;
@@ -24,6 +26,11 @@ public class StudentSignController {
     @Operation(summary = "학생 회원가입")
     @PostMapping("/sign-up")
     public Api<StudentSignUpResponse> StudentSignUp(@RequestBody StudentSignUpRequest studentSignUpRequest){
+        log.info("student signUp request : {}",studentSignUpRequest);
+        log.info("student signUp school : {}",studentSignUpRequest.getSchool().getClass().getName());
+        log.info("student signUp grade : {}",studentSignUpRequest.getGrade());
+        log.info("student signUp number : {}",studentSignUpRequest.getStudentNumber());
+        log.info("student signUp classroom : {}",studentSignUpRequest.getClassRoom());
         return Api.OK(studentSignService.studentSignUp(studentSignUpRequest));
     }
     @Operation(summary = "학생 회원가입 아이디 중복 체크")
