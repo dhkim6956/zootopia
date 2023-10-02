@@ -36,4 +36,9 @@ public class AccountController {
     public ApiResponse sendMoney(@RequestBody SendMoneyRequest sendMoneyRequest){
         return ApiResponse.success(accountService.sendMoney(sendMoneyRequest));
     }
+    @Operation(summary = "특정 반 학생의 목록")
+    @GetMapping("/classroom/studentlist")
+    public ApiResponse getClassRoom(@RequestParam UUID classroomId){
+        return ApiResponse.success(accountService.classRoomList(classroomId));
+    }
 }

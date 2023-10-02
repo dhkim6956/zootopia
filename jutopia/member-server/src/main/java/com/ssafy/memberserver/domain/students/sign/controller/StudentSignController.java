@@ -3,9 +3,8 @@ package com.ssafy.memberserver.domain.students.sign.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.memberserver.common.api.Api;
 import com.ssafy.memberserver.domain.students.client.ClassServerClient;
-import com.ssafy.memberserver.domain.students.client.ResponseClass;
-import com.ssafy.memberserver.domain.students.sign.dto.signIn.StudentSignInRequest;
-import com.ssafy.memberserver.domain.students.sign.dto.signIn.StudentSignInResponse;
+import com.ssafy.memberserver.domain.students.sign.dto.signIn.SignInRequest;
+import com.ssafy.memberserver.domain.students.sign.dto.signIn.SignInResponse;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpResponse;
 import com.ssafy.memberserver.domain.students.sign.service.StudentSignService;
@@ -23,11 +22,10 @@ import java.util.UUID;
 public class StudentSignController {
     private final StudentSignService studentSignService;
     private final ClassServerClient classServerClient;
-
     @Operation(summary = "학생 로그인")
     @PostMapping("/sign-in")
-    public Api<StudentSignInResponse> StudentSignIn(@RequestBody StudentSignInRequest studentSignInRequest) throws JsonProcessingException {
-        return Api.OK(studentSignService.studentSignIn(studentSignInRequest));
+    public Api<SignInResponse> StudentSignIn(@RequestBody SignInRequest signInRequest){
+        return Api.OK(studentSignService.signIn(signInRequest));
     }
     @Operation(summary = "학생 회원가입")
     @PostMapping("/sign-up")
@@ -40,13 +38,14 @@ public class StudentSignController {
         return Api.OK(studentSignService.checkStudentIdDuplicated(studentId));
     }
 
-
+    // Feign-------------------------
     // 회원가입 할때 학교 조회 하기
     @GetMapping("/{schoolName}/{grade}/{classNum}")
     public Api<UUID> getClassroomId(@PathVariable("schoolName") String schoolName,
-                                  @PathVariable("grade") int grade,
-                                  @PathVariable("classNum") int classNum) {
+                                    @PathVariable("grade") int grade,
+                                    @PathVariable("classNum") int classNum) {
 
         return Api.OK(classServerClient.getClassroomId(schoolName, grade, classNum));
     }
 }
+
