@@ -16,7 +16,7 @@ public class TeacherSignService {
     private final PasswordEncoder passwordEncoder;
     @Transactional
     public TeacherSignUpResponse teacherSignUp(TeacherSignUpRequest teacherSignUpRequest){
-        if (teacherRepository.findByTeacherId(teacherSignUpRequest.teacherId()).isPresent()){
+        if (teacherRepository.findByTeacherId(teacherSignUpRequest.getTeacherId()).isPresent()){
             throw new IllegalStateException("아이디 중복입니다.");
         }
         Teacher teacher = teacherRepository.save(Teacher.from(teacherSignUpRequest, passwordEncoder));

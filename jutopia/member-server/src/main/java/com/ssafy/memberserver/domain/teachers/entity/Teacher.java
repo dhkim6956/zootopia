@@ -33,12 +33,12 @@ public class Teacher {
     @Enumerated(EnumType.STRING)
     private MemberBioStatus memberBioStatus;
 
-    public static Teacher from(TeacherSignUpRequest teacherSignUpRequest, PasswordEncoder passwordEncoder){
+    public static Teacher from(TeacherSignUpRequest teacherSignUpRequest, PasswordEncoder passwordEncoder) {
         return Teacher.builder()
-                .teacherId(teacherSignUpRequest.teacherId())
-                .teacherPwd(passwordEncoder.encode(teacherSignUpRequest.teacherPwd()))
-                .teacherName(teacherSignUpRequest.Name())
-                .teacherEmail(teacherSignUpRequest.teacherEmail())
+                .teacherId(teacherSignUpRequest.getTeacherId())
+                .teacherPwd(passwordEncoder.encode(teacherSignUpRequest.getTeacherPwd()))
+                .teacherName(teacherSignUpRequest.getTeacherName())
+                .teacherEmail(teacherSignUpRequest.getTeacherEmail())
                 .memberRole(MemberRole.TEACHER)
                 .memberStatus(MemberStatus.ACTIVE)
                 .memberBioStatus(MemberBioStatus.INACTIVE)
