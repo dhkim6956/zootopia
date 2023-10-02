@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import common.TmpUserInfo
 import stock.common.Stock
 import stock.common.StockRequest
 
@@ -125,7 +126,7 @@ fun StockBuyingPage(
                 confirmButton = {
                     Button(onClick = {
                         val request = StockRequest(
-                            memberId = "e602882e-30ea-42d5-9fdc-631d2ffb07c1",
+                            memberId = TmpUserInfo.getMemberId(),
                             stockId = stock.id,
                             type = TradeType.BUY,
                             volume = orderQuantity.toLong(),

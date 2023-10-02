@@ -1,15 +1,14 @@
 package chatbot
 
 import co.touchlab.kermit.Logger
+import common.TmpUserInfo
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.HttpRequestBuilder
-import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
-import io.ktor.client.request.put
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
@@ -17,7 +16,6 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import lease.SeatRequest
 
 class ChatbotApiService {
     private val log = Logger.withTag("chatbot")
@@ -42,12 +40,14 @@ class ChatbotApiService {
 
     @OptIn(InternalAPI::class)
     suspend fun sendMessage(inputMessage: String): HttpResponse {
+        val memberId = TmpUserInfo.getMemberId()
         val request: ChatRequest = ChatRequest(inputMessage)
         val jsonData = Json.encodeToString(request);
         log.i { "요청: ${jsonData}" }
         return client.post{
             apiUrl("ask")
             header("Content-Type", ContentType.Application.Json.toString())
+
             body = jsonData
 
         }

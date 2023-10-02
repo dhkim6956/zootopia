@@ -1,6 +1,7 @@
 package stock.stocktrade
 
 import co.touchlab.kermit.Logger
+import common.TmpUserInfo
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +12,6 @@ import moe.tlaster.precompose.viewmodel.viewModelScope
 import stock.common.StockApiService
 import stock.common.MyStock
 import stock.common.MyStockResponse
-import stock.common.MyStocksResponse
 import stock.common.StockRequest
 import stock.common.StockTradeResponse
 
@@ -34,10 +34,9 @@ enum class TradeStatus {
 private val log = Logger.withTag("StockAPI")
 
 class StockTradeViewModel(stockId: String) : ViewModel() {
-    private val memberId = "e602882e-30ea-42d5-9fdc-631d2ffb07c1"
+    private val memberId = TmpUserInfo.getMemberId()
     private val stockId = stockId
-//    private val _myStocks = MutableStateFlow<List<MyStock>>(listOf())
-//    val myStocks: StateFlow<List<MyStock>> = _myStocks
+
 
     private val _myStock = MutableStateFlow<MyStock?>(null)
     val myStock: StateFlow<MyStock?> = _myStock
@@ -64,7 +63,7 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
     }
 
     private fun getMyStockInfo(){
-        //TODO: 현재 모든 주식목록을 불러와 낭비가 있다. 특정 유저의 특정 주식의 정보만 불러올 수 있도록 API 제작 요청 예정
+
         viewModelScope.launch {
             try {
                 log.i { "주식 id: $stockId" }
@@ -86,7 +85,7 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
 
 
     fun tradeStock(stockRequest: StockRequest) {
-        //TODO : trade 성공 여부에 따라 dialog
+
         viewModelScope.launch {
             try {
                 log.i{

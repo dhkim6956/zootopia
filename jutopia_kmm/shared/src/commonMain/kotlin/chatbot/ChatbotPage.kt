@@ -164,11 +164,11 @@ fun ChatMessageRow(message: ChatMessage) {
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
                 Text(message.message, color = if (message.fromServer) Color.Black else Color.White)
-//                Text(
-//                    message.timestamp,
-//                    fontSize = 10.sp,
-//                    color = if (message.from_server) Color.Black else Color.White
-//                )
+                Text(
+                    message.parsedTime,
+                    fontSize = 10.sp,
+                    color = if (message.fromServer) Color.Black else Color.White
+                )
             }
         }
     }
