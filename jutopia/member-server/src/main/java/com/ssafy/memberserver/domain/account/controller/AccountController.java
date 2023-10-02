@@ -38,7 +38,7 @@ public class AccountController {
     }
     @Operation(summary = "특정 반 학생의 목록")
     @GetMapping("/classroom/studentlist")
-    public ApiResponse getClassRoom(@RequestParam String school,@RequestParam int grade,@RequestParam int classRoom){
-        return ApiResponse.success(accountService.classRoomList(school,classRoom,grade));
+    public ApiResponse getClassRoom(@RequestParam UUID classroomId){
+        return ApiResponse.success(accountService.classRoomList(classroomId));
     }
 }

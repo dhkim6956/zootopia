@@ -13,4 +13,6 @@ public interface ClassRoomRepository extends JpaRepository<ClassRoomEntity, UUID
     Optional<ClassRoomEntity> findById(UUID id);
 
     Iterable<ClassRoomEntity> findAllByGradeId(UUID gradeId);
+
+    Optional<ClassRoomEntity> findFirstByClassNumAndGradeId(int classNum, UUID gradeId);
 }
