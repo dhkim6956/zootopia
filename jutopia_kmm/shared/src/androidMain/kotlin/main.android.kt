@@ -6,12 +6,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import com.myapplication.common.R
+import moe.tlaster.precompose.lifecycle.PreComposeActivity
 import java.text.DecimalFormat
 import java.util.Locale
 
 actual fun getPlatformName(): String = "Android"
 
-@Composable fun MainView() = App()
+lateinit var mainActivity: PreComposeActivity
+
+@Composable fun MainView(activity: PreComposeActivity)
+{
+    mainActivity = activity
+    App()
+}
 
 actual val icehimchanFontFamily: FontFamily = FontFamily(
     Font(R.font.icehimchan)
@@ -38,17 +45,6 @@ actual fun formatDouble(value: Double, decimalPlaces: Int): String {
     return formatter.format(value)
 }
 
-//class AndroidApp : Application() {
-//    companion object {
-//        lateinit var INSTANCE: AndroidApp
-//    }
-//
-//    override fun onCreate() {
-//        super.onCreate()
-//        INSTANCE = this
-//    }
-//}
-
 actual fun addComma(value: Double): String {
     val formatter = NumberFormat.getInstance(Locale.KOREA)
     return formatter.format(value)
@@ -63,5 +59,5 @@ actual fun openUrl(url: String?) {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
-//    AndroidApp.INSTANCE.startActivity(intent)
+    mainActivity.startActivity(intent)
 }
