@@ -4,10 +4,7 @@ import com.ssafy.memberserver.common.enums.HistoryType;
 import com.ssafy.memberserver.domain.account.dto.request.AccountDeleteRequest;
 import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.account.dto.request.SendMoneyRequest;
-import com.ssafy.memberserver.domain.account.dto.response.AccountDeleteResponse;
-import com.ssafy.memberserver.domain.account.dto.response.AccountInfoResponse;
-import com.ssafy.memberserver.domain.account.dto.response.CreateAccountResponse;
-import com.ssafy.memberserver.domain.account.dto.response.SendMoneyResponse;
+import com.ssafy.memberserver.domain.account.dto.response.*;
 import com.ssafy.memberserver.domain.account.entity.Account;
 import com.ssafy.memberserver.domain.account.repository.AccountRepository;
 import com.ssafy.memberserver.domain.history.entity.History;
@@ -20,8 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -73,5 +72,12 @@ public class AccountService {
         historyRepository.save(receiverHistory);
 
         return new SendMoneyResponse("송금이 성공적으로 완료되었습니다.");
+    }
+    @Transactional(readOnly = true)
+    public List<ClassRoomListResponse> classRoomList(String school, Integer grade, Integer classRoom){
+        List<Student> students = studentRepository.findBySchoolAndGradeAndClassRoom(school, grade, classRoom);
+        return students.stream()
+                .map(ClassRoomListResponse::from)
+                .collect(Collectors.toList());
     }
 }
