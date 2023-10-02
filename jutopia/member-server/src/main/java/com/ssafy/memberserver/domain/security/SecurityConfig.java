@@ -23,7 +23,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationEntryPoint entryPoint;
 
-    private static final String[] ALLOWED_URIS = {"/sign-up", "/sign-in"};
+    private static final String[] ALLOWED_URIS = {"/**", "/sign-in"};
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
