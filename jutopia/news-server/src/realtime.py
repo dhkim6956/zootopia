@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 from pydantic import BaseModel
+import pandas as pd
 
 router = APIRouter()
 connection_string = "mongodb://juto:juto1234@mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=jutopia-repl"
@@ -17,20 +18,20 @@ test_collection = db['test']
 def dbtest():
     return test_collection.find()
 
-# stock_name_param: samsung, hanhwa, naver, sm, hyundai
+# ticker: 005930, 000880, 005380, 035420, 041510
 # time_frame: day, hour, minute
-@router.get("/chart/{stock_name_param}/{time_frame}") 
-def get_chart(stock_name_param: str, time_frame: str):
+@router.get("/chart/{ticker}/{time_frame}") 
+def get_chart(ticker: str, time_frame: str):
     stock_name = ''
-    if (stock_name_param == 'samsung'):
+    if (ticker == '005930'):
         stock_name = '삼성전자'
-    elif (stock_name_param == 'hanhwa'):
+    elif (ticker == '000880'):
         stock_name = '한화'
-    elif (stock_name_param == 'hyundai'):
+    elif (ticker == '005380'):
         stock_name = '현대차'
-    elif (stock_name_param == 'naver'):
+    elif (ticker == '035420'):
         stock_name = 'NAVER'
-    elif (stock_name_param == 'sm'):
+    elif (ticker == '041510'):
         stock_name = '에스엠'
     now = datetime.now()
     
@@ -52,44 +53,59 @@ def get_chart(stock_name_param: str, time_frame: str):
         #     "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
         # }).sort("시간", -1).limit(30)
 
-    elif time_frame == "hour":
-        # 지난 24시간 동안의 시간별 마지막 데이터
-        start_date = now - timedelta(hours=24)
-        results = realtime_collection.find({
-            "회사명": stock_name
-            # "시간": {"$gte": start_date.strftime('%a %b  %d %H:%M:%S %Y')}
-        }).sort("시간", -1).limit(24)
+    elif time_frame == "hour": # 지난 24시간간 1시간 단위 종가 데이터
+        results = realtime_collection.find({ # results의 타입은 cursor -> MongoDB find()의 결과
+            "회사명 ": stock_name,
+            "시간" : {"gte": datetime.now() - timedelta(hours=24)} # (now - 24h) ~ now
+        })
+        df = pd.DataFrame(list(results)) # list(cursor)를 df로 변환
+        
+        if "_id" in df.columns: # ObjectId 는 직렬화 불가능하기 _id 컬럼 삭제
+            df.drop(columns=["_id"], inplace=True)
+        
+        df['시간'] = pd.to_datetime(df['시간']) # ISODate 타입을 datetime 타입으로 변환
+        df.set_index('시간', inplace=True) # 시간을 인덱스로 설정
+        resampled_data = df.resample('1H').last() # 1시간 단위로 resample
+        cleaned_data = resampled_data[:24] # 최근 24개의 데이터만 추출
+        
+        return cleaned_data.to_dict() # df를 dict로 변환하여 반환
 
-    elif time_frame == "minute":
-        # 지난 60분 동안의 분별 마지막 데이터
-        start_date = now - timedelta(minutes=60)
-        print(f"debug start_date : {start_date}")
-        results = realtime_collection.find({
-            "회사명": stock_name
-            # "시간": {"$gte": start_date.strftime('%a %b  %d %H:%M:%S %Y')}
-        }).sort("시간", -1).limit(60)
-        print(f"debug results : {results}")
-        print(f"debug list(results) : {list(results)}")
+    elif time_frame == "minute": # 지난 60분간 1분 단위 종가 데이터
+        results = realtime_collection.find({ # results의 타입은 cursor -> MongoDB find()의 결과
+            "회사명": stock_name,
+            "시간": {"$gte": datetime.now() - timedelta(minutes=60)} # (now - 60m) ~ now
+        })
+        df = pd.DataFrame(list(results)) # list(cursor)를 df로 변환
+        
+        if "_id" in df.columns: # ObjectId 는 직렬화 불가능하기 _id 컬럼 삭제
+            df.drop(columns=["_id"], inplace=True)
+        
+        df['시간'] = pd.to_datetime(df['시간']) # ISODate 타입을 datetime 타입으로 변환
+        df.set_index('시간', inplace=True) # 시간을 인덱스로 설정
+        resampled_data = df.resample('1T').last() # 1분 단위로 resample
+        cleaned_data = resampled_data[:60] # 최근 60개의 데이터만 추출
+        
+        return cleaned_data.to_dict() # df를 dict로 변환하여 반환
+        
 
     else:
         raise HTTPException(status_code=400, detail="Invalid time_frame value")
 
     # 데이터 변환
-    if time_frame != "day":
-        print(f"debug time_frame : {time_frame}")
-        stocks_temp = list(results)
-        print(f"debug stocks_temp : {stocks_temp}")
-        stocks = []
-        for stock in stocks_temp:
-            print(f"debug stock in stocks_temp : {stock}")
-            stock_info = {
-                "회사명": stock["회사명"],
-                "시간": stock["시간"],
-                "현재 주식 가격": stock["현재 주식 가격"]
-            }
-            stocks.append(stock_info)
-        print(f"debug stocks before return : {stocks}")
-    return stocks
+    # if time_frame != "day":
+    #     stocks_temp = list(results)
+    #     print(f"debug stocks_temp : {stocks_temp}")
+    #     stocks = []
+    #     for stock in stocks_temp:
+    #         print(f"debug stock in stocks_temp : {stock}")
+    #         stock_info = {
+    #             "회사명": stock["회사명"],
+    #             "시간": stock["시간"],
+    #             "현재 주식 가격": stock["현재 주식 가격"]
+    #         }
+    #         stocks.append(stock_info)
+    #     print(f"debug stocks before return : {stocks}")
+    # return stocks
 
 @router.get("/stocks/")
 def get_latest_stocks():
