@@ -37,14 +37,17 @@ class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
             val res = apiService.getStockChart(stockCode,TimeFrame.minute)
             val jsonRes = Json.decodeFromString<StockChart>(res.bodyAsText())
             val priceMapData = jsonRes.price
+            log.i { "가격 데이터 : $priceMapData" }
 
             val convertedData = priceMapData.mapNotNull { (key, value) ->
-                value?.toDoubleOrNull()?.let {
+                value?.replace(",", "")?.toDoubleOrNull()?.let {
                     Pair(key, it)
                 }
             }
+            log.i{"변환 데이터 : $convertedData"}
+
             _chartData.emit(convertedData)
-            log.i{"변환 데이터 : $_chartData"}
+            log.i{"데이터 : ${_chartData.value}"}
             _isLoading.emit(false)
 
 //            while(true) {
