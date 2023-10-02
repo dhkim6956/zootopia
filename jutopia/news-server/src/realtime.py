@@ -74,6 +74,7 @@ def get_chart(ticker: str, time_frame: str):
                             "전일대비 변화 가격":"price_change_prevday", 
                             "퍼센트":"percent"
                             }, inplace=True)
+        
                 
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
 
@@ -99,7 +100,7 @@ def get_chart(ticker: str, time_frame: str):
                             "퍼센트":"percent"
                             }, inplace=True)
         
-        cleaned_data.index = df.index.strftime('%H:%M') # 시간 파싱
+        cleaned_data.index = cleaned_data.index.strftime('%H:%M') # 시간 파싱
         
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
         
