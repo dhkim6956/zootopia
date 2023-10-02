@@ -27,9 +27,9 @@ public record StudentInfoResponse(
         @Schema(description = "학생의 학교")
         String school,
         @Schema(description = "학생의 학년")
-        Integer grade,
+        int grade,
         @Schema(description = "학생의 반")
-        Integer classRoom,
+        int classRoom,
         @Schema(description = "학생 권한")
         MemberRole memberRole,
         @Schema(description = "학생 상태 여부")
