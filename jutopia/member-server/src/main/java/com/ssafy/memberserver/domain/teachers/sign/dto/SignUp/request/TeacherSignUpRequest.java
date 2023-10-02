@@ -7,13 +7,12 @@ import com.ssafy.memberserver.common.enums.MemberStatus;
 import java.util.UUID;
 
 public record TeacherSignUpRequest(
-        UUID id,
         String teacherId,
         String teacherPwd,
         String Name,
         String teacherEmail,
-        MemberRole memberRole,
-        MemberStatus memberStatus,
-        MemberBioStatus memberBioStatus
+        String school,
+        int grade,
+        int classroom
 ) {
 }
