@@ -47,14 +47,9 @@ public class StockController {
 
     @GetMapping("/{stockId}")
     public Api<ResponseStock> getStock(@PathVariable UUID stockId) {
-        Optional<Stock> stock = stockService.getStock(stockId);
-        if (stock.isPresent()) {
-            // Optional이 값으로 채워져 있다면 매핑을 수행
-            ResponseStock responseStock = mapper.map(stock.get(), ResponseStock.class);
-            return Api.OK(responseStock);
-        } else {
-            // Optional이 비어있는 경우에 대한 처리
-            return Api.NOT_FOUND(null); // 예: 404 Not Found
-        }
+        ResponseStock stock = stockService.getStock(stockId);
+        if (stock == null) return Api.NOT_FOUND(null);
+
+        return Api.OK(stock);
     }
 }

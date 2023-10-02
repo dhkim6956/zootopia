@@ -11,8 +11,10 @@ import java.util.UUID;
 public interface StockService {
 
     List<ResponseStock> getAllStocks();
+    ResponseStock getStock(UUID stockId);
 
+
+    Optional<Stock> getOneStock(UUID stockId);
     ResponseStock createStock(RequestStock stock);
 
-    Optional<Stock> getStock(UUID stockId);
 }

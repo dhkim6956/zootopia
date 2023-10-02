@@ -1,5 +1,6 @@
 package com.ssafy.stockserver.domain.stock.service;
 
+import com.ssafy.common.api.Api;
 import com.ssafy.stockserver.domain.client.NewsServerClient;
 import com.ssafy.stockserver.domain.client.ResponseFeignStock;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
@@ -74,7 +75,33 @@ public class StockServiceImpl implements StockService{
     }
 
     @Override
-    public Optional<Stock> getStock(UUID stockId) {
+    public ResponseStock getStock(UUID stockId) {
+        Optional<Stock> stock = stockRepository.findById(stockId);
+
+        if (!stock.isPresent()) return null;
+
+        // Optional이 값으로 채워져 있다면 매핑을 수행
+        ResponseStock responseStock = mapper.map(stock.get(), ResponseStock.class);
+
+        ResponseFeignStock feignStock = newsServerClient.getOneStock(responseStock.getStockCode());
+
+        BigDecimal nowMoney = new BigDecimal(feignStock.getNowMoney().replaceAll(",", ""));
+        BigDecimal prevMoney = new BigDecimal(feignStock.getPrevMoney().replaceAll(",", ""));
+
+        responseStock.setNowMoney(nowMoney);
+        responseStock.setPrevMoney(prevMoney);
+        responseStock.setChangeMoney(nowMoney.subtract(prevMoney));
+        responseStock.setChangeRate(nowMoney.subtract(prevMoney).divide(prevMoney, 3, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100")).doubleValue());
+        if (nowMoney.compareTo(prevMoney) > 0) responseStock.setType(1);
+        else if (nowMoney.compareTo(prevMoney) < 0) responseStock.setType(-1);
+        else responseStock.setType(0);
+
+        return responseStock;
+    }
+
+    @Override
+    public Optional<Stock> getOneStock(UUID stockId) {
         return stockRepository.findById(stockId);
     }
 }
