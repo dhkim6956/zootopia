@@ -75,6 +75,7 @@ def get_chart(ticker: str, time_frame: str):
                             "퍼센트":"percent"
                             }, inplace=True)
         
+        cleaned_data.index = cleaned_data.index.strftime('%m/%d %H시')
                 
         return cleaned_data.to_dict() # df를 dict로 변환하여 반환
 
