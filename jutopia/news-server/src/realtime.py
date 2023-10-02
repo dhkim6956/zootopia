@@ -37,26 +37,40 @@ def get_chart(ticker: str, time_frame: str):
     now = datetime.now()
     
     if time_frame == "day":
-        end_date = datetime.today().strftime('%Y%m%d')
-        start_date = (datetime.today() - timedelta(days=30)).strftime('%Y%m%d')
+    # 최근 30개의 일별 종가 데이터
+        pykrx_data = pykrx_collection.find_one({"_id": stock_name})
+        if not pykrx_data or "OHLCV" not in pykrx_data:
+            raise HTTPException(status_code=404, detail="pykrx's OHLCV data not found")
         
-        df = stock.get_market_ohlcv_by_date(start_date, end_date, ticker)
-        df['날짜'] = df.index.strftime('%m월 %d일')
-        df = df[['날짜', '종가']].tail(30) # 최근 30일 데이터만 추출
+        daily_data = list(pykrx_data["OHLCV"].items())
+        daily_data.sort(key=lambda x: x[0], reverse=True) # 날짜 기준 내림차순 정렬
+        latest_data = daily_data[:30]
         
-        # DataFrame을 dict 로 변환
-        data_to_return = []
+        # DataFrame 생성 후, 인덱스 설정 및 정렬
+        df = pd.DataFrame(latest_data, columns=["timestamp", "data"])
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df.set_index('timestamp', inplace=True)
+        df.sort_index(inplace=True)
+        
+        # 결과 반환을 위한 Dictionary 생성
+        result = {
+            "sign": {},
+            "name": {},
+            "price": {},
+            "price_change_prevday": {},
+            "percent": {}
+        }
+        
+        # 데이터 파싱 및 적재
         for index, row in df.iterrows():
-            data_to_return.append({
-                "회사명": stock_name,
-                "시간": row['날짜'],
-                "현재 주식 가격": row['종가'],
-                "부호": None,
-                "전일대비 변화 가격": None,
-                "퍼센트": None
-            })
+            timestamp_str = index.strftime('%m월 %d일')
+            result["name"][timestamp_str] = stock_name
+            result["price"][timestamp_str] = row['data']['종가']
+            result["sign"][timestamp_str] = None
+            result["price_change_prevday"][timestamp_str] = None
+            result["percent"][timestamp_str] = None
         
-        return data_to_return
+        return result
         
         # 최근 30개의 일별 종가 데이터
         # pykrx_data = pykrx_collection.find_one({"_id": stock_name})
