@@ -50,6 +50,9 @@ public class Student {
     private int classRoom;
     private int studentNumber;
 
+    private UUID classroomId;
+
+
     public static Student from(StudentSignUpRequest studentSignUpRequest, PasswordEncoder passwordEncoder){
         return  Student.builder()
                 .studentId(studentSignUpRequest.getStudentId())
@@ -67,9 +70,9 @@ public class Student {
                 .classRoom(studentSignUpRequest.getClassRoom())
                 .studentNumber(studentSignUpRequest.getStudentNumber())
                 .seatOwnershipStatus(SeatOwnershipStatus.NOTOWNED)
+                .classroomId(studentSignUpRequest.getClassroomId())
                 .build();
     }
-    //##############
     public void update(StudentUpdateRequest studentUpdateRequest, PasswordEncoder passwordEncoder){
         if(studentUpdateRequest.getStudentNewPwd() != null || !studentUpdateRequest.getStudentPwd().isBlank()){
             this.studentPwd = passwordEncoder.encode(studentUpdateRequest.getStudentNewPwd());

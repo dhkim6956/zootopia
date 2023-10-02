@@ -8,6 +8,7 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 public class StudentSignUpRequest {
@@ -18,4 +19,5 @@ public class StudentSignUpRequest {
     private int grade;
     private int classRoom;
     private int studentNumber;
+    private UUID classroomId;
 }

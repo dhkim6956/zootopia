@@ -31,6 +31,4 @@ public class ClassRoomEntity {
     @ManyToOne
     @JoinColumn(name = "GRADE_ID")
     private GradeEntity grade;
-
-
 }
