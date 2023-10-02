@@ -106,6 +106,14 @@ public class SchoolServiceImpl implements SchoolService{
     }
 
     @Override
+    public UUID getClassRoomId(String schoolName, int gradeNum, int classNum) {
+        UUID schoolId = schoolRepository.findFirstBySchoolName(schoolName).get().getId();
+        UUID gradeId = gradeRepository.findFirstByGradeNumAndSchoolId(gradeNum, schoolId).get().getId();
+        UUID classroomId = classRoomRepository.findFirstByClassNumAndGradeId(classNum, gradeId).get().getId();
+        return classroomId;
+    }
+
+    @Override
     public Optional<SchoolEntity> getOneSchool(UUID schoolId) {
         return schoolRepository.findById(schoolId);
     }
