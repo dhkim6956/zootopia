@@ -9,6 +9,7 @@ import com.ssafy.memberserver.domain.teachers.sign.dto.SignUp.request.TeacherSig
 import com.ssafy.memberserver.domain.teachers.sign.service.TeacherSignService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -30,11 +31,22 @@ public class TeacherSignController {
         return ApiResponse.success(teacherSignService.checkIdDuplicated(memberId));
     }
 
-    @Operation(summary = "이메일 인증")
+    @Operation(summary = "이메일 인증 코드 발송")
     @PostMapping("/sign-in/mailConfirm")
     @ResponseBody
     public ApiResponse mailConfirm(@RequestParam("email") String email) throws Exception{
         return ApiResponse.success(mailService.sendSimpleMessage(email));
+    }
+    @Operation(summary = "이메일 인증 코드 비교")
+    @PostMapping("/sign-in/verifyCode")
+    @ResponseBody
+    public boolean verifyCode(@RequestParam("code") String code) throws ChangeSetPersister.NotFoundException {
+        boolean result = false;
+        String temp = mailService.verifyEmail(code);
+        if(temp.equals(code)){
+            return result;
+        }
+        return true;
     }
 }
 
