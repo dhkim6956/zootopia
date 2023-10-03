@@ -1,14 +1,27 @@
 package news
 
+import asset.subMenu.MyStockAPI
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class NewsViewModel(): ViewModel() {
-    private val _newses: List<NewsDetail> = mutableListOf(
-        NewsDetail("삼성전자, 고화질 콘텐츠 위한 SSD", "뉴시스", "2023.09.07", "10:09", "https://www.naver.com"),
-        NewsDetail("429만원 한정 수량 ... 삼성전자, '폴드5'", "더팩트", "2023.09.07", "10:00", "https://www.naver.com"),
-        NewsDetail("EU'빅테크 규제법' 삼성만 제외됐다", "서울신문", "2023.09.07", "06:10", "https://www.naver.com"),
-        NewsDetail("'쉿! 유출 안돼' 삼성, 반도체 개발에 ...", "중앙일보", "2023.09.07", "05:04", "https://www.naver.com"),
-    )
+    private val _newses: MutableStateFlow<List<NewsDetail>> = MutableStateFlow(listOf())
 
-    val newses: List<NewsDetail> = _newses
+    val newses: StateFlow<List<NewsDetail>> = _newses
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun fetchData(brand: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _newses.emit(NewsAPI().getNewses(brand))
+            _isLoading.emit(false)
+        }
+    }
 }
