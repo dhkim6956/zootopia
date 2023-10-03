@@ -25,7 +25,7 @@ public class StudentSignController {
         return Api.OK(studentSignService.studentSignUp(studentSignUpRequest));
     }
     @Operation(summary = "학생 회원가입 아이디 중복 체크")
-    @GetMapping("/sign-up/{studentId}/duplicated")
+    @GetMapping("/sign-up/{memberId}/duplicated")
     public Api<?> checkStudentIdDuplicated(@PathVariable String memberId){
         return Api.OK(studentSignService.checkIdDuplicated(memberId));
     }
