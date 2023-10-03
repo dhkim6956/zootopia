@@ -1,6 +1,12 @@
 package asset.subMenu
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class MyAccountViewModel: ViewModel() {
     private val _transactionHistory: MutableList<depositDetail> = mutableListOf(
@@ -10,4 +16,19 @@ class MyAccountViewModel: ViewModel() {
     )
 
     val transactionHistory: List<depositDetail> = _transactionHistory
+
+    private val _accountInformation: MutableStateFlow<AccountInformation?> = MutableStateFlow(null)
+
+    val accountInformation: StateFlow<AccountInformation?> = _accountInformation
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun fetchData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _accountInformation.emit(MyAccountAPI().getAccountInfo())
+            _isLoading.emit(false)
+        }
+    }
 }

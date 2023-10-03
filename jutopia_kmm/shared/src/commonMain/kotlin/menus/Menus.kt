@@ -18,25 +18,21 @@ import pathTo
 @Composable
 fun Menus(navigator: Navigator) {
 
-    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+//    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
 
-    Logger.d(pathTo("user"))
+//    val testData = UserInfo(uuid = "testuuid", id = "testid")
 
-    val testData = UserInfo(uuid = "testuuid", id = "testid")
+//    var getData by remember { mutableStateOf("데이터 없음") }
 
-    var getData by remember { mutableStateOf("데이터 없음") }
-
-    LaunchedEffect(1) {
+//    LaunchedEffect(1) {
+//        store.delete()
 //        store.set(testData)
-        val temp: UserInfo? = store.get()
-
-        if (temp != null) {
-            Logger.d(temp.id)
-            getData = temp.id
-        }
-    }
-
-    Text(getData)
+//        val temp: UserInfo? = store.get()
+//
+//        if (temp != null) {
+//            Logger.d(temp.id)
+//        }
+//    }
 
     Column {
     }

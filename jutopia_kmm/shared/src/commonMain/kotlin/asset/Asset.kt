@@ -22,10 +22,25 @@ import asset.subMenu.MyPoint
 import asset.subMenu.MySave
 import asset.subMenu.MyStock
 import common.TopPageBar
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
+import UserInfo
+import Variables.ColorsPrimary
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import pathTo
 
 data class ChipItem(val idx: Int, val name: String, val bgColor: Color, val conColor: Color, val desc: String)
 
@@ -41,23 +56,52 @@ val chipItems: List<ChipItem> = listOf(
 fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = viewModel(modelClass = AssetViewModel::class) {savedStateHolder ->
     AssetViewModel(savedStateHolder)
 }) {
-    if(category != null) viewModel.setChipIdx(category)
 
-    Column {
-        TopPageBar("자산", navigator, showReturn = false)
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
 
-        Chips(navigator, viewModel.chipIdx.value, viewModel)
+//    더미데이터 : UserInfo("0e4ad1d7-6a52-499a-92f2-915c3e6f3cb", "student22", "ssafy초등학교", 6, 1, 3)
 
-        when (viewModel.chipIdx.value) {
-            0 -> MyAccount()
-            1 -> MySave()
-            2 -> MyPoint()
-            3 -> MyStock()
-            4 -> MyBuilding()
-            else -> Text("Error Page")
-        }
+    var userInfo by remember { mutableStateOf<UserInfo?>(null) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(true) {
+        userInfo = store.get()
+        isLoading = false
     }
-    BottomTabBar(navigator, 1)
+
+    if (isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+        ) {
+            CircularProgressIndicator(
+                color = ColorsPrimary,
+                backgroundColor = Color.LightGray,
+                modifier = Modifier.width(64.dp)
+            )
+        }
+    } else {
+        if(category != null) viewModel.setChipIdx(category)
+
+        Column {
+            TopPageBar("자산", navigator, showReturn = false)
+
+            Chips(navigator, viewModel.chipIdx.value, viewModel)
+
+            when (viewModel.chipIdx.value) {
+                0 -> MyAccount(userInfo!!)
+                1 -> MySave()
+                2 -> MyPoint()
+                3 -> MyStock()
+                4 -> MyBuilding()
+                else -> Text("Error Page")
+            }
+        }
+        BottomTabBar(navigator, 1)
+    }
+
 }
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalResourceApi::class)

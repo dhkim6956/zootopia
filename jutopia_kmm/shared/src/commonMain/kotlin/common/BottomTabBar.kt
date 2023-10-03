@@ -1,7 +1,11 @@
 @file:OptIn(ExperimentalResourceApi::class)
 
+import Variables.ColorsOnPrimary
+import Variables.ColorsPrimary
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +16,7 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import moe.tlaster.precompose.navigation.NavOptions
@@ -34,7 +39,7 @@ fun BottomTabBar(navigator: Navigator, idx: Int) {
     )
 
     Column (
-        verticalArrangement = Arrangement.Bottom,
+        verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Bottom),
         modifier = Modifier
             .fillMaxHeight()
             .fillMaxWidth()
@@ -42,9 +47,9 @@ fun BottomTabBar(navigator: Navigator, idx: Int) {
     ) {
         TabRow(
             selectedTabIndex = idx,
-            backgroundColor = Variables.ColorsPrimary,
-            contentColor = Variables.ColorsOnPrimary,
-            indicator = {TabRowDefaults.Indicator(color = Variables.ColorsPrimary.copy(alpha = 0.0f))},
+            backgroundColor = ColorsPrimary,
+            contentColor = ColorsOnPrimary,
+            indicator = {TabRowDefaults.Indicator(color = ColorsPrimary.copy(alpha = 0.0f))},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp)
@@ -74,5 +79,11 @@ fun BottomTabBar(navigator: Navigator, idx: Int) {
                 }
             }
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .background(color = ColorsPrimary)
+        )
     }
 }
