@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from py_eureka_client.eureka_client import EurekaClient
 from pymongo import MongoClient
-from utils import generate_answer, news_summary
+from utils import generate_answer, generate_newssum_answer, news_summary
 from datetime import datetime, timedelta
 # import httpx
 # import openai
@@ -69,4 +69,4 @@ async def answer(question: Question):
 @app.post("/sumnews")
 async def sum_news(news_link: NewsLink):
     summary = news_summary(news_link.link)
-    return generate_answer(summary)
+    return generate_newssum_answer(summary)
