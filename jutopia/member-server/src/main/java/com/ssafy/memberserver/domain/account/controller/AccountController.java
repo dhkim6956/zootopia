@@ -21,11 +21,11 @@ public class AccountController {
     public ApiResponse getAccountInfo(@RequestParam(name = "studentId") String studentId){
         return ApiResponse.success(accountService.getAccountInfo(studentId));
     }
-    @Operation(summary = "학생 계좌 생성")
-    @PostMapping("/make")
-    public ApiResponse makeAccount(@RequestBody CreateAccountRequest createAccountRequest,@RequestParam String studentId){
-        return ApiResponse.success(accountService.createAccount(createAccountRequest,studentId));
-    }
+//    @Operation(summary = "학생 계좌 생성")
+//    @PostMapping("/make")
+//    public ApiResponse makeAccount(@RequestBody CreateAccountRequest createAccountRequest,@RequestParam String studentId){
+//        return ApiResponse.success(accountService.createAccount(createAccountRequest,studentId));
+//    }
     @Operation(summary = "학생 계좌 탈퇴")
     @DeleteMapping("/delete")
     public ApiResponse deleteAccount(@RequestBody AccountDeleteRequest accountDeleteRequest, String id){
