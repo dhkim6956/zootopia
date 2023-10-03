@@ -19,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -35,6 +34,14 @@ public class AccountService {
         Account account = accountRepository.findAccountByStudentId(studentId)
                 .orElseThrow(() -> new NoSuchElementException("학생 계좌를 찾을 수 없습니다"));
         return AccountInfoResponse.from(account);
+    }
+    @Transactional
+    public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest,String studentId){
+        Student student = studentRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new NoSuchElementException("학생을 찾을 수 없습니다"));
+        Account account = accountRepository.save(Account.from(createAccountRequest,student));
+        accountRepository.flush();
+        return CreateAccountResponse.from(account);
     }
     @Transactional
     public AccountDeleteResponse deleteAccount(AccountDeleteRequest accountDeleteRequest, UUID id){
