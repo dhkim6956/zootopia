@@ -1,6 +1,8 @@
-package stock.stocklist
+package stock.common
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonNames
 import stock.stocktrade.TradeType
 
 @Serializable
@@ -8,11 +10,12 @@ data class Stock(
     val id: String,
     val stockCode: String,
     val stockName: String,
-    val price: Int = 1000,
-    val changePercent: Double = 0.0,
+    val nowMoney: Int = 1000,
+    val prevMoney: Int = 1000,
+    val changeRate: Double = 0.0,
     val isOwnedByUser: Boolean = false,
-    val changeAmount: Double = 0.0,
-    val type: TradeType? = null
+    val changeMoney: Int = 0,
+    val type: Int = 0, // 1증가 -1감소 0 그대로
 )
 
 @Serializable
@@ -77,6 +80,11 @@ data class MyStock(
     val stockId: String,
     val stockName: String,
     val stockCode: String,
+    val nowMoney: Int,
+    val prevMoney: Int,
+    val changeMoney: Int,
+    val changeRate: Double,
+    val type: Int,
     val qty: Int,
     val totalPrice: Double,
     val avgPrice: Double
@@ -87,3 +95,20 @@ data class MyStocksResponse(
     val result: ApiResult,
     val body: List<MyStock>
 )
+
+@Serializable
+data class StockChart(
+    val sign: Map<String, String?>,
+    val name: Map<String, String?>,
+    val price: Map<String, String?>,
+    @JsonNames("price_change_prevday")val priceChangePrevDay:Map<String, String?>,
+    val percent: Map<String, String?>
+)
+
+
+@Serializable
+data class MyStockResponse(
+    val result: ApiResult,
+    val body: MyStock
+)
+

@@ -8,8 +8,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import stock.stocklist.Stock
-import stock.stocklist.StockResponse
 
 
 enum class PageType {
@@ -25,7 +23,7 @@ enum class StockLoadingState {
 
 private val log = Logger.withTag("StockAPI")
 
-class StockViewModel(stockId: String) :ViewModel() {
+class StockViewModel(stockId: String, stockCode: String) :ViewModel() {
     private val _currentPage = MutableStateFlow(PageType.CHART)
     val currentPage: StateFlow<PageType> = _currentPage
 

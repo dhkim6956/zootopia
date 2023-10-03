@@ -31,9 +31,10 @@ private val log = Logger.withTag("StockAPI")
 @Composable
 fun StockScreen(
     stockId: String,
+    stockCode: String,
     navigator: Navigator,
     viewModel: StockViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockViewModel::class) {
-        StockViewModel(stockId)
+        StockViewModel(stockId, stockCode)
     }
 ) {
 
@@ -64,6 +65,7 @@ fun StockScreen(
                         PageType.CHART -> {
                             StockChartPage(
                                 stockId,
+                                stockCode,
                                 navigator = navigator,
                                 stockViewModel = viewModel,
                             )

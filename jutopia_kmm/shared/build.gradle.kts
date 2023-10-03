@@ -37,7 +37,7 @@ kotlin {
                 api("moe.tlaster:precompose:1.5.3")
                 api("moe.tlaster:precompose-viewmodel:1.5.3")
                 implementation("co.touchlab:kermit:2.0.0")
-                implementation("io.github.thechance101:chart:Beta-0.0.5")
+//                implementation("io.github.thechance101:chart:Beta-0.0.5")
                 implementation("com.svenjacobs.reveal:reveal-core:3.0.0")
                 implementation("io.ktor:ktor-client-core:$ktorVersion")
                 implementation("io.ktor:ktor-client-json:$ktorVersion")
@@ -90,5 +90,4 @@ android {
 dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview-android:1.5.1")
     implementation("androidx.compose.material3:material3:1.1.2")
-
 }

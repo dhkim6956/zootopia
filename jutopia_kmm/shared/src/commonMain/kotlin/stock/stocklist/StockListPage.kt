@@ -22,7 +22,7 @@ import moe.tlaster.precompose.navigation.Navigator
 import stock.common.StockRow
 
 private val log = Logger.withTag("StockListPage")
-//TODO: 뒤로가기 시 빈 화면 나오는 에러 수정
+
 @Composable
 fun StockListPage(
     viewModel: StockListViewModel = moe.tlaster.precompose.viewmodel.viewModel(modelClass = StockListViewModel::class) {
@@ -47,8 +47,7 @@ fun StockListPage(
     LazyColumn(modifier = Modifier.padding(13.dp)) {
         items(filteredStocks) { stock ->
             StockRow(stock) {
-                log.i { stock.id }
-                navigator.navigate("/stockChart/${stock.id}")
+                navigator.navigate("/stockChart/${stock.id}/${stock.stockCode}")
             }
         }
     }

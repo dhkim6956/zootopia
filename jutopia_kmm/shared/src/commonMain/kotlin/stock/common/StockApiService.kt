@@ -9,7 +9,6 @@ import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
-import io.ktor.client.request.put
 import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
@@ -17,14 +16,13 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import lease.SeatRequest
-import stock.stocklist.StockRequest
 
 private val log = Logger.withTag("StockAPI")
 class StockApiService {
 
     private companion object {
         const val BASE_URL = "http://j9c108.p.ssafy.io:8000/stock-server/api"
+        const val JWT_TOKEN = "test" //실제 토큰을 넣어야 하지만 임시로 userId를 넣는
     }
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -34,6 +32,8 @@ class StockApiService {
         }
         defaultRequest {
             url(BASE_URL)
+//            header("Authorization", "Bearer $JWT_TOKEN")
+            header("Authorization", "$JWT_TOKEN")
         }
     }
     private fun HttpRequestBuilder.apiUrl(path: String){
@@ -58,6 +58,11 @@ class StockApiService {
         }
     }
 
+    suspend fun getMyStock(memberId: String, stockId: String): HttpResponse {
+        return client.get{
+            apiUrl("memberstock/$memberId/$stockId")
+        }
+    }
     @OptIn(InternalAPI::class)
     suspend fun tradeStock(stockRequest: StockRequest): HttpResponse {
         val jsonData = Json.encodeToString(stockRequest)
