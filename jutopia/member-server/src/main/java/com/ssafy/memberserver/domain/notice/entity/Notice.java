@@ -22,16 +22,11 @@ public class Notice {
     private Long id;
     private String title;
     private String content;
-
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
     private Long viewCount;
     @Enumerated(EnumType.STRING)
     private NoticeStatus noticeStatus;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "teacher_id")
-//    private Teacher teacher;
 
     public static Notice from(NoticeRequest noticeRequest){
         return Notice.builder()
