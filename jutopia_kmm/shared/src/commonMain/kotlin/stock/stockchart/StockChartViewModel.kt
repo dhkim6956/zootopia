@@ -46,26 +46,31 @@ class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
     init {
         viewModelScope.launch {
             _isLoading.emit(false)
-            var currentTime = 0
-            while(true) {  // Keep running until the ViewModel gets cleared or some condition is met
-                val randomPrice = Random.nextDouble(100.0, 200.0)  // Generate a random price between 100 and 200
-                currentTime += 1 // Use current time as the key
 
-                // Add the new random price data to existing chart data
-                val updatedData = _chartData.value.toMutableList()
+            var currentTime = 0
+            while (true) {
+                val randomPrice =
+                    Random.nextDouble(100.0, 200.0)
+                currentTime += 1
+
+
+                val currentData = _chartData.value
+
+
+                val updatedData = if (currentData.size >= 60) {
+                    currentData.drop(1).toMutableList()
+                } else {
+                    currentData.toMutableList()
+                }
+
                 updatedData.add(Pair(currentTime.toString(), randomPrice))
 
-                _chartData.emit(updatedData)  // Emit the updated data
+                _chartData.emit(updatedData)
 
-                delay(500)  // Delay for 1 minute
+                delay(5000)
             }
 
-            // Dummy data generation logic ends here
-
-            _isLoading.emit(false)
         }
     }
-
 }
-
 
