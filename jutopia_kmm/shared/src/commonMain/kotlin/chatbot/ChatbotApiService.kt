@@ -49,7 +49,6 @@ class ChatbotApiService {
             header("Content-Type", ContentType.Application.Json.toString())
 
             body = jsonData
-
         }
     }
 }

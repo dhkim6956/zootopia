@@ -1,76 +1,120 @@
 package stock.stockchart
 
 import co.touchlab.kermit.Logger
+import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import kotlin.random.Random
+import stock.common.StockChart
 
 private val log = Logger.withTag("stockChart")
 
 class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
-    private val _chartData = MutableStateFlow<List<Pair<String, Double>>>(listOf())
-    val chartData: StateFlow<List<Pair<String, Double>>> = _chartData
+    private val _minuteChartData  = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val minuteChartData: StateFlow<List<Pair<String, Double?>>> = _minuteChartData
+
+    private val _hourChartData = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val hourChartData: StateFlow<List<Pair<String, Double?>>> = _hourChartData
+
+    private val _dayChartData = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val dayChartData: StateFlow<List<Pair<String, Double?>>> = _dayChartData
+
+    private val _currentChartData = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val currentChartData: StateFlow<List<Pair<String, Double?>>> = _currentChartData
 
     private val _isLoading = MutableStateFlow<Boolean>(true)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _timeFrame = MutableStateFlow(TimeFrame.day)
+    val timeFrame: StateFlow<TimeFrame> = _timeFrame
+
     private val apiService = StockChartApiService()
 
-//    init {
-//        viewModelScope.launch {
-//            _isLoading.emit(true)
-//            log.i { "주식 코드 : $stockCode" }
-//            val res = apiService.getStockChart(stockCode,TimeFrame.minute)
-//            val jsonRes = Json.decodeFromString<StockChart>(res.bodyAsText())
-//            val priceMapData = jsonRes.price
-//            log.i { "가격 데이터 : $priceMapData" }
-//
-//            val convertedData = priceMapData.mapNotNull { (key, value) ->
-//                value?.replace(",", "")?.toDoubleOrNull()?.let {
-//                    Pair(key, it)
-//                }
-//            }
-//            log.i{"변환 데이터 : $convertedData"}
-//
-//            _chartData.emit(convertedData)
-//            log.i{"데이터 : ${_chartData.value}"}
-//            _isLoading.emit(false)
-//
-//        }
-//    }
+    fun setTimeFrame(timeFrame: TimeFrame) {
+        when (timeFrame) {
+            TimeFrame.minute -> _currentChartData.value = _minuteChartData.value
+            TimeFrame.hour -> _currentChartData.value = _hourChartData.value
+            TimeFrame.day-> _currentChartData.value = _dayChartData.value
+        }
+    }
+
+    private suspend fun getChartData(timeFrame: TimeFrame, stockCode: String){
+        try {
+            val res = apiService.getStockChart(stockCode,timeFrame)
+            val jsonRes = Json.decodeFromString<StockChart>(res.bodyAsText())
+            val priceMapData = jsonRes.price
+            val convertedData = priceMapData.map { (key, value) ->
+                if (value == null) {
+                    Pair(key, null)
+                } else {
+                    value.replace(",", "").toDoubleOrNull()?.let {
+                        Pair(key, it)
+                    } ?: Pair(key, null)
+                }
+            }
+            when(timeFrame){
+                TimeFrame.minute -> _minuteChartData.emit(convertedData)
+                TimeFrame.hour -> _hourChartData.emit(convertedData)
+                TimeFrame.day -> _dayChartData.emit(convertedData)
+            }
+        } catch (e: Exception) {
+            log.i{"차트 코드 : ${stockCode} 차트 데이터 에러 : ${e}"}
+        }
+    }
+
 
     init {
         viewModelScope.launch {
-            _isLoading.emit(false)
-
-            var currentTime = 0
-            while (true) {
-                val randomPrice =
-                    Random.nextDouble(100.0, 200.0)
-                currentTime += 1
-
-
-                val currentData = _chartData.value
-
-
-                val updatedData = if (currentData.size >= 60) {
-                    currentData.drop(1).toMutableList()
-                } else {
-                    currentData.toMutableList()
-                }
-
-                updatedData.add(Pair(currentTime.toString(), randomPrice))
-
-                _chartData.emit(updatedData)
-
-                delay(5000)
+            _isLoading.emit(true)
+            val minuteData = async { getChartData(TimeFrame.minute, stockCode) }
+            val hourData = async { getChartData(TimeFrame.hour, stockCode) }
+            val dayData = async { getChartData(TimeFrame.day, stockCode) }
+            try {
+                awaitAll(minuteData, hourData, dayData)
+                log.i { "분 데이터: ${minuteChartData.value}" }
+                log.i { "시 데이터: ${hourChartData.value}" }
+                log.i { "일 데이터: ${dayChartData.value}" }
+            } catch (e: Exception) {
+                log.i { "비동기 처리 에러 : $e" }
+            } finally {
+                log.i{"finally 진입"}
+                _currentChartData.value = _minuteChartData.value
+                _isLoading.emit(false)
             }
-
         }
+
+        viewModelScope.launch {
+            while(true) {
+                delay(60_000)
+                log.i { "분 데이터 갱신" }
+                getChartData(TimeFrame.minute, stockCode)
+            }
+        }
+
+        viewModelScope.launch {
+            while(true) {
+                delay(3_600_000)
+                log.i { "시 데이터 갱신" }
+                getChartData(TimeFrame.hour, stockCode)
+            }
+        }
+
+        viewModelScope.launch {
+            while(true) {
+                delay(86_400_000)
+                log.i { "일 데이터 갱신" }
+                getChartData(TimeFrame.day, stockCode)
+            }
+        }
+
     }
 }
+
+
 

@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -46,7 +48,6 @@ fun StockSellingPage(
     var showDialog by remember { mutableStateOf(false) }
     val myStockCount by viewModel.myStockCount.collectAsState()
     val tradeStatus by viewModel.tradeStatus.collectAsState()
-
 
 
     val totalAmount: Double =
@@ -121,7 +122,10 @@ fun StockSellingPage(
             onClick = {
                 showDialog = true
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color(0xFFC3E0E8)
+            )
         ) {
             Text(text = "판매")
         }
@@ -129,24 +133,32 @@ fun StockSellingPage(
             AlertDialog(
                 onDismissRequest = { showDialog = false },
                 confirmButton = {
-                    Button(onClick = {
-                        val request = StockRequest(
-                            memberId = TmpUserInfo.getMemberId(),
-                            stockId = stock.id,
-                            type = TradeType.SELL,
-                            volume = orderQuantity.toLong(),
-                            price = orderPrice.toInt(),
+                    Button(
+                        onClick = {
+                            val request = StockRequest(
+                                memberId = TmpUserInfo.getMemberId(),
+                                stockId = stock.id,
+                                type = TradeType.SELL,
+                                volume = orderQuantity.toLong(),
+                                price = orderPrice.toInt(),
+                            )
+                            viewModel.tradeStock(request)
+                            orderQuantity = "1"
+                            orderPrice = "${stock.nowMoney}"
+                            showDialog = false
+                        }, colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFC3E0E8)
                         )
-                        viewModel.tradeStock(request)
-                        orderQuantity = "1"
-                        orderPrice = "${stock.nowMoney}"
-                        showDialog = false
-                    }) {
+                    ) {
                         Text("판매")
                     }
                 },
                 dismissButton = {
-                    Button(onClick = { showDialog = false }) {
+                    Button(
+                        onClick = { showDialog = false }, colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFC3E0E8)
+                        )
+                    ) {
                         Text("취소")
                     }
                 },
@@ -165,7 +177,12 @@ fun StockSellingPage(
             AlertDialog(
                 onDismissRequest = { viewModel.resetTradeStatus() },
                 confirmButton = {
-                    Button(onClick = { viewModel.resetTradeStatus() }) {
+                    Button(
+                        onClick = { viewModel.resetTradeStatus() },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFC3E0E8)
+                        )
+                    ) {
                         Text("확인")
                     }
                 },
@@ -174,11 +191,16 @@ fun StockSellingPage(
                     Text("판매가 성공적으로 이루어졌습니다.")
                 }
             )
-        } else if (tradeStatus == TradeStatus.FAILURE){
+        } else if (tradeStatus == TradeStatus.FAILURE) {
             AlertDialog(
                 onDismissRequest = { viewModel.resetTradeStatus() },
                 confirmButton = {
-                    Button(onClick = { viewModel.resetTradeStatus() }) {
+                    Button(
+                        onClick = { viewModel.resetTradeStatus() },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFC3E0E8)
+                        )
+                    ) {
                         Text("확인")
                     }
                 },
