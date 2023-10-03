@@ -21,11 +21,11 @@ public class AccountController {
     public ApiResponse getAccountInfo(@RequestParam(name = "studentId") String studentId){
         return ApiResponse.success(accountService.getAccountInfo(studentId));
     }
-    @Operation(summary = "학생 계좌 생성")
-    @PostMapping("/make")
-    public ApiResponse makeAccount(@RequestBody CreateAccountRequest createAccountRequest,@RequestParam String studentId){
-        return ApiResponse.success(accountService.createAccount(createAccountRequest,studentId));
-    }
+//    @Operation(summary = "학생 계좌 생성")
+//    @PostMapping("/make")
+//    public ApiResponse makeAccount(@RequestBody CreateAccountRequest createAccountRequest,@RequestParam String studentId){
+//        return ApiResponse.success(accountService.createAccount(createAccountRequest,studentId));
+//    }
     @Operation(summary = "학생 계좌 탈퇴")
     @DeleteMapping("/delete")
     public ApiResponse deleteAccount(@RequestBody AccountDeleteRequest accountDeleteRequest, String id){
@@ -35,5 +35,10 @@ public class AccountController {
     @PostMapping("/send")
     public ApiResponse sendMoney(@RequestBody SendMoneyRequest sendMoneyRequest){
         return ApiResponse.success(accountService.sendMoney(sendMoneyRequest));
+    }
+    @Operation(summary = "특정 반 학생의 목록")
+    @GetMapping("/classroom/studentlist")
+    public ApiResponse getClassRoom(@RequestParam UUID classroomId){
+        return ApiResponse.success(accountService.classRoomList(classroomId));
     }
 }

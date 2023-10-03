@@ -6,6 +6,7 @@ import com.ssafy.memberserver.common.enums.MoneyType;
 import com.ssafy.memberserver.domain.account.dto.request.AccountDeleteRequest;
 import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.students.entity.Student;
+import com.ssafy.memberserver.domain.students.sign.service.CreateAccountNumber;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,13 +34,13 @@ public class Account {
     @ManyToOne(fetch = FetchType.LAZY)
     private Student student;
 
-    public static Account from(CreateAccountRequest createAccountRequest,Student student){
+    public static Account from(CreateAccountRequest createAccountRequest, Student student, String number){
         return Account.builder()
-                .accountName(createAccountRequest.accountName())
-                .accountNumber(createAccountRequest.accountNumber())
-                .accountBalance(createAccountRequest.accountBalance())
-                .accountType(createAccountRequest.accountType())
-                .moneyType(createAccountRequest.moneyType())
+                .accountName(createAccountRequest.getAccountName())
+                .accountNumber(number)
+                .accountBalance(createAccountRequest.getAccountBalance())
+                .accountType(createAccountRequest.getAccountType())
+                .moneyType(createAccountRequest.getMoneyType())
                 .student(student)
                 .accountStatus(AccountStatus.ACTIVE)
                 .build();
@@ -54,7 +55,7 @@ public class Account {
         this.accountBalance = this.accountBalance.subtract(amount);
     }
     public void delete(AccountDeleteRequest accountDeleteRequest){
-        if(accountDeleteRequest.accountStatus() == AccountStatus.ACTIVE){
+        if(accountDeleteRequest.getAccountStatus() == AccountStatus.ACTIVE){
             this.accountStatus = AccountStatus.INACTIVE;
         }
     }

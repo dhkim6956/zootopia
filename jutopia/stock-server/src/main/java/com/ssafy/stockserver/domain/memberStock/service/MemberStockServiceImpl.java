@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,7 +58,8 @@ public class MemberStockServiceImpl implements MemberStockService{
 
             Long upQty = newMemStock.getQty() + trade.getVolume();
             BigDecimal upTotalPrice = newMemStock.getTotalPrice().add(trade.getTotalPrice());
-            BigDecimal upAvgPrice = upTotalPrice.divide(BigDecimal.valueOf(upQty));
+            BigDecimal upAvgPrice = upTotalPrice.divide(BigDecimal.valueOf(upQty), 2, RoundingMode.HALF_UP);
+
 
             newMemStock.update(upQty, upTotalPrice, upAvgPrice);
 
@@ -82,6 +84,11 @@ public class MemberStockServiceImpl implements MemberStockService{
 
             memberStockRepository.save(newMemStock);
         }
+    }
+
+    @Override
+    public Optional<MemberStock> getMemberOneStock(UUID memberId, UUID stockId) {
+        return memberStockRepository.findByMemberIdAndStockId(memberId, stockId);
     }
 
 }

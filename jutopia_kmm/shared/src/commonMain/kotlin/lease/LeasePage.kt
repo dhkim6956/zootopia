@@ -169,18 +169,6 @@ fun LeasePage(
             }
         }
 
-//        when (apiResponse) {
-//            is ApiResponse.Success -> {
-//                ShowSuccessMessage()
-//            }
-//            is ApiResponse.InsufficientPoints -> {
-//                ShowInsufficientPointsMessage()
-//            }
-//            is ApiResponse.ServerError -> {
-//                ShowServerErrorMessage()
-//            }
-//            null -> Unit
-//        }
         ShowDialogBasedOnApiResponse(apiResponse, viewModel)
 
     }

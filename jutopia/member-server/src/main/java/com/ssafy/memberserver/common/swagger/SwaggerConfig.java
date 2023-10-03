@@ -47,4 +47,9 @@ public class SwaggerConfig {
                 .info(new io.swagger.v3.oas.models.info.Info().title("springdoc API").version("V1")
                         .license(new License().name("Apache 2.0").url("<http://springdoc.org>")));
     }
+
+    @Bean
+    public ModelResolver modelResolver(ObjectMapper objectMapper){
+        return new ModelResolver(objectMapper);
+    }
 }

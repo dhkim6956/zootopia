@@ -1,17 +1,26 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from py_eureka_client.eureka_client import EurekaClient
+from pymongo import MongoClient
 from utils import generate_answer
-from datetime import datetime
+from datetime import datetime, timedelta
 # import httpx
 # import openai
 
+# 유레카 관련 설정
 INSTANCE_PORT = 9002
 INSTANCE_HOST = "j9c108.p.ssafy.io"
+
+# MongoDB 관련 설정
+connection_string = "mongodb://juto:juto1234@mongo1:27017,mongo2:27018,mongo3:27019/?replicaSet=jutopia-repl"
+client = MongoClient(connection_string)
+db = client['jutopia']
+collection = db['chat']
 
 app = FastAPI()
 
 class Question(BaseModel):
+    user_id: str
     message: str
 
 class Document(BaseModel):
@@ -47,9 +56,26 @@ def index():
 @app.post("/ask")
 async def answer(question: Question):
     ans = generate_answer(question.message)
-    now = datetime.now(timezone.kst)
-    return { 
-            "from_server": True, 
-            "message": ans, 
-            "parsed_time": f"{'오전' if now.hour < 12 else '오후'} {now.strftime('%I:%M')}" 
-            }
+    now = datetime.now() + timedelta(hours=9)
+    
+    print(ans)
+    
+    # question_doc = Document(
+    #     role="user",
+    #     from_server=False,
+    #     message=question.message,
+    #     time=now
+    # )
+    
+    # answer_doc = Document(
+    #     role="",
+    #     from_server=True,
+    #     message=ans,
+    #     time=now
+    # )
+    
+    return Answer(
+        from_server=True,
+        message=ans,
+        parsed_time=f"{'오전' if now.hour < 12 else '오후'} {now.strftime('%I:%M')}"
+    )

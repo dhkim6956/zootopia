@@ -13,12 +13,12 @@ import moe.tlaster.precompose.navigation.Navigator
 
 
 @Composable
-fun StockChartScreen(stockId: String, navigator: Navigator) {
+fun StockChartScreen(stockId: String,stockCode: String, navigator: Navigator) {
     Column(
         modifier = Modifier.fillMaxHeight().padding(bottom = 100.dp)
     ) {
         TopPageBar(stockId, navigator)
-        StockChartPage(stockId, navigator=navigator)
+        StockChartPage(stockId, stockCode, navigator=navigator)
     }
     BottomTabBar(navigator, 0)
 }

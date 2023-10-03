@@ -1,5 +1,6 @@
 package stock.common
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import formatDouble
-import stock.stocklist.Stock
 
 @Composable
 fun StockRow(stock: Stock, onClick: () -> Unit) {
@@ -26,7 +26,7 @@ fun StockRow(stock: Stock, onClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(stock.name, fontSize = 20.sp)
+        Text(stock.stockName, fontSize = 20.sp)
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -34,20 +34,18 @@ fun StockRow(stock: Stock, onClick: () -> Unit) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("${formatDouble(stock.price, 3)}", fontSize = 20.sp)
+                Text("${stock.nowMoney}", fontSize = 20.sp)
                 val arrowAndColor =
-                    if (stock.changePercent!! > 0) "↑" to Color.Red else "↓" to Color.Blue
+                    if (stock.type!! == 1) "↑" to Color.Red else if (stock.type!! == -1) "↓" to Color.Blue else "-" to Color.Gray
                 Text(arrowAndColor.first, color = arrowAndColor.second, fontSize = 20.sp)
                 Text(
-                    "${formatDouble(stock.changePercent!!, 3)}%",
+                    "${formatDouble(stock.changeRate!!, 3)}%",
                     color = arrowAndColor.second,
                     fontSize = 20.sp
                 )
             }
-            val changeColor = if (stock.changeAmount!! > 0) Color.Red else Color.Blue
-            val displayChangeAmount =
-                if (stock.changeAmount!! < 0) -stock.changeAmount!! else stock.changeAmount
-            Text("${formatDouble(displayChangeAmount!!, 3)}", color = changeColor, fontSize = 14.sp)
+            val changeColor = if (stock.type!! == 1)  Color.Red else if (stock.type!! == -1) Color.Blue else Color.Gray
+            Text("${stock.changeMoney}", color = changeColor, fontSize = 14.sp)
         }
     }
 }
