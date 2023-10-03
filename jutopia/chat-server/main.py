@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from py_eureka_client.eureka_client import EurekaClient
 from pymongo import MongoClient
-from utils import generate_answer
+from utils import generate_answer, news_summary
 from datetime import datetime, timedelta
 # import httpx
 # import openai
@@ -20,7 +20,6 @@ collection = db['chat']
 app = FastAPI()
 
 class Question(BaseModel):
-    user_id: str
     message: str
 
 class Document(BaseModel):
@@ -33,6 +32,9 @@ class Answer(BaseModel):
     from_server: bool
     message: str
     parsed_time: str
+    
+class NewsLink(BaseModel):
+    link: str
 
 @app.on_event("startup")
 async def eureka_init():
@@ -58,24 +60,13 @@ async def answer(question: Question):
     ans = generate_answer(question.message)
     now = datetime.now() + timedelta(hours=9)
     
-    print(ans)
-    
-    # question_doc = Document(
-    #     role="user",
-    #     from_server=False,
-    #     message=question.message,
-    #     time=now
-    # )
-    
-    # answer_doc = Document(
-    #     role="",
-    #     from_server=True,
-    #     message=ans,
-    #     time=now
-    # )
-    
     return Answer(
         from_server=True,
         message=ans,
         parsed_time=f"{'오전' if now.hour < 12 else '오후'} {now.strftime('%I:%M')}"
     )
+
+@app.post("/sumnews")
+async def sum_news(news_link: NewsLink):
+    summary = news_summary(news_link.link)
+    return generate_answer(summary)
