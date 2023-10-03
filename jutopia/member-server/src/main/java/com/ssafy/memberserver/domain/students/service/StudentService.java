@@ -76,7 +76,7 @@ public class StudentService {
 
     @Transactional
     public MemberPointUpdateResponse memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest) {
-        return studentRepository.findById(memberPointUpdateRequest.id())
+        return studentRepository.findById(memberPointUpdateRequest.getId())
                 .map(it ->{
                     log.info("{}","ewffwefwewefefewf");
                     it.memberPointUpdate(memberPointUpdateRequest);
@@ -87,7 +87,7 @@ public class StudentService {
 
     @Transactional
     public MemberMoneyUpdateResponse memberMoneyUpdate(MemberMoneyUpdateRequest memberMoneyUpdateRequest) {
-        return studentRepository.findById(memberMoneyUpdateRequest.id())
+        return studentRepository.findById(memberMoneyUpdateRequest.getId())
                 .map(it ->{
                     log.info("{}","ewffwefwewefefewf");
                     it.memberMoneyUpdate(memberMoneyUpdateRequest);

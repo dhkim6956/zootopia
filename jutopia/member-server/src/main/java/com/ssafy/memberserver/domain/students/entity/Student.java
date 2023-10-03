@@ -92,12 +92,12 @@ public class Student {
         }
     }
     public void pointIncomeUpdate(PointIncomeRequest pointIncomeRequest, BigDecimal addPoint){
-        if(pointIncomeRequest.income() != null){
+        if(pointIncomeRequest.getIncome() != null){
             this.point = addPoint;
         }
     }
     public void pointExpenseUpdate(PointExpenseRequest pointExpenseRequest, BigDecimal subtractPoint){
-        if(pointExpenseRequest.expense() != null){
+        if(pointExpenseRequest.getExpense() != null){
             this.point = subtractPoint;
         }
     }
@@ -107,9 +107,9 @@ public class Student {
 
     // feign -----------------------------------------------------------------
     public void memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest){
-        this.point = point.subtract(memberPointUpdateRequest.point());
+        this.point = point.subtract(memberPointUpdateRequest.getPoint());
     }
     public void memberMoneyUpdate(MemberMoneyUpdateRequest memberMoneyUpdateRequest){
-        this.money = money.subtract(memberMoneyUpdateRequest.money());
+        this.money = money.subtract(memberMoneyUpdateRequest.getMoney());
     }
 }
