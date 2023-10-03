@@ -25,7 +25,7 @@ public class TeacherSignController {
         return ApiResponse.success(teacherSignService.teacherSignUp(teacherSignUpRequest));
     }
     @Operation(summary = "선생님 아이디 중복 검사")
-    @GetMapping("/sign-up/{teacherId}/duplicated")
+    @GetMapping("/sign-up/{memberId}/duplicated")
     public ApiResponse checkTeacherIdDuplicated(@PathVariable String memberId){
         return ApiResponse.success(teacherSignService.checkIdDuplicated(memberId));
     }
