@@ -24,8 +24,8 @@ public class TeacherService {
 
     @Transactional
     public TeacherUpdateResponse teacherUpdate(TeacherUpdateRequest teacherUpdateRequest){
-        return teacherRepository.findByTeacherId(teacherUpdateRequest.teacherId())
-                .filter(teacher -> passwordEncoder.matches(teacherUpdateRequest.teacherPwd(),teacher.getTeacherPwd()))
+        return teacherRepository.findByTeacherId(teacherUpdateRequest.getTeacherId())
+                .filter(teacher -> passwordEncoder.matches(teacherUpdateRequest.getTeacherPwd(),teacher.getTeacherPwd()))
                 .map(teacher -> {
                     teacher.update(teacherUpdateRequest,passwordEncoder);
                     return TeacherUpdateResponse.of(true);
@@ -34,8 +34,8 @@ public class TeacherService {
     }
     @Transactional
     public TeacherDeleteResponse teacherDelete(TeacherDeleteRequest teacherDeleteRequest) {
-        return teacherRepository.findByTeacherId(teacherDeleteRequest.teacherId())
-                .filter(teacher -> passwordEncoder.matches(teacherDeleteRequest.teacherPwd(),teacher.getTeacherPwd()))
+        return teacherRepository.findByTeacherId(teacherDeleteRequest.getTeacherId())
+                .filter(teacher -> passwordEncoder.matches(teacherDeleteRequest.getTeacherPwd(),teacher.getTeacherPwd()))
                 .map(teacher -> {
                     teacher.delete(teacherDeleteRequest);
                     return TeacherDeleteResponse.of(true);

@@ -54,21 +54,21 @@ public class AccountService {
     }
     @Transactional
     public SendMoneyResponse sendMoney(SendMoneyRequest sendMoneyRequest){
-        Account senderAccount = accountRepository.findAccountByStudentId(sendMoneyRequest.sender())
+        Account senderAccount = accountRepository.findAccountByStudentId(sendMoneyRequest.getSender())
                 .orElseThrow(() -> new NoSuchElementException("보내는 사람을 찾을 수 없습니다."));
         // 돈을 보낼 때 보내는 양이 넘어 가면 안된다. //같은 반의 금액인지 확인을한다. 거래 시간을 찍는다.
-        Account receiverAccount = accountRepository.findAccountByStudentId(sendMoneyRequest.receiver())
+        Account receiverAccount = accountRepository.findAccountByStudentId(sendMoneyRequest.getReceiver())
                 .orElseThrow(() -> new NoSuchElementException("받는 사람을 찾을 수 없습니다"));
-        BigDecimal amount = sendMoneyRequest.amount();
+        BigDecimal amount = sendMoneyRequest.getAmount();
         senderAccount.withdraw(amount);
         receiverAccount.deposit(amount);
         accountRepository.flush();
 
         History senderHistory = new History();
-        senderHistory.senderHistory(senderAccount,HistoryType.EXPENSE, sendMoneyRequest.sender(), sendMoneyRequest.receiver(), amount, senderAccount.getAccountBalance());
+        senderHistory.senderHistory(senderAccount,HistoryType.EXPENSE, sendMoneyRequest.getSender(), sendMoneyRequest.getReceiver(), amount, senderAccount.getAccountBalance());
         historyRepository.save(senderHistory);
         History receiverHistory = new History();
-        receiverHistory.receiverHistory(receiverAccount,HistoryType.INCOME, sendMoneyRequest.receiver(), sendMoneyRequest.sender(), amount, receiverAccount.getAccountBalance());
+        receiverHistory.receiverHistory(receiverAccount,HistoryType.INCOME, sendMoneyRequest.getReceiver(), sendMoneyRequest.getSender(), amount, receiverAccount.getAccountBalance());
         historyRepository.save(receiverHistory);
 
         return new SendMoneyResponse("송금이 성공적으로 완료되었습니다.");

@@ -36,7 +36,7 @@ public class PointTransactionService {
     public PointIncomeResponse pointIncome(PointIncomeRequest pointIncomeRequest, String studentId, BigDecimal income){
         return studentRepository.findByStudentId(studentId)
                 .map(student -> {
-                    if (student.getPoint() != null && pointIncomeRequest.income() != null) {
+                    if (student.getPoint() != null && pointIncomeRequest.getIncome() != null) {
                         BigDecimal pointIncome = student.getPoint().add(income);
                         student.pointIncomeUpdate(pointIncomeRequest, pointIncome);
                         PointTransaction point = pointTransactionRepository.save(PointTransaction.incomeFrom(pointIncomeRequest, student));
@@ -52,7 +52,7 @@ public class PointTransactionService {
     public PointExpenseResponse pointExpense(PointExpenseRequest pointExpenseRequest, String studentId, BigDecimal expense){
         return studentRepository.findByStudentId(studentId)
                 .map(student -> {
-                    if (student.getPoint() != null && pointExpenseRequest.expense() != null) {
+                    if (student.getPoint() != null && pointExpenseRequest.getExpense() != null) {
                         BigDecimal pointExpense = student.getPoint().subtract(expense);
                         student.pointExpenseUpdate(pointExpenseRequest, pointExpense);
                         PointTransaction point = pointTransactionRepository.save(PointTransaction.expenseFrom(pointExpenseRequest, student));

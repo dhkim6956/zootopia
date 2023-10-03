@@ -46,12 +46,12 @@ public class Teacher {
     }
     //TODO:삼항 연사자 변경 필요
     public void update(TeacherUpdateRequest teacherUpdateRequest,PasswordEncoder passwordEncoder){
-        if(teacherUpdateRequest.teacherNewPwd() != null || !teacherUpdateRequest.teacherPwd().isBlank()){
-            this.teacherPwd = passwordEncoder.encode(teacherUpdateRequest.teacherNewPwd());
+        if(teacherUpdateRequest.getTeacherNewPwd() != null || !teacherUpdateRequest.getTeacherPwd().isBlank()){
+            this.teacherPwd = passwordEncoder.encode(teacherUpdateRequest.getTeacherNewPwd());
         }
     }
     public void delete(TeacherDeleteRequest teacherDeleteRequest){
-        if(teacherDeleteRequest.memberStatus() == MemberStatus.ACTIVE){
+        if(teacherDeleteRequest.getMemberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }
     }

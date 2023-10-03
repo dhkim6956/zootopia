@@ -35,11 +35,11 @@ public class Account {
 
     public static Account from(CreateAccountRequest createAccountRequest,Student student){
         return Account.builder()
-                .accountName(createAccountRequest.accountName())
-                .accountNumber(createAccountRequest.accountNumber())
-                .accountBalance(createAccountRequest.accountBalance())
-                .accountType(createAccountRequest.accountType())
-                .moneyType(createAccountRequest.moneyType())
+                .accountName(createAccountRequest.getAccountName())
+                .accountNumber(createAccountRequest.getAccountNumber())
+                .accountBalance(createAccountRequest.getAccountBalance())
+                .accountType(createAccountRequest.getAccountType())
+                .moneyType(createAccountRequest.getMoneyType())
                 .student(student)
                 .accountStatus(AccountStatus.ACTIVE)
                 .build();
@@ -54,7 +54,7 @@ public class Account {
         this.accountBalance = this.accountBalance.subtract(amount);
     }
     public void delete(AccountDeleteRequest accountDeleteRequest){
-        if(accountDeleteRequest.accountStatus() == AccountStatus.ACTIVE){
+        if(accountDeleteRequest.getAccountStatus() == AccountStatus.ACTIVE){
             this.accountStatus = AccountStatus.INACTIVE;
         }
     }
