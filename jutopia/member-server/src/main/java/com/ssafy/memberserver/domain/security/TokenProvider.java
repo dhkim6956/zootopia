@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.memberserver.common.config.YamlLoadFactory;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
-import com.ssafy.members.domain.teachers.repository.TeacherRepository;
-import com.ssafy.members.domain.teachers.entity.Teacher;
+import com.ssafy.memberserver.domain.teachers.entity.Teacher;
+import com.ssafy.memberserver.domain.teachers.repository.TeacherRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,6 @@ public class TokenProvider {
         String studentId = userInfo[0];
         Optional<Student> student = studentRepository.findByStudentId(studentId);
         Student temp = student.get();
-        String subject = student.get().getSchool() + student.get().getGrade() + student.get().getClassRoom() + student.get().getStudentNumber();
 
         Map<String, String> tokenSub = new HashMap<>();
         tokenSub.put("school",temp.getSchool());
@@ -47,11 +46,11 @@ public class TokenProvider {
         tokenSub.put("studentNumber", String.valueOf(temp.getStudentNumber()));
 
         return Jwts.builder()
-                .setIssuer("jutopia")
-                .setIssuedAt(new Date())
-                .setSubject(tokenSub.toString())
-                .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
-                .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
+                        .setIssuer("jutopia")
+                        .setIssuedAt(new Date())
+                        .setSubject(tokenSub.toString())
+                        .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
+                        .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
                 .compact();
     }
     public String TeacherCreateToken(String userSpecification){
