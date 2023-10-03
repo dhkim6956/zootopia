@@ -1,7 +1,6 @@
 package com.ssafy.memberserver.domain.students.sign.controller;
 
 import com.ssafy.memberserver.common.api.Api;
-import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.students.client.ClassServerClient;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpResponse;
@@ -22,8 +21,8 @@ public class StudentSignController {
     private final ClassServerClient classServerClient;
     @Operation(summary = "학생 회원가입")
     @PostMapping("/sign-up")
-    public Api<StudentSignUpResponse> StudentSignUp(@RequestBody CreateAccountRequest createAccountRequest, @RequestBody StudentSignUpRequest studentSignUpRequest){
-        return Api.OK(studentSignService.studentSignUp(createAccountRequest,studentSignUpRequest));
+    public Api<StudentSignUpResponse> StudentSignUp(@RequestBody StudentSignUpRequest studentSignUpRequest){
+        return Api.OK(studentSignService.studentSignUp(studentSignUpRequest));
     }
     @Operation(summary = "학생 회원가입 아이디 중복 체크")
     @GetMapping("/sign-up/{memberId}/duplicated")
