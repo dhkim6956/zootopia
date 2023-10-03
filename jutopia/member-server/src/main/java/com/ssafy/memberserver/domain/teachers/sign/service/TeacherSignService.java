@@ -1,5 +1,6 @@
 package com.ssafy.memberserver.domain.teachers.sign.service;
 
+import com.ssafy.memberserver.domain.students.repository.StudentRepository;
 import com.ssafy.memberserver.domain.teachers.entity.Teacher;
 import com.ssafy.memberserver.domain.teachers.repository.TeacherRepository;
 import com.ssafy.memberserver.domain.teachers.sign.dto.SignUp.request.TeacherSignUpRequest;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class TeacherSignService {
+    private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
     @Transactional
@@ -23,7 +25,12 @@ public class TeacherSignService {
         teacherRepository.flush();
         return TeacherSignUpResponse.from(teacher);
     }
-    public boolean checkTeacherIdDuplicated(String teacherId){
-        return teacherRepository.existsByTeacherId(teacherId);
+    public boolean checkIdDuplicated(String memberId) {
+        boolean student = studentRepository.existsByStudentId(memberId);
+        boolean teacher = teacherRepository.existsByTeacherId(memberId);
+        if (student == false && teacher == false) {
+            return false;
+        }
+        return true;
     }
 }

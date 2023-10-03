@@ -1,10 +1,7 @@
 package com.ssafy.memberserver.domain.students.sign.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.memberserver.common.api.Api;
 import com.ssafy.memberserver.domain.students.client.ClassServerClient;
-import com.ssafy.memberserver.domain.students.sign.dto.signIn.SignInRequest;
-import com.ssafy.memberserver.domain.students.sign.dto.signIn.SignInResponse;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpResponse;
 import com.ssafy.memberserver.domain.students.sign.service.StudentSignService;
@@ -22,11 +19,6 @@ import java.util.UUID;
 public class StudentSignController {
     private final StudentSignService studentSignService;
     private final ClassServerClient classServerClient;
-    @Operation(summary = "학생 로그인")
-    @PostMapping("/sign-in")
-    public Api<SignInResponse> StudentSignIn(@RequestBody SignInRequest signInRequest){
-        return Api.OK(studentSignService.signIn(signInRequest));
-    }
     @Operation(summary = "학생 회원가입")
     @PostMapping("/sign-up")
     public Api<StudentSignUpResponse> StudentSignUp(@RequestBody StudentSignUpRequest studentSignUpRequest){
@@ -34,8 +26,8 @@ public class StudentSignController {
     }
     @Operation(summary = "학생 회원가입 아이디 중복 체크")
     @GetMapping("/sign-up/{studentId}/duplicated")
-    public Api<?> checkStudentIdDuplicated(@PathVariable String studentId){
-        return Api.OK(studentSignService.checkStudentIdDuplicated(studentId));
+    public Api<?> checkStudentIdDuplicated(@PathVariable String memberId){
+        return Api.OK(studentSignService.checkIdDuplicated(memberId));
     }
 
     // Feign-------------------------

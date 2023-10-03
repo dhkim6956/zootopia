@@ -1,4 +1,4 @@
-package com.ssafy.memberserver.domain.students.sign.dto.signIn;
+package com.ssafy.memberserver.domain.sign.dto;
 
 import com.ssafy.memberserver.common.enums.MemberBioStatus;
 import com.ssafy.memberserver.common.enums.MemberRole;
