@@ -22,8 +22,9 @@ class NewsResponse(BaseModel):
     display: int
     items: list[NewsItem]
 
-@router.get("/{stock_name}/{display}/{start}/{sort}")
+@router.get("/orig/{stock_name}/{display}/{start}/{sort}")
 async def fetch_news(stock_name: str, display: int, start: int, sort: str):
+    print('got here')
     params = {
         "query": stock_name, # 검색할 주식 이름 (전체는 '시황' 으로 검색 추천)
         "display": display, # 검색할 뉴스 개수
@@ -44,7 +45,7 @@ async def fetch_news(stock_name: str, display: int, start: int, sort: str):
     
     return response.json()
 
-@router.get("/naver/{stock_name}/{offset}/{max_num}", response_model=NewsResponse)
+@router.get("/{stock_name}/{offset}/{max_num}", response_model=NewsResponse)
 async def fetch_naver_news(stock_name: str, offset: int, max_num: int):
     print("got here")
     params={
@@ -75,6 +76,6 @@ async def fetch_naver_news(stock_name: str, offset: int, max_num: int):
         lastBuildDate=response.json()["lastBuildDate"],
         total=response.json()["total"],
         start=response.json()["start"],
-        display=response.json()["display"],
+        display=int(response.json()["display"]),
         items=naver_news[:max_num]
     )
