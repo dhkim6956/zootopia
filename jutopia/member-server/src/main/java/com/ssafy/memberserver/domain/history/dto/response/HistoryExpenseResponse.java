@@ -10,6 +10,8 @@ import java.util.UUID;
 @Builder
 public record HistoryExpenseResponse(
         Long id,
+        String sender,
+        String receiver,
         BigDecimal amount,
         HistoryType historyType,
         UUID accountId
@@ -17,6 +19,8 @@ public record HistoryExpenseResponse(
     public static HistoryExpenseResponse from(History history){
         return HistoryExpenseResponse.builder()
                 .id(history.getId())
+                .sender(history.getSender())
+                .receiver(history.getReceiver())
                 .amount(history.getAmount())
                 .historyType(history.getHistoryType())
                 .accountId(history.getAccount().getId())
