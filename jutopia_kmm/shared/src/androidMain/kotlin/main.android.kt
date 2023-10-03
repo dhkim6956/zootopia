@@ -61,3 +61,5 @@ actual fun openUrl(url: String?) {
 
     mainActivity.startActivity(intent)
 }
+
+actual fun pathTo(id: String): String = "${mainActivity.filesDir.path}/$id.json"

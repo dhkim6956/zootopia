@@ -24,6 +24,8 @@ kotlin {
     }
 
     val ktorVersion = "2.3.4"
+    val kstoreVersion = "0.6.0"
+
     sourceSets {
         val commonMain by getting {
             dependencies {
@@ -45,6 +47,8 @@ kotlin {
                 implementation("io.ktor:ktor-client-serialization:$ktorVersion")
                 implementation("io.ktor:ktor-client-cio:$ktorVersion")
                 implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+                implementation("io.github.xxfast:kstore:$kstoreVersion")
+                implementation("io.github.xxfast:kstore-file:$kstoreVersion")
 
             }
         }
@@ -55,6 +59,7 @@ kotlin {
                 api("androidx.core:core-ktx:1.10.1")
                 implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
                 implementation("io.ktor:ktor-client-android:$ktorVersion")
+                implementation("io.github.xxfast:kstore-file:$kstoreVersion")
             }
         }
 
@@ -68,6 +73,7 @@ kotlin {
             iosSimulatorArm64Main.dependsOn(this)
             dependencies {
                 implementation("io.ktor:ktor-client-darwin:$ktorVersion")
+                implementation("io.github.xxfast:kstore-file:$kstoreVersion")
             }
         }
     }

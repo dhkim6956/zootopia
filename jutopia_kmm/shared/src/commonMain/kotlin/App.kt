@@ -177,3 +177,5 @@ expect fun formatDouble(value: Double, decimalPlaces: Int): String
 expect fun addComma(value: Double): String
 
 expect fun openUrl(url: String?)
+
+expect fun pathTo(id: String): String

@@ -3,12 +3,12 @@ import androidx.compose.ui.text.platform.Typeface
 import moe.tlaster.precompose.PreComposeApplication
 import org.jetbrains.skia.FontStyle
 import org.jetbrains.skia.Typeface
+import platform.Foundation.NSHomeDirectory
 import platform.Foundation.NSLocale
 import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
 import platform.Foundation.NSNumberFormatterDecimalStyle
 import platform.Foundation.NSURL
-import platform.Foundation.currentLocale
 import platform.UIKit.UIApplication
 
 
@@ -56,3 +56,5 @@ actual fun openUrl(url: String?) {
     val nsUrl = url?.let { NSURL.URLWithString(it) } ?: return
     UIApplication.sharedApplication.openURL(nsUrl)
 }
+
+actual fun pathTo(id: String): String = "${NSHomeDirectory()}/Library/$id.json"
