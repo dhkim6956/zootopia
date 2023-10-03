@@ -42,26 +42,28 @@ public class StudentSignService {
 
     @Transactional
     public SignInResponse signIn(SignInRequest signInRequest) {
-        Optional<Student> temp = studentRepository.findByStudentIdAndMemberRole(signInRequest.getMemberId(),MemberRole.STUDENT);
-        Optional<Teacher> temp2 = teacherRepository.findByTeacherIdAndMemberRole(signInRequest.getMemberId(),MemberRole.TEACHER);
-        if (!temp.isPresent()) {
-            Student student =
-                    Optional.ofNullable(studentRepository.findByStudentId(signInRequest.getMemberId()))
-                            .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "존재하지 않는 아이디입니다."))
-                            .filter(it -> passwordEncoder.matches(signInRequest.getMemberPwd(), it.getStudentPwd()))
-                            .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "비밀번호가 틀렸습니다"));
-            String token = tokenProvider.createToken(String.format("%s:%s,", student.getStudentId(), student.getStudentName()));
-            return SignInResponse.studentFrom(student, token);
-        } else if (!temp2.isPresent()) {
-            Teacher teacher =
-                    Optional.ofNullable(teacherRepository.findByTeacherId(signInRequest.getMemberId()))
-                            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디 입니다."))
-                            .filter(it -> passwordEncoder.matches(signInRequest.getMemberPwd(), it.getTeacherPwd()))
-                            .orElseThrow(() -> new IllegalArgumentException("비밀번호가 틀렸습니다."));
-            String token = tokenProvider.createToken(String.format("%s:%s,", teacher.getTeacherId(), teacher.getTeacherName()));
-            return SignInResponse.teacherFrom(teacher, token);
+       Optional<Student> studentOptional = studentRepository.findByStudentIdAndMemberRole(signInRequest.getMemberId(), MemberRole.STUDENT);
+        Optional<Teacher> teacherOptional = teacherRepository.findByTeacherIdAndMemberRole(signInRequest.getMemberId(), MemberRole.TEACHER);
+
+        if (studentOptional.isPresent()) {
+            Student student = studentOptional.get();
+            if (passwordEncoder.matches(signInRequest.getMemberPwd(), student.getStudentPwd())) {
+                String token = tokenProvider.createToken(String.format("%s:%s", student.getStudentId(), student.getStudentName()));
+                return SignInResponse.studentFrom(student, token);
+            } else {
+                throw new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "비밀번호가 틀렸습니다");
+            }
+        } else if (teacherOptional.isPresent()) {
+            Teacher teacher = teacherOptional.get();
+            if (passwordEncoder.matches(signInRequest.getMemberPwd(), teacher.getTeacherPwd())) {
+                String token = tokenProvider.TeacherCreateToken(String.format("%s:%s", teacher.getTeacherId(),teacher.getTeacherName()));
+                return SignInResponse.teacherFrom(teacher, token);
+            } else {
+                throw new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "비밀번호가 틀렸습니다");
+            }
+        } else {
+            throw new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "존재하지 않는 아이디입니다.");
         }
-        throw new ApiException(ErrorCode.STUDENT_INVALID_INPUT, "존재하지 않는 아이디입니다.");
     }
     public boolean checkStudentIdDuplicated(String studentId){
         return studentRepository.existsByStudentId(studentId);
