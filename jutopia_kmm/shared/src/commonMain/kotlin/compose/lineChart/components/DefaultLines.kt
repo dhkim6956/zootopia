@@ -31,6 +31,7 @@ internal fun DrawScope.drawDefaultLineWithShadow(
     clickedPoints: MutableList<Pair<Float, Float>>,
     textMeasure: TextMeasurer,
     xRegionWidth: Dp,
+    xAxisData: List<String>
 ) {
 
     val strokePathOfDefaultLine = drawLineAsDefault(
@@ -41,7 +42,8 @@ internal fun DrawScope.drawDefaultLineWithShadow(
         spacingY = spacingY,
         clickedPoints = clickedPoints,
         textMeasure = textMeasure,
-        xRegionWidth = xRegionWidth
+        xRegionWidth = xRegionWidth,
+        xAxisData = xAxisData
     )
 
     if (line.lineShadow) {
@@ -71,6 +73,7 @@ private fun DrawScope.drawLineAsDefault(
     clickedPoints: MutableList<Pair<Float, Float>>,
     textMeasure: TextMeasurer,
     xRegionWidth: Dp,
+    xAxisData: List<String>
 ) = Path().apply {
     val height = size.height.toDp()
     drawPathLineWrapper(
@@ -84,6 +87,7 @@ private fun DrawScope.drawLineAsDefault(
         ).size.width
         val textSpace = yTextLayoutResult - (yTextLayoutResult/4)
         val info = lineParameter.data[index]
+        val xInfo = xAxisData[index]
         val ratio = (info - lowerValue) / (upperValue - lowerValue)
         val startXPoint = (textSpace * 1.5.toFloat().toDp()) + (index * xRegionWidth)
         val startYPoint =
@@ -105,6 +109,7 @@ private fun DrawScope.drawLineAsDefault(
                     y = startYPoint,
                     textMeasure = textMeasure,
                     info = info,
+                    xInfo = xInfo,
                     stroke = Stroke(width = 2.dp.toPx()),
                     line = lineParameter,
                     animatedProgress = animatedProgress

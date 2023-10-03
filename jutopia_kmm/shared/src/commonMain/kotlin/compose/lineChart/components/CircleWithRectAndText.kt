@@ -26,29 +26,30 @@ internal fun DrawScope.circleWithRectAndText(
     animatedProgress: Animatable<Float, AnimationVector1D>,
     textMeasure: TextMeasurer,
     info: Double,
+    xInfo: String,
     stroke: Stroke,
     line: LineParameters,
     x: Dp,
     y: Double,
 ) {
     chartCircle(x.toPx(), y.toFloat(), line.lineColor, animatedProgress, stroke)
-    chartRectangleWithText(x, y, line.lineColor, textMeasure, info)
+    chartRectangleWithText(x, y, line.lineColor, textMeasure, info, xInfo)
 }
 
 
 @OptIn(ExperimentalTextApi::class)
 private fun DrawScope.chartRectangleWithText(
-    x: Dp, y: Double, color: Color, textMeasurer: TextMeasurer, infoText: Double,
+    x: Dp, y: Double, color: Color, textMeasurer: TextMeasurer, infoText: Double, xInfo: String,
 ) {
-    val rectSize = Size(50.dp.toPx(), 30.dp.toPx())
+    val rectSize = Size(70.dp.toPx(), 40.dp.toPx())
     val rectTopLeft = Offset(
         x.toPx() - rectSize.width / 1.5.toFloat(),
         y.toFloat() - rectSize.height * 1.5.toFloat()
     )
     val rectBounds = Rect(rectTopLeft, rectSize)
-    val text = "Value:${infoText.toFloat().formatToThousandsMillionsBillions()}"
+    val text = "시간: $xInfo \n가격: ${infoText.toFloat().formatToThousandsMillionsBillions()}"
 
-    val textStyle = TextStyle(fontSize = 8.sp, color = Color.Black)
+    val textStyle = TextStyle(fontSize = 9.sp, color = Color.Black)
 
     val textLayoutResult = textMeasurer.measure(
         text = AnnotatedString(text),
@@ -57,7 +58,7 @@ private fun DrawScope.chartRectangleWithText(
 
     val textOffset = Offset(
         rectTopLeft.x + rectSize.width / 2 - textLayoutResult.size.width / 2,
-        rectTopLeft.y + rectSize.height / 4 + textLayoutResult.size.height / 2
+        rectTopLeft.y + rectSize.height / 2 - textLayoutResult.size.height / 2
     )
 
     drawRoundRect(

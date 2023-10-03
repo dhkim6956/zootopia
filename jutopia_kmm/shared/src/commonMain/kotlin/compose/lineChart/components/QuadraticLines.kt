@@ -32,6 +32,7 @@ internal fun DrawScope.drawQuarticLineWithShadow(
     clickedPoints: MutableList<Pair<Float, Float>>,
     xRegionWidth: Dp,
     textMeasurer: TextMeasurer,
+    xAxisData: List<String>
 ) {
     val strokePathOfQuadraticLine = drawLineAsQuadratic(
         line = line,
@@ -42,7 +43,8 @@ internal fun DrawScope.drawQuarticLineWithShadow(
         specialChart = specialChart,
         clickedPoints = clickedPoints,
         textMeasurer = textMeasurer,
-        xRegionWidth = xRegionWidth
+        xRegionWidth = xRegionWidth,
+        xAxisData = xAxisData
     )
 
     if (line.lineShadow && !specialChart) {
@@ -73,7 +75,8 @@ fun DrawScope.drawLineAsQuadratic(
     specialChart: Boolean,
     clickedPoints: MutableList<Pair<Float, Float>>,
     textMeasurer: TextMeasurer,
-    xRegionWidth: Dp
+    xRegionWidth: Dp,
+    xAxisData: List<String>
 ) = Path().apply {
     var medX: Float
     val height = size.height.toDp()
@@ -90,6 +93,7 @@ fun DrawScope.drawLineAsQuadratic(
         val textSpace = yTextLayoutResult - (yTextLayoutResult/4)
 
         val info = lineParameter.data[index]
+        val xInfo = xAxisData[index]
         val nextInfo = lineParameter.data.getOrNull(index + 1) ?: lineParameter.data.last()
         val firstRatio = (info - lowerValue) / (upperValue - lowerValue)
         val secondRatio = (nextInfo - lowerValue) / (upperValue - lowerValue)
@@ -128,7 +132,8 @@ fun DrawScope.drawLineAsQuadratic(
                     info = info,
                     stroke = Stroke(width = 2.dp.toPx()),
                     line = line,
-                    animatedProgress = animatedProgress
+                    animatedProgress = animatedProgress,
+                    xInfo = xInfo
                 )
             }
 

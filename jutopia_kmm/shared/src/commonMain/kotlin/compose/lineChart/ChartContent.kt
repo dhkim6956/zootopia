@@ -80,8 +80,8 @@ internal fun ChartContent(
         val dataCount = linesParameters.getOrNull(0)?.data?.size ?: 1
         val spacingX = (size.width / 50.dp.toPx()).dp
         val spacingY = (size.height / 8.dp.toPx()).dp
-//        val xRegionWidth = (size.width.toDp() / (xAxisData.size - 1).toDp()).toDp() - (textLayoutResult.toDp() / 2)
-        val xRegionWidth = (size.width / dataCount).toDp() - 0.5.dp
+        val xRegionWidth = (size.width.toDp() / (xAxisData.size - 1).toDp()).toDp() - (textLayoutResult.toDp() / 2)
+//        val xRegionWidth = (size.width / dataCount).toDp() - 0.5.dp
 
 
         baseChartContainer(
@@ -120,7 +120,8 @@ internal fun ChartContent(
                     specialChart = specialChart,
                     clickedPoints = clickedPoints,
                     xRegionWidth = xRegionWidth,
-                    textMeasure
+                    textMeasure,
+                    xAxisData = xAxisData
                 )
 
             }
@@ -140,7 +141,8 @@ internal fun ChartContent(
                         spacingY = spacingY,
                         clickedPoints = clickedPoints,
                         textMeasure = textMeasure,
-                        xRegionWidth = xRegionWidth
+                        xRegionWidth = xRegionWidth,
+                        xAxisData = xAxisData
                     )
 
                 } else {
@@ -154,7 +156,8 @@ internal fun ChartContent(
                         specialChart = specialChart,
                         clickedPoints = clickedPoints,
                         xRegionWidth = xRegionWidth,
-                        textMeasure
+                        textMeasure,
+                        xAxisData = xAxisData
                     )
 
                 }

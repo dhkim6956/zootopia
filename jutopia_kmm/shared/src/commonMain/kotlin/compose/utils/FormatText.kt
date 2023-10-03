@@ -13,9 +13,9 @@ internal fun Float.formatToThousandsMillionsBillions(): String {
     val absValue = abs(this)
     return when {
         absValue < 1000 -> this.format("")
-        absValue < 1_000_000 -> (this / 1_000).format("K")
-        absValue < 1_000_000_000 -> (this / 1_000_000).format("M")
-        absValue < 1_000_000_000_000 -> (this / 1_000_000_000).format("B")
+        absValue < 1_000_000 -> (this / 1_000).format("천")
+        absValue < 1_000_000_000 -> (this / 1_000_000).format("백만")
+        absValue < 1_000_000_000_000 -> (this / 1_000_000_000).format("십억")
         else -> "Infinity"
     }
 }

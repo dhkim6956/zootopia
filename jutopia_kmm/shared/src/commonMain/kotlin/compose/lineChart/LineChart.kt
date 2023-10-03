@@ -1,10 +1,16 @@
 package com.aay.compose.lineChart
 
-import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -18,6 +24,7 @@ import com.aay.compose.baseComponents.model.GridOrientation
 import com.aay.compose.baseComponents.model.LegendPosition
 import com.aay.compose.lineChart.model.LineParameters
 import com.aay.compose.utils.ChartDefaultValues
+
 /**
  * Composable function to render a line chart with optional legends.
  *
@@ -65,7 +72,7 @@ fun LineChart(
     showYAxis: Boolean = ChartDefaultValues.showyAxis,
     oneLineChart: Boolean = ChartDefaultValues.specialChart,
     gridOrientation: GridOrientation = ChartDefaultValues.gridOrientation,
-    legendPosition: LegendPosition = ChartDefaultValues.legendPosition
+    legendPosition: LegendPosition = ChartDefaultValues.legendPosition,
 ) {
     val clickedPoints = remember { mutableStateListOf<Pair<Float, Float>>() }
     Box(modifier.wrapContentHeight()) {
