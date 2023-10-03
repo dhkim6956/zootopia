@@ -21,7 +21,7 @@ class ChatbotApiService {
     private val log = Logger.withTag("chatbot")
     //TODO: 기존 질문에 이어서 질문할 수 있도록 수정 필요
     private companion object {
-        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/chat-server"
+        const val BASE_URL = "http://j9c108.p.ssafy.io:9002/chat-server"
     }
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
@@ -41,7 +41,7 @@ class ChatbotApiService {
     @OptIn(InternalAPI::class)
     suspend fun sendMessage(inputMessage: String): HttpResponse {
         val memberId = TmpUserInfo.getMemberId()
-        val request: ChatRequest = ChatRequest(inputMessage)
+        val request: ChatRequest = ChatRequest(memberId,inputMessage)
         val jsonData = Json.encodeToString(request);
         log.i { "요청: ${jsonData}" }
         return client.post{
