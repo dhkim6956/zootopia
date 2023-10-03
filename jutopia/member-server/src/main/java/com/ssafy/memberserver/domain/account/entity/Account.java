@@ -6,6 +6,7 @@ import com.ssafy.memberserver.common.enums.MoneyType;
 import com.ssafy.memberserver.domain.account.dto.request.AccountDeleteRequest;
 import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.students.entity.Student;
+import com.ssafy.memberserver.domain.students.sign.service.CreateAccountNumber;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,10 +34,10 @@ public class Account {
     @ManyToOne(fetch = FetchType.LAZY)
     private Student student;
 
-    public static Account from(CreateAccountRequest createAccountRequest,Student student){
+    public static Account from(CreateAccountRequest createAccountRequest, Student student, String number){
         return Account.builder()
                 .accountName(createAccountRequest.getAccountName())
-                .accountNumber(createAccountRequest.getAccountNumber())
+                .accountNumber(number)
                 .accountBalance(createAccountRequest.getAccountBalance())
                 .accountType(createAccountRequest.getAccountType())
                 .moneyType(createAccountRequest.getMoneyType())
