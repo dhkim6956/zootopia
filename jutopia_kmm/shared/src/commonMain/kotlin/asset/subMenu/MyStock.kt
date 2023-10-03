@@ -2,6 +2,7 @@ package asset.subMenu
 
 import Variables.ColorsOnPrimary
 import Variables.ColorsPrimary
+import addComma
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +32,7 @@ fun MyStock(viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewMode
     MyStockViewModel()
 }) {
     StockInfo()
-    StockTable(viewModel)
+    Content(viewModel)
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -101,106 +103,127 @@ fun StockInfo() {
 }
 
 @Composable
-fun StockTable(viewModel: MyStockViewModel)
+fun Content(viewModel: MyStockViewModel)
 {
-    Column (
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+    LazyRow {
+        item {
+            Column (
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                TableHeaders()
+                viewModel.ownedStock.value.map { stockDetail ->
+                    TableItems(stockDetail.name, stockDetail.bought, stockDetail.current, stockDetail.qty, stockDetail.rate, stockDetail.changes)
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun TableHeaders() {
+    val headerTexts = listOf("종목명", "매입가", "평가손익", "수익률", "현재금액", "매입금액", "평가금액")
+
+    Row (
+        horizontalArrangement = Arrangement.Start
     ) {
-        TableHeader()
-        TableItem("삼성", "67,000", "5,800", "4.32", Comparison.Increased)
-        TableItem("삼성", "67,000", "5,800", "4.32", Comparison.Decreased)
-        TableItem("삼성", "67,000", "5,800", "4.32", Comparison.Increased)
-    }
-}
-
-@Composable
-fun TableHeader() {
-    Row {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(color = Color(0xFFEDEDED))
-                .weight(1f)
-        ) {
-            Text("종목명")
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(color = Color(0xFFEDEDED))
-                .weight(1f)
-        ) {
-            Text("매입가")
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(color = Color(0xFFEDEDED))
-                .weight(1f)
-        ) {
-            Text("평가손익")
-        }
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .background(color = Color(0xFFEDEDED))
-                .weight(1f)
-        ) {
-            Text("수익률")
+        headerTexts.map {
+            TableHeader(it)
         }
     }
 }
 
 @Composable
-fun TableItem(stockName: String, bought: String, rate: String, percentage: String, state: Comparison) {
+fun TableHeader(text: String) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .background(color = Color(0xFFEDEDED))
+            .width(92.dp)
+    ) {
+        Text(text)
+    }
+}
 
-    val isIncreasing: Boolean = state == Comparison.Increased
+@Composable
+fun TableItems(name: String, bought: Int, current: Int, qty: Int, rate: Double, changes: Comparison) {
+
+    val boughtValue = bought * qty
+    val currentValue = current * qty
+    val profit: Int = currentValue - boughtValue
 
     Row {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .weight(1f)
+                .width(92.dp)
                 .border(width = 0.5.dp, color = Color.LightGray)
                 .height(40.dp)
                 .padding(4.dp)
         ) {
-            Text(stockName, overflow = TextOverflow.Ellipsis)
+            Text(name, overflow = TextOverflow.Ellipsis)
         }
         Box(
             contentAlignment = Alignment.CenterEnd,
             modifier = Modifier
-                .weight(1f)
+                .width(92.dp)
                 .border(width = 0.5.dp, color = Color.LightGray)
                 .height(40.dp)
                 .padding(4.dp)
         ) {
-            Text(bought, overflow = TextOverflow.Ellipsis)
+            Text(addComma(bought.toDouble()), overflow = TextOverflow.Ellipsis)
         }
         Box(
             contentAlignment = Alignment.CenterEnd,
             modifier = Modifier
-                .weight(1f)
+                .width(92.dp)
                 .border(width = 0.5.dp, color = Color.LightGray)
                 .height(40.dp)
                 .padding(4.dp)
         ) {
-            Text(rate, overflow = TextOverflow.Ellipsis, color = if(isIncreasing) Color.Red else Color.Blue)
+            Text(addComma(profit.toDouble()), overflow = TextOverflow.Ellipsis, color = if(changes == Comparison.Increased) Color(0xFFCB0B47) else if(changes == Comparison.Decreased) Color(0xFF167BDF) else Color.Black)
         }
         Box(
             contentAlignment = Alignment.CenterEnd,
             modifier = Modifier
-                .weight(1f)
+                .width(92.dp)
                 .border(width = 0.5.dp, color = Color.LightGray)
                 .height(40.dp)
                 .padding(4.dp)
         ) {
-            Text("$percentage%", overflow = TextOverflow.Ellipsis, color = if(isIncreasing) Color.Red else Color.Blue)
+            Text("$rate%", overflow = TextOverflow.Ellipsis, color = if(changes == Comparison.Increased) Color(0xFFCB0B47) else if(changes == Comparison.Decreased) Color(0xFF167BDF) else Color.Black)
+        }
+        Box(
+            contentAlignment = Alignment.CenterEnd,
+            modifier = Modifier
+                .width(92.dp)
+                .border(width = 0.5.dp, color = Color.LightGray)
+                .height(40.dp)
+                .padding(4.dp)
+        ) {
+            Text(addComma(current.toDouble()), overflow = TextOverflow.Ellipsis)
+        }
+        Box(
+            contentAlignment = Alignment.CenterEnd,
+            modifier = Modifier
+                .width(92.dp)
+                .border(width = 0.5.dp, color = Color.LightGray)
+                .height(40.dp)
+                .padding(4.dp)
+        ) {
+            Text(addComma(boughtValue.toDouble()), overflow = TextOverflow.Ellipsis)
+        }
+        Box(
+            contentAlignment = Alignment.CenterEnd,
+            modifier = Modifier
+                .width(92.dp)
+                .border(width = 0.5.dp, color = Color.LightGray)
+                .height(40.dp)
+                .padding(4.dp)
+        ) {
+            Text(addComma(currentValue.toDouble()), overflow = TextOverflow.Ellipsis)
         }
     }
 }

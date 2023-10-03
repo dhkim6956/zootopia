@@ -131,9 +131,7 @@ fun History(viewModel: MyAccountViewModel) {
                 Text(
                     addComma(detail.amount.toDouble()) + "원",
                     fontSize = 20.sp,
-                    color = if (detail.type == transactionType.Deposit) Color(0xFFCB0B47) else Color(
-                        0xFF167BDF
-                    ),
+                    color = if (detail.type == transactionType.Deposit) Color(0xFFCB0B47) else Color(0xFF167BDF),
                     fontWeight = FontWeight.Bold
                 )
             }
