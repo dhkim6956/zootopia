@@ -1,9 +1,27 @@
 package school
 
+import androidx.compose.runtime.State
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class NotiContentsViewModel(private val idx: Int): ViewModel() {
-    private val _notice: noticeDetail = noticeDetail("칠판당번 공지", "금주의 칠판당번은 xxx입니다", "2023.09.07", if (idx == 0) "10:00" else "10:59")
+    private val _notice: MutableStateFlow<NoticeDetail?> = MutableStateFlow(null)
 
-    val notice: noticeDetail = _notice
+    val notice: StateFlow<NoticeDetail?> = _notice
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun fetchDetailData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _notice.emit(SchoolAPI().getNotiDetail(idx))
+            _isLoading.emit(false)
+        }
+    }
 }

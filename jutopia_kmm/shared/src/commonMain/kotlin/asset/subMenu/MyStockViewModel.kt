@@ -1,16 +1,27 @@
 package asset.subMenu
 
+import androidx.compose.runtime.State
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class MyStockViewModel: ViewModel() {
-    private val _ownedStock: MutableStateFlow<List<StockDetail>> = MutableStateFlow(listOf(
-        StockDetail(name = "현대차", bought = 191100, current = 191100, qty = 1, rate = 0.0, changes = Comparison.NotChanged),
-        StockDetail(name = "삼성전자", bought = 68400, current = 68400, qty = 2, rate = 0.0, changes = Comparison.NotChanged),
-        StockDetail(name = "에스엠", bought = 128300, current = 128300, qty = 1, rate = 0.0, changes = Comparison.NotChanged),
-        StockDetail(name = "NAVER", bought = 201500, current = 201500, qty = 1, rate = 0.0, changes = Comparison.NotChanged),
-        StockDetail(name = "한화", bought = 23950, current = 23950, qty = 4, rate = 0.0, changes = Comparison.NotChanged)
-    ))
+    private val _ownedStock: MutableStateFlow<List<StockDetail>> = MutableStateFlow(listOf())
 
-    val ownedStock: MutableStateFlow<List<StockDetail>> = _ownedStock
+    val ownedStock: StateFlow<List<StockDetail>> = _ownedStock
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun fetchData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _ownedStock.emit(MyStockAPI().getMyStock())
+            _isLoading.emit(false)
+        }
+    }
 }

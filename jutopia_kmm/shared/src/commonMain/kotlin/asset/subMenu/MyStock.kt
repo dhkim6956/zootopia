@@ -2,6 +2,7 @@ package asset.subMenu
 
 import Variables.ColorsOnPrimary
 import Variables.ColorsPrimary
+import Variables.ColorsPrimaryVariant
 import addComma
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,8 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,13 +35,40 @@ import org.jetbrains.compose.resources.painterResource
 fun MyStock(viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewModel::class) {
     MyStockViewModel()
 }) {
-    StockInfo()
-    Content(viewModel)
+    val ownedStock by viewModel.ownedStock.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    if (isLoading) viewModel.fetchData()
+
+    if(isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+        ) {
+            CircularProgressIndicator(
+                color = ColorsPrimary,
+                backgroundColor = Color.LightGray,
+                modifier = Modifier.width(64.dp)
+            )
+        }
+    } else {
+        StockInfo(ownedStock)
+        Content(ownedStock)
+    }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun StockInfo() {
+fun StockInfo(ownedStock: List<StockDetail>) {
+
+    val totalBought = ownedStock.map { it.bought * it.qty }.reduce {acc, i -> acc + i }
+    val totalCurrent = ownedStock.map { it.current * it.qty }.reduce {acc, i -> acc + i }
+
+    val totalDiff = totalCurrent - totalBought
+    val diffPercent = totalDiff / totalBought * 100
+
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,8 +100,8 @@ fun StockInfo() {
                     modifier = Modifier
                         .width(160.dp)
                 ) {
-                    Text("-8100P", color = ColorsOnPrimary, fontSize = 24.sp)
-                    Text("-2.13%", color = ColorsOnPrimary)
+                    Text("${addComma(totalDiff.toDouble())}P", color = ColorsOnPrimary, fontSize = 24.sp)
+                    Text("${diffPercent}%", color = ColorsOnPrimary)
                 }
             }
             Row (
@@ -85,7 +116,7 @@ fun StockInfo() {
                         .weight(1f)
                 ) {
                     Text("총 매입", color = ColorsOnPrimary.copy(alpha = 0.74F))
-                    Text("380800P", color = ColorsOnPrimary.copy(alpha = 0.74F))
+                    Text("${addComma(totalBought.toDouble())}P", color = ColorsOnPrimary.copy(alpha = 0.74F))
                 }
 
                 Row (
@@ -95,7 +126,7 @@ fun StockInfo() {
                         .weight(1f)
                 ) {
                     Text("총 평가", color = ColorsOnPrimary.copy(alpha = 0.74F))
-                    Text("380800P", color = ColorsOnPrimary.copy(alpha = 0.74F))
+                    Text("${addComma(totalCurrent.toDouble())}P", color = ColorsOnPrimary.copy(alpha = 0.74F))
                 }
             }
         }
@@ -103,7 +134,7 @@ fun StockInfo() {
 }
 
 @Composable
-fun Content(viewModel: MyStockViewModel)
+fun Content(ownedStock: List<StockDetail>)
 {
     LazyRow {
         item {
@@ -112,7 +143,7 @@ fun Content(viewModel: MyStockViewModel)
                 verticalArrangement = Arrangement.Top
             ) {
                 TableHeaders()
-                viewModel.ownedStock.value.map { stockDetail ->
+                ownedStock.map { stockDetail ->
                     TableItems(stockDetail.name, stockDetail.bought, stockDetail.current, stockDetail.qty, stockDetail.rate, stockDetail.changes)
                 }
             }
