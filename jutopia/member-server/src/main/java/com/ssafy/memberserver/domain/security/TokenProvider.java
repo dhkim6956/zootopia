@@ -24,6 +24,7 @@ import java.util.*;
 @PropertySource(value = {"token.yaml"}, factory = YamlLoadFactory.class)
 public class TokenProvider {
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Value("${secret-key}")
     String secretKey;
@@ -47,6 +48,21 @@ public class TokenProvider {
                 .setIssuer("jutopia")
                 .setIssuedAt(new Date())
                 .setSubject(tokenSub.toString())
+                .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
+                .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
+                .compact();
+    }
+    public String TeacherCreateToken(String userSpecification){
+        String[] userInfo = userSpecification.split(":");
+        String tearchId = userInfo[0];
+        Optional<Teacher> teacher = teacherRepository.findByTeacherId(tearchId);
+        Teacher temp = teacher.get();
+
+
+        return Jwts.builder()
+                .setIssuer("jutopia")
+                .setIssuedAt(new Date())
+                .setSubject(teacher.get().getTeacherEmail())
                 .setExpiration(Date.from(Instant.now().plus(expirationMinutes, ChronoUnit.HOURS)))
                 .signWith(new SecretKeySpec(secretKey.getBytes(),SignatureAlgorithm.HS512.getJcaName()))
                 .compact();
