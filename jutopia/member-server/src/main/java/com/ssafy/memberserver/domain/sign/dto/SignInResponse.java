@@ -7,31 +7,34 @@ import com.ssafy.memberserver.common.enums.SeatOwnershipStatus;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.teachers.entity.Teacher;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Builder
-public record SignInResponse(
-        UUID id,
-        String MemberId,
-        String name,
-        MemberBioStatus memberBioStatus,
-        BigDecimal money,
-        BigDecimal point,
-        MemberRole memberRole,
-        MemberStatus memberStatus,
-        String school,
-        int grade,
-        int classroom,
-        int studentNumber,
-        SeatOwnershipStatus seatOwnershipStatus,
-        String token
-) {
+@Getter
+public class SignInResponse {
+
+    private UUID id;
+    private String memberId;
+    private String name;
+    private MemberBioStatus memberBioStatus;
+    private BigDecimal money;
+    private BigDecimal point;
+    private MemberRole memberRole;
+    private MemberStatus memberStatus;
+    private String school;
+    private int grade;
+    private int classroom;
+    private int studentNumber;
+    private SeatOwnershipStatus seatOwnershipStatus;
+    private String token;
+
     public static SignInResponse studentFrom(Student student, String token){
         return SignInResponse.builder()
                 .id(student.getId())
-                .MemberId(student.getStudentId())
+                .memberId(student.getStudentId())
                 .name(student.getStudentName())
                 .memberStatus(student.getMemberStatus())
                 .memberRole(student.getMemberRole())
@@ -49,7 +52,7 @@ public record SignInResponse(
     public static SignInResponse teacherFrom(Teacher teacher, String token){
         return SignInResponse.builder()
                 .id(teacher.getId())
-                .MemberId(teacher.getTeacherId())
+                .memberId(teacher.getTeacherId())
                 .name(teacher.getTeacherName())
                 .memberStatus(teacher.getMemberStatus())
                 .memberRole(teacher.getMemberRole())

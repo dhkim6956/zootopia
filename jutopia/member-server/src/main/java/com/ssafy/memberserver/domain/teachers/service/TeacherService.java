@@ -42,5 +42,4 @@ public class TeacherService {
                 })
                 .orElseThrow(() -> new NoSuchElementException("비밀번호가 일치하지 않습니다"));
     }
-
 }
