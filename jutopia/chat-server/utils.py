@@ -62,7 +62,7 @@ def generate_newssum_answer(input: str):
     messages = [
         {
             "role" : "system",
-            "content": "다음 뉴스를 초등학생이 이해하기 쉽게, 초등학생이 이해하기 쉬운 말투로 요약해줘."
+            "content": "다음 뉴스를 초등학생이 이해하기 쉽게, 초등학생이 이해하기 쉬운 말투로 요약해줘. 이모지도 함께 붙여줘"
         }
     ]
     
