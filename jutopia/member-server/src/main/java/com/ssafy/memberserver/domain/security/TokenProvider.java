@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.memberserver.common.config.YamlLoadFactory;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
+import com.ssafy.members.domain.teachers.repository.TeacherRepository;
+import com.ssafy.members.domain.teachers.entity.Teacher;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
