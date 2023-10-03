@@ -45,7 +45,7 @@ async def fetch_news(stock_name: str, display: int, start: int, sort: str):
     
     return response.json()
 
-@router.get("/{stock_name}/{offset}/{max_num}", response_model=NewsResponse)
+@router.get("/naver/{stock_name}/{offset}/{max_num}", response_model=NewsResponse)
 async def fetch_naver_news(stock_name: str, offset: int, max_num: int):
     print("got here")
     params={
@@ -79,3 +79,4 @@ async def fetch_naver_news(stock_name: str, offset: int, max_num: int):
         display=int(response.json()["display"]),
         items=naver_news[:max_num]
     )
+    
