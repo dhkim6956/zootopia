@@ -1,10 +1,7 @@
 package com.ssafy.memberserver.domain.account.entity;
 
 import com.ssafy.memberserver.common.enums.AccountStatus;
-import com.ssafy.memberserver.common.enums.AccountType;
-import com.ssafy.memberserver.common.enums.MoneyType;
 import com.ssafy.memberserver.domain.account.dto.request.AccountDeleteRequest;
-import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,23 +22,18 @@ public class Account {
     private String accountNumber;
     private BigDecimal accountBalance;
     @Enumerated(EnumType.STRING)
-    private AccountType accountType;
-    @Enumerated(EnumType.STRING)
-    private MoneyType moneyType;
-    @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus;
     @ManyToOne(fetch = FetchType.LAZY)
     private Student student;
 
-    public static Account from(CreateAccountRequest createAccountRequest,Student student){
+    public static Account from(Student student, String accountNumber){
         return Account.builder()
-                .accountName(createAccountRequest.getAccountName())
-                .accountNumber(createAccountRequest.getAccountNumber())
-                .accountBalance(createAccountRequest.getAccountBalance())
-                .accountType(createAccountRequest.getAccountType())
-                .moneyType(createAccountRequest.getMoneyType())
-                .student(student)
+                .accountName("싸피은행")
                 .accountStatus(AccountStatus.ACTIVE)
+                .accountBalance(BigDecimal.ZERO)
+                .id(UUID.randomUUID())
+                .accountNumber(accountNumber)
+                .student(student)
                 .build();
     }
     public void deposit(BigDecimal amount){

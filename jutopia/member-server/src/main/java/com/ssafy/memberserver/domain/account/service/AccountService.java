@@ -2,7 +2,6 @@ package com.ssafy.memberserver.domain.account.service;
 
 import com.ssafy.memberserver.common.enums.HistoryType;
 import com.ssafy.memberserver.domain.account.dto.request.AccountDeleteRequest;
-import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.account.dto.request.SendMoneyRequest;
 import com.ssafy.memberserver.domain.account.dto.response.*;
 import com.ssafy.memberserver.domain.account.entity.Account;
@@ -34,14 +33,6 @@ public class AccountService {
         Account account = accountRepository.findAccountByStudentId(studentId)
                 .orElseThrow(() -> new NoSuchElementException("학생 계좌를 찾을 수 없습니다"));
         return AccountInfoResponse.from(account);
-    }
-    @Transactional
-    public CreateAccountResponse createAccount(CreateAccountRequest createAccountRequest,String studentId){
-        Student student = studentRepository.findByStudentId(studentId)
-                .orElseThrow(() -> new NoSuchElementException("학생을 찾을 수 없습니다"));
-        Account account = accountRepository.save(Account.from(createAccountRequest,student));
-        accountRepository.flush();
-        return CreateAccountResponse.from(account);
     }
     @Transactional
     public AccountDeleteResponse deleteAccount(AccountDeleteRequest accountDeleteRequest, UUID id){
