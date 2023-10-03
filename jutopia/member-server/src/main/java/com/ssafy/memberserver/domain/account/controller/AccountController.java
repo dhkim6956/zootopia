@@ -2,7 +2,6 @@ package com.ssafy.memberserver.domain.account.controller;
 
 import com.ssafy.memberserver.common.api.ApiResponse;
 import com.ssafy.memberserver.domain.account.dto.request.AccountDeleteRequest;
-import com.ssafy.memberserver.domain.account.dto.request.CreateAccountRequest;
 import com.ssafy.memberserver.domain.account.dto.request.SendMoneyRequest;
 import com.ssafy.memberserver.domain.account.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,11 +19,6 @@ public class AccountController {
     @GetMapping
     public ApiResponse getAccountInfo(@RequestParam(name = "studentId") String studentId){
         return ApiResponse.success(accountService.getAccountInfo(studentId));
-    }
-    @Operation(summary = "학생 계좌 생성")
-    @PostMapping("/make")
-    public ApiResponse makeAccount(@RequestBody CreateAccountRequest createAccountRequest,@RequestParam String studentId){
-        return ApiResponse.success(accountService.createAccount(createAccountRequest,studentId));
     }
     @Operation(summary = "학생 계좌 탈퇴")
     @DeleteMapping("/delete")

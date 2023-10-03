@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ssafy.memberserver.common.enums.MemberRole;
 import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
+import com.ssafy.memberserver.domain.account.entity.Account;
+import com.ssafy.memberserver.domain.account.repository.AccountRepository;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
 
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class StudentSignService {
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AccountRepository accountRepository;
 
     @Transactional
     public StudentSignUpResponse studentSignUp(StudentSignUpRequest studentSignUpRequest) {
@@ -34,6 +38,9 @@ public class StudentSignService {
         }
         Student student = studentRepository.save(Student.from(studentSignUpRequest, passwordEncoder));
         studentRepository.flush();
+        String accountNumber = CreateAccountNumber.generateAccountNumber();
+        Account account = accountRepository.save(Account.from(student,accountNumber));
+        accountRepository.flush();
         return StudentSignUpResponse.from(student);
     }
     public boolean checkIdDuplicated(String memberId) {
@@ -43,5 +50,31 @@ public class StudentSignService {
             return false;
         }
         return true;
+    }
+    public class CreateAccountNumber {
+        public static String generateAccountNumber() {
+            // 12자리의 랜덤 숫자 생성
+            String accountNumber = generateRandomNumbers(12);
+
+            // 포맷 형식에 맞게 변경
+            return formatAccountNumber(accountNumber);
+        }
+
+        private static String generateRandomNumbers(int length) {
+            Random random = new Random();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                stringBuilder.append(random.nextInt(10));
+            }
+            return stringBuilder.toString();
+        }
+
+        private static String formatAccountNumber(String accountNumber) {
+            // "xxx-xxxxxx-xxx" 형식으로 포맷팅
+            return String.format("%s-%s-%s",
+                    accountNumber.substring(0, 3),
+                    accountNumber.substring(3, 9),
+                    accountNumber.substring(9));
+        }
     }
 }
