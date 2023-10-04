@@ -21,8 +21,8 @@ public class NoticeController {
     }
     @Operation(summary = "공지사항 리스트 조회")
     @GetMapping
-    public ApiResponse getNotices(){
-        return ApiResponse.success(noticeService.getNotices());
+    public ApiResponse getNotices(String school, int grade, int classroom){
+        return ApiResponse.success(noticeService.getNotices(school, grade, classroom));
     }
     @Operation(summary = "공지사항 작성")
     @PostMapping("/write")
