@@ -13,4 +13,9 @@ public class NoticeRequest {
     private String content;
     private Long viewCount;
     private NoticeStatus noticeStatus;
+    private String school;
+    private int grade;
+    private int classroom;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
