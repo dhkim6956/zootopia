@@ -51,7 +51,6 @@ public class MemberStockController {
             responseMemberStock.setStockName(stock.getStockName());
             responseMemberStock.setStockCode(stock.getStockCode());
             responseMemberStock.setNowMoney(stock.getNowMoney());
-            responseMemberStock.setPrevMoney(stock.getPrevMoney());
             responseMemberStock.setChangeMoney(stock.getChangeMoney());
             responseMemberStock.setChangeRate(stock.getChangeRate());
             responseMemberStock.setType(stock.getType());
@@ -68,7 +67,6 @@ public class MemberStockController {
 
         if (!memberStock.isPresent()) return Api.NOT_FOUND(null);
 
-
         ResponseMemberStock responseMemberStock = mapper.map(memberStock.get(), ResponseMemberStock.class);
         responseMemberStock.setStockId(memberStock.get().getStock().getId());
         responseMemberStock.setStockName(memberStock.get().getStock().getStockName());
@@ -76,7 +74,6 @@ public class MemberStockController {
 
         ResponseStock stock = stockService.getStock(stockId);
         responseMemberStock.setNowMoney(stock.getNowMoney());
-        responseMemberStock.setPrevMoney(stock.getPrevMoney());
         responseMemberStock.setChangeMoney(stock.getChangeMoney());
         responseMemberStock.setChangeRate(stock.getChangeRate());
         responseMemberStock.setType(stock.getType());
