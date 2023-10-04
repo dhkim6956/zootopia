@@ -52,7 +52,7 @@ fun StockChartPage(
 ) {
     val currentChartData by viewModel.currentChartData.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    if (isLoading) {
+    if (isLoading || currentChartData.isEmpty()) {
         CircularProgressIndicator()
     } else{
         Column {
