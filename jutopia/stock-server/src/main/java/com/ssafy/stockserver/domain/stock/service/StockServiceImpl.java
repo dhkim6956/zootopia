@@ -45,27 +45,18 @@ public class StockServiceImpl implements StockService{
 
         // news-server 로부터 실시간 주식 데이터 가져와 가공
         List<ResponseFeignStock> res = newsServerClient.getStocks();
-        res.stream().forEach(r -> {
-            r.setNowMoney(r.getNowMoney().replaceAll(",",""));
-            r.setPrevMoney(r.getPrevMoney().replaceAll(",",""));
-        });
 
         // response 객체 가공
         stock.forEach(s -> {
             ResponseStock newStock = mapper.map(s, ResponseStock.class);
 
             Optional<ResponseFeignStock> tmp = res.stream().filter(e -> e.getStockName().equals(s.getStockName())).findFirst();
-            BigDecimal nowMoney = new BigDecimal(tmp.get().getNowMoney());
-            BigDecimal prevMoney = new BigDecimal(tmp.get().getPrevMoney());
+            BigDecimal nowMoney = new BigDecimal(tmp.get().getPrice());
 
             newStock.setNowMoney(nowMoney);
-            newStock.setPrevMoney(prevMoney);
-            newStock.setChangeMoney(nowMoney.subtract(prevMoney));
-            newStock.setChangeRate(nowMoney.subtract(prevMoney).divide(prevMoney,3, RoundingMode.HALF_UP)
-                                    .multiply(new BigDecimal("100")).doubleValue());
-            if(nowMoney.compareTo(prevMoney) > 0) newStock.setType(1);
-            else if (nowMoney.compareTo(prevMoney) < 0) newStock.setType(-1);
-            else newStock.setType(0);
+            newStock.setChangeMoney(new BigDecimal(tmp.get().getChangeMoney()));
+            newStock.setChangeRate(tmp.get().getChangeRate());
+            newStock.setType(tmp.get().getType());
 
             if (ownedStockCode.contains(s.getStockCode())) {
                 newStock.setIsOwnedByUser(true);
@@ -95,17 +86,11 @@ public class StockServiceImpl implements StockService{
 
         ResponseFeignStock feignStock = newsServerClient.getOneStock(responseStock.getStockCode());
 
-        BigDecimal nowMoney = new BigDecimal(feignStock.getNowMoney().replaceAll(",", ""));
-        BigDecimal prevMoney = new BigDecimal(feignStock.getPrevMoney().replaceAll(",", ""));
 
-        responseStock.setNowMoney(nowMoney);
-        responseStock.setPrevMoney(prevMoney);
-        responseStock.setChangeMoney(nowMoney.subtract(prevMoney));
-        responseStock.setChangeRate(nowMoney.subtract(prevMoney).divide(prevMoney, 3, RoundingMode.HALF_UP)
-                .multiply(new BigDecimal("100")).doubleValue());
-        if (nowMoney.compareTo(prevMoney) > 0) responseStock.setType(1);
-        else if (nowMoney.compareTo(prevMoney) < 0) responseStock.setType(-1);
-        else responseStock.setType(0);
+        responseStock.setNowMoney(new BigDecimal(feignStock.getPrice()));
+        responseStock.setChangeMoney(new BigDecimal(feignStock.getChangeMoney()));
+        responseStock.setChangeRate(feignStock.getChangeRate());
+        responseStock.setType(feignStock.getType());
 
         return responseStock;
     }
