@@ -160,7 +160,10 @@ def get_latest_stocks():
                 "data": {
                     "$push": {
                         "currentPrice": "$현재 주식 가격",
-                        "timestamp": "$시간"
+                        "timestamp": "$시간",
+                        "changeRate": "$퍼센트",
+                        "changeMoney": "$전일대비 변화 가격",
+                        "type": "$부호"
                     }
                 }
             }
@@ -168,11 +171,29 @@ def get_latest_stocks():
         {
             "$project": {
                 "stockName": "$_id",
-                "nowMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 0]
+                "stockCode": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": ["$_id", "삼성전자"]}, "then": "005930"},
+                            {"case": {"$eq": ["$_id", "현대차"]}, "then": "005380"},
+                            {"case": {"$eq": ["$_id", "NAVER"]}, "then": "035420"},
+                            {"case": {"$eq": ["$_id", "에스엠"]}, "then": "041510"},
+                            {"case": {"$eq": ["$_id", "한화"]}, "then": "000880"},
+                        ],
+                        "default": "Unknown"
+                    }
                 },
-                "prevMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 1]
+                "price": {"$toInt": {"$arrayElemAt": ["$data.currentPrice", 0]}},
+                "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
+                "changeMoney": {"$toInt": {"$arrayElemAt": ["$data.changeMoney", 0]}},
+                "type": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "+"]}, "then": 1},
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "-"]}, "then": -1},
+                        ],
+                        "default": 0
+                    }
                 }
             }
         }
@@ -220,7 +241,10 @@ def get_latest_stocks(ticker: str):
                 "data": {
                     "$push": {
                         "currentPrice": "$현재 주식 가격",
-                        "timestamp": "$시간"
+                        "timestamp": "$시간",
+                        "changeRate": "$퍼센트",
+                        "changeMoney": "$전일대비 변화 가격",
+                        "type": "$부호"
                     }
                 }
             }
@@ -228,11 +252,30 @@ def get_latest_stocks(ticker: str):
         {
             "$project": {
                 "stockName": "$_id",
-                "nowMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 0]
+                "stockCode": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": ["$_id", "삼성전자"]}, "then": "005930"},
+                            {"case": {"$eq": ["$_id", "현대차"]}, "then": "005380"},
+                            {"case": {"$eq": ["$_id", "NAVER"]}, "then": "035420"},
+                            {"case": {"$eq": ["$_id", "에스엠"]}, "then": "041510"},
+                            {"case": {"$eq": ["$_id", "한화"]}, "then": "000880"},
+                        ],
+                        "default": "Unknown"
+                    }
                 },
-                "prevMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 1]
+                "nowMoney": {"$toInt": {"$arrayElemAt": ["$data.currentPrice", 0]}},
+                "prevMoney": {"$toInt": {"$arrayElemAt": ["$data.currentPrice", 1]}},
+                "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
+                "changeMoney": {"$toInt": {"$arrayElemAt": ["$data.changeMoney", 0]}},
+                "type": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "+"]}, "then": 1},
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "-"]}, "then": -1},
+                        ],
+                        "default": 0
+                    }
                 }
             }
         }
@@ -240,10 +283,8 @@ def get_latest_stocks(ticker: str):
 
     try:
         result = list(realtime_collection.aggregate(pipeline))
-        # Check if a result was found
         if not result:
             raise HTTPException(status_code=404, detail=f"No data found for ticker: {ticker}")
-        # Return the first item in the result
         stock_data = result[0]
         stock_data.pop("_id", None)
         return JSONResponse(content=stock_data)
