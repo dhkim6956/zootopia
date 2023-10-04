@@ -264,8 +264,7 @@ def get_latest_stocks(ticker: str):
                         "default": "Unknown"
                     }
                 },
-                "nowMoney": {"$toInt": {"$arrayElemAt": ["$data.currentPrice", 0]}},
-                "prevMoney": {"$toInt": {"$arrayElemAt": ["$data.currentPrice", 1]}},
+                "price": {"$toInt": {"$arrayElemAt": ["$data.currentPrice", 0]}},
                 "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
                 "changeMoney": {"$toInt": {"$arrayElemAt": ["$data.changeMoney", 0]}},
                 "type": {
