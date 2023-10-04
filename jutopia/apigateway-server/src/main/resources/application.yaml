@@ -19,6 +19,9 @@ spring:
     password: guest
   cloud:
     gateway:
+      httpclient:
+        ssl:
+          use-insecure-trust-manager: true
       routes:
         - id: member-server
           uri: lb://MEMBER-SERVER
