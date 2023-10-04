@@ -1,3 +1,7 @@
+import Sign.MainPage
+import Sign.SignUp
+import Sign.StudentSignUp
+import Sign.TeacherSignUp
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -53,8 +57,13 @@ fun App() {
                     pauseTransition = ExitTransition.None,
                     resumeTransition = EnterTransition.None
                 ),
-                initialRoute = "/home",
+                initialRoute = "/mainpage",
             ) {
+                scene(
+                    route = "/mainpage"
+                ) {
+                    MainPage(navigator)
+                }
                 scene(
                     route = "/home"
                 ) {
@@ -158,8 +167,29 @@ fun App() {
                 }
                 scene(
                     route = "/chatbot"
-                ){
+                ) {
                     ChatbotScreen(navigator)
+                }
+                scene(
+                    route = "/signup"
+                ) {
+                    SignUp(navigator)
+                }
+                scene(
+                    route = "/studentsignup/{id}/{password}"
+                ) { backStackEntry ->
+                    val id = backStackEntry.path<String>("id")
+                    val password = backStackEntry.path<String>("password")
+
+                    StudentSignUp(navigator, id, password)
+                }
+                scene(
+                    route = "/teachersignup/{id}/{password}"
+                ) { backStackEntry ->
+                    val id = backStackEntry.path<String>("id")
+                    val password = backStackEntry.path<String>("password")
+
+                    TeacherSignUp(navigator, id, password)
                 }
             }
         }
