@@ -27,6 +27,9 @@ public class Notice {
     private Long viewCount;
     @Enumerated(EnumType.STRING)
     private NoticeStatus noticeStatus;
+    private String school;
+    private int grade;
+    private int classroom;
 
     public static Notice from(NoticeRequest noticeRequest){
         return Notice.builder()
@@ -34,6 +37,9 @@ public class Notice {
                 .title(noticeRequest.getTitle())
                 .content(noticeRequest.getContent())
                 .createdAt(LocalDateTime.now())
+                .school(noticeRequest.getSchool())
+                .grade(noticeRequest.getGrade())
+                .classroom(noticeRequest.getClassroom())
                 .updateAt(LocalDateTime.now())
                 .viewCount(0L)
                 .noticeStatus(NoticeStatus.ACTIVE)
