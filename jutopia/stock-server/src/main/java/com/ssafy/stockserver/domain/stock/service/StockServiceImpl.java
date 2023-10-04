@@ -3,6 +3,8 @@ package com.ssafy.stockserver.domain.stock.service;
 import com.ssafy.common.api.Api;
 import com.ssafy.stockserver.domain.client.NewsServerClient;
 import com.ssafy.stockserver.domain.client.ResponseFeignStock;
+import com.ssafy.stockserver.domain.memberStock.service.MemberStockService;
+import com.ssafy.stockserver.domain.memberStock.service.MemberStockServiceImpl;
 import com.ssafy.stockserver.domain.stock.entity.Stock;
 import com.ssafy.stockserver.domain.stock.repository.StockRepository;
 import com.ssafy.stockserver.domain.stock.vo.request.RequestStock;
@@ -15,10 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -26,18 +25,23 @@ public class StockServiceImpl implements StockService{
     ModelMapper mapper;
     StockRepository stockRepository;
     NewsServerClient newsServerClient;
+    MemberStockService memberStockService;
     @Autowired
-    public StockServiceImpl(StockRepository stockRepository, NewsServerClient newsServerClient) {
+    public StockServiceImpl(StockRepository stockRepository, NewsServerClient newsServerClient, MemberStockService memberStockService) {
         this.stockRepository = stockRepository;
         this.newsServerClient = newsServerClient;
+        this.memberStockService = memberStockService;
         this.mapper = new ModelMapper();
         this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
     @Override
-    public List<ResponseStock> getAllStocks() {
+    public List<ResponseStock> getAllStocks(UUID userId) {
         Iterable<Stock> stock = stockRepository.findAll();
         List<ResponseStock> resList = new ArrayList<>();
+        var MyStocks = memberStockService.getMemberStocks(userId);
+        Set<String> ownedStockCode = new HashSet<>();
+        MyStocks.forEach(s -> ownedStockCode.add(s.getStock().getStockCode()));
 
         // news-server 로부터 실시간 주식 데이터 가져와 가공
         List<ResponseFeignStock> res = newsServerClient.getStocks();
@@ -62,6 +66,12 @@ public class StockServiceImpl implements StockService{
             if(nowMoney.compareTo(prevMoney) > 0) newStock.setType(1);
             else if (nowMoney.compareTo(prevMoney) < 0) newStock.setType(-1);
             else newStock.setType(0);
+
+            if (ownedStockCode.contains(s.getStockCode())) {
+                newStock.setIsOwnedByUser(true);
+            } else {
+                newStock.setIsOwnedByUser(false);
+            }
 
             resList.add(newStock);
         });
