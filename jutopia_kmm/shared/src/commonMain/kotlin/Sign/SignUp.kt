@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
@@ -29,15 +31,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
+import common.startTopBar
 import common.TopPageBar
 import home.deepSky
 import io.ktor.client.HttpClient
@@ -57,6 +64,7 @@ import org.jetbrains.compose.resources.painterResource
 
 private val log = Logger.withTag("SignUp")
 val deepsky = Color(0xFF8FE0FF)
+
 @Serializable
 data class ResultData(
     @SerialName("result_code")
@@ -75,7 +83,7 @@ data class DuplicatedResponse(
 
 class SignUpAPI {
     private val client = HttpClient(CIO) {
-        install(ContentNegotiation){
+        install(ContentNegotiation) {
             json(
                 Json { ignoreUnknownKeys = true }
             )
@@ -83,12 +91,13 @@ class SignUpAPI {
     }
 
     suspend fun duplicated(studentId: String): DuplicatedResponse {
-        val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/member-server/api/student/sign-up/$studentId/duplicated")
+        val response: HttpResponse =
+            client.get("http://j9c108.p.ssafy.io:8000/member-server/api/student/sign-up/$studentId/duplicated")
         return Json.decodeFromString<DuplicatedResponse>(response.bodyAsText())
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
+@OptIn(ExperimentalResourceApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SignUp(navigator: Navigator) {
     var ID by remember { mutableStateOf("") }
@@ -110,6 +119,9 @@ fun SignUp(navigator: Navigator) {
     var schoolImg = "drawable/school.png"
     val schoolIcon: Painter = painterResource(schoolImg)
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     Column {
         Column(
             modifier = Modifier,
@@ -123,7 +135,8 @@ fun SignUp(navigator: Navigator) {
                     .height(130.dp)
                     .background(sky)
             ) {
-                Image(painter = schoolIcon, contentDescription = "School Icon",
+                Image(
+                    painter = schoolIcon, contentDescription = "School Icon",
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(end = 30.dp)
@@ -161,7 +174,12 @@ fun SignUp(navigator: Navigator) {
                                 backgroundColor = Color.White,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
-                            )
+                            ),
+                            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                            keyboardActions = KeyboardActions(onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            })
                         )
                     }
                 }
@@ -201,9 +219,9 @@ fun SignUp(navigator: Navigator) {
                     AlertDialog(
                         onDismissRequest = { showAlertForDuplication = false },
                         title = { Text(text = "알림") },
-                        text = { Text(text=alertMessageForDuplication, fontSize = 20.sp)},
-                        confirmButton={
-                            Button(onClick={showAlertForDuplication=false}){
+                        text = { Text(text = alertMessageForDuplication, fontSize = 20.sp) },
+                        confirmButton = {
+                            Button(onClick = { showAlertForDuplication = false }) {
                                 Text("확인")
                             }
                         })
@@ -238,7 +256,12 @@ fun SignUp(navigator: Navigator) {
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        })
                     )
                 }
             }
@@ -271,7 +294,12 @@ fun SignUp(navigator: Navigator) {
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        })
                     )
                 }
             }
@@ -339,10 +367,10 @@ fun SignUp(navigator: Navigator) {
             if (showAlertForDuplicationCheck) {
                 AlertDialog(
                     onDismissRequest = { showAlertForDuplicationCheck = false },
-                    title = { Text(text="알림") },
-                    text={Text(text=alertMessageForDuplicationCheck, fontSize=20.sp)},
-                    confirmButton={
-                        Button(onClick={showAlertForDuplicationCheck=false}){
+                    title = { Text(text = "알림") },
+                    text = { Text(text = alertMessageForDuplicationCheck, fontSize = 20.sp) },
+                    confirmButton = {
+                        Button(onClick = { showAlertForDuplicationCheck = false }) {
                             Text("확인")
                         }
                     })
@@ -350,23 +378,23 @@ fun SignUp(navigator: Navigator) {
 
             if (showAlertForInput) {
                 AlertDialog(
-                    onDismissRequest = { showAlertForInput= false },
-                    title ={ Text(text="알림") },
-                    text={Text(text=alertMessageForInput, fontSize=17.sp)},
-                    confirmButton={
-                        Button(onClick={showAlertForInput=false}){
+                    onDismissRequest = { showAlertForInput = false },
+                    title = { Text(text = "알림") },
+                    text = { Text(text = alertMessageForInput, fontSize = 17.sp) },
+                    confirmButton = {
+                        Button(onClick = { showAlertForInput = false }) {
                             Text("확인")
                         }
                     })
             }
 
-            if(showAlertForRole){
+            if (showAlertForRole) {
                 AlertDialog(
-                    onDismissRequest ={showAlertForRole=false},
-                    title={Text(text="알림")},
-                    text={Text(text=alertMessageForRole,fontSize=17.sp)},
-                    confirmButton={
-                        Button(onClick={showAlertForRole=false}){
+                    onDismissRequest = { showAlertForRole = false },
+                    title = { Text(text = "알림") },
+                    text = { Text(text = alertMessageForRole, fontSize = 17.sp) },
+                    confirmButton = {
+                        Button(onClick = { showAlertForRole = false }) {
                             Text("확인")
                         }
                     })

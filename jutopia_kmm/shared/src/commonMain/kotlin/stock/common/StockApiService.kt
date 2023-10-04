@@ -42,7 +42,7 @@ class StockApiService {
 
     suspend fun getAllStocks(memberId: String): HttpResponse{
         return client.get{
-            apiUrl("stock/${memberId}")
+            apiUrl("stock/stocklist/${memberId}")
         }
     }
 
