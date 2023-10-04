@@ -27,7 +27,7 @@ public class TeacherController {
     public ApiResponse teacherDelete(@RequestBody TeacherDeleteRequest teacherDeleteRequest){
         return ApiResponse.success(teacherService.teacherDelete(teacherDeleteRequest));
     }
-    @Operation(summary = "기본금 지급")
+    @Operation(summary = "특정 학교, 학년, 반을 기준으로 기본금 지급")
     @PutMapping("/helpMoney")
     public ApiResponse helpMony(@RequestParam String school, @RequestParam int grade, @RequestParam int classroom, @RequestParam BigDecimal income){
         return ApiResponse.success(teacherService.helpMoney(school, grade, classroom, income));
