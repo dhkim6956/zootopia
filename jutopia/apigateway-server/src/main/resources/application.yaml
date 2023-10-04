@@ -21,10 +21,10 @@ spring:
     gateway:
       httpclient:
         ssl:
-          enabled: true
           key-store: classpath:ssl/keystore.p12
           key-store-type: PKCS12
           key-store-password: juto
+          use-insecure-trust-manager: true
       routes:
         - id: member-server
           uri: lb://MEMBER-SERVER
