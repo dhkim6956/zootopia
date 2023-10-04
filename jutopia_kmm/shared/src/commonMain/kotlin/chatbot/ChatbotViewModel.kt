@@ -49,7 +49,7 @@ class ChatbotViewModel : ViewModel() {
         try {
             val reply = chatApiService.sendMessage(message)
             log.i{
-                "응답 : ${reply.body<ChatMessage>()}"
+                "응답 : ${reply.bodyAsText()}"
             }
             addMessage(reply.body())
         } catch (e:Exception) {

@@ -1,5 +1,6 @@
 package asset.subMenu
 
+import UserInfo
 import Variables.ColorsOnPrimary
 import Variables.ColorsOnPrimaryVariant
 import Variables.ColorsPrimary
@@ -20,9 +21,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults.buttonColors
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,16 +39,36 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun MyAccount(viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
+fun MyAccount(userInfo: UserInfo, viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
     MyAccountViewModel()
 }) {
-    AccountInfo()
-    History(viewModel)
+
+    val accountInformation by viewModel.accountInformation.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    if (isLoading) viewModel.fetchData()
+
+    if(isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+        ) {
+            CircularProgressIndicator(
+                color = ColorsPrimary,
+                backgroundColor = Color.LightGray,
+                modifier = Modifier.width(64.dp)
+            )
+        }
+    } else {
+        AccountInfo(accountInformation!!)
+        History(viewModel)
+    }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun AccountInfo() {
+fun AccountInfo(accountInfo: AccountInformation) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,7 +86,7 @@ fun AccountInfo() {
                     null,
                     modifier = Modifier.width(24.dp)
                 )
-                Text("삼다수 은행", color = ColorsOnPrimary.copy(alpha = 0.74F))
+                Text(accountInfo.bank, color = ColorsOnPrimary.copy(alpha = 0.74F))
                 Text("|", color = ColorsOnPrimary.copy(alpha = 0.74F))
                 Text("입출금 통장", color = ColorsOnPrimary)
             }
@@ -73,7 +97,7 @@ fun AccountInfo() {
                     .fillMaxWidth()
                     .fillMaxHeight()
             ) {
-                Text("60,000원", color = ColorsOnPrimary, fontSize = 36.sp)
+                Text("${addComma(accountInfo.balance.toDouble())}원", color = ColorsOnPrimary, fontSize = 36.sp)
                 Button(
                     onClick = { Logger.d { "test" } },
                     colors = buttonColors(

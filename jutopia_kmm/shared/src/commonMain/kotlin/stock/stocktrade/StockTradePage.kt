@@ -50,29 +50,16 @@ fun StockTradePage(
         ) {
             Text("판매")
         }
-        Button(
-            onClick = { viewModel.changeTradeType(TradeType.Pending) },
-            modifier = Modifier.weight(1f),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Color(0xFFC3E0E8)
-            )
-        ) {
-            Text("미체결")
-        }
 
     }
     when (tradeType) {
         TradeType.BUY -> {
             StockBuyingPage(stock!!)
         }
-
         TradeType.SELL -> {
             StockSellingPage(stock!!)
         }
 
-        TradeType.Pending -> {
-            StockPendingPage(stock!!)
-        }
     }
 }
 

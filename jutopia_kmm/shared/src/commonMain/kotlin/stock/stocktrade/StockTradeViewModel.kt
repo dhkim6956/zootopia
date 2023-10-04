@@ -18,7 +18,6 @@ import stock.common.StockTradeResponse
 enum class TradeType {
     BUY,
     SELL,
-    Pending
 }
 enum class StockStatus {
     Contract,

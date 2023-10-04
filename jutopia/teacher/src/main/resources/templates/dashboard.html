@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 50px;
+        }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        form, h1 {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 45%; /* 변경된 부분 */
+            margin-bottom: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, button, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #1abc9c;
+            border: none;
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #16a085;
+        }
+    </style>
+</head>
+<body>
+<h1>Welcome to the Dashboard!</h1>
+<!--<h1 th:text="'Welcome to ' + ${session.user.school} Dashboard!'">Welcome to the Dashboard!</h1>-->
+<div class="grid">
+    <form th:action="@{/createSeat}" method="post">
+        <h2>Create Seat</h2>
+        <label>Total Count:</label>
+        <input type="number" name="totalCount" required>
+        <label>Grade:</label>
+        <input type="number" name="grade" required>
+        <label>Class Number:</label>
+        <input type="number" name="clazzNumber" required>
+        <button type="submit">Create</button>
+    </form>
+
+    <form th:action="@{/createProduct}" method="post">
+        <h2>Create Product</h2>
+        <label>Product Name:</label>
+        <input type="text" name="productName" required>
+        <label>Product Detail:</label>
+        <input type="text" name="productDetail" required>
+        <label>Min Money:</label>
+        <input type="number" name="minMoney" required>
+        <label>Max Money:</label>
+        <input type="number" name="maxMoney" required>
+        <label>Interest Rate:</label>
+        <input type="number" name="interestRate" required>
+        <label>Term:</label>
+        <input type="number" name="term" required>
+        <button type="submit">Create</button>
+    </form>
+
+    <form th:action="@{/createNotice}" method="post">
+        <h2>Post Notice</h2>
+        <label>Title:</label>
+        <input type="text" name="title" required>
+        <label>Content:</label>
+        <textarea name="content" rows="5" required></textarea>
+        <button type="submit">Post</button>
+    </form>
+
+    <form th:action="@{/providePoints}" method="post">
+        <h2>Provide Points</h2>
+        <label>Amount:</label>
+        <input type="number" name="points" required>
+        <button type="submit">Provide</button>
+    </form>
+</div>
+</body>
+</html>

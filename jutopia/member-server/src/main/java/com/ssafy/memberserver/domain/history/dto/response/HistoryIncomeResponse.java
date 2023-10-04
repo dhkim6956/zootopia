@@ -10,6 +10,8 @@ import java.util.UUID;
 @Builder
 public record HistoryIncomeResponse(
         Long id,
+        String sender,
+        String receiver,
         BigDecimal amount,
         HistoryType historyType,
         UUID accountId
@@ -17,6 +19,8 @@ public record HistoryIncomeResponse(
     public static HistoryIncomeResponse from(History history){
         return HistoryIncomeResponse.builder()
                 .id(history.getId())
+                .sender(history.getSender())
+                .receiver(history.getReceiver())
                 .amount(history.getAmount())
                 .historyType(history.getHistoryType())
                 .accountId(history.getAccount().getId())

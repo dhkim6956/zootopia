@@ -188,8 +188,33 @@ def get_latest_stocks():
                 "nowMoney": {
                     "$arrayElemAt": ["$data.currentPrice", 0]
                 },
-                "prevMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 1]
+                "price": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.currentPrice", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
+                "changeMoney": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.changeMoney", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "type": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "+"]}, "then": 1},
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "-"]}, "then": -1},
+                        ],
+                        "default": 0
+                    }
                 }
             }
         }
@@ -246,8 +271,33 @@ def get_latest_stocks(ticker: str):
                 "nowMoney": {
                     "$arrayElemAt": ["$data.currentPrice", 0]
                 },
-                "prevMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 1]
+                "price": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.currentPrice", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
+                "changeMoney": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.changeMoney", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "type": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "+"]}, "then": 1},
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "-"]}, "then": -1},
+                        ],
+                        "default": 0
+                    }
                 }
             }
         }
