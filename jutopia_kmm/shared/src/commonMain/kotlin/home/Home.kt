@@ -3,6 +3,7 @@
 package home
 
 import BottomTabBar
+import UserInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,30 +32,45 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import asset.subMenu.MyAccountAPI
 import co.touchlab.kermit.Logger
 import common.TopPageBar
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
-import io.ktor.client.statement.readText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.coroutineScope
+import io.ktor.util.InternalAPI
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import pathTo
 
 private val log = Logger.withTag("Home")
 val LightGray = Color(0xFFF6F6F6)
 
+@Serializable
+data class PointResponse(
+    val api_status: String,
+    val message: String?,
+    val data: Double
+)
 
-class Greeting {
+
+class Home {
     private val client = HttpClient(CIO) {
-        install(ContentNegotiation){
+        install(ContentNegotiation) {
             json(
                 Json { ignoreUnknownKeys = true }
             )
@@ -61,25 +78,55 @@ class Greeting {
     }
 
     suspend fun getHome(): String {
-        val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/class-server/api/school/")
+        val response: HttpResponse =
+            client.get("http://j9c108.p.ssafy.io:8000/class-server/api/school/")
         val body: String = response.bodyAsText()
-        log.i {"$body"}
         return body
     }
+
+    suspend fun getPoint(studentId: String): Double {
+
+        val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/member-server/api/pointtransaction/point/student?studentId=$studentId")
+        val body: String = response.bodyAsText()
+        val json = Json { ignoreUnknownKeys = true }
+        val pointResponse = json.decodeFromString<PointResponse>(body)
+
+        return pointResponse.data
+    }
 }
+
+
+
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Home(navigator: Navigator) {
 
     val coroutineScope = rememberCoroutineScope()
+    var myaccount by remember { mutableStateOf("") }
+    var mybalance by remember { mutableStateOf(0.0) }
+    var myPoint by remember { mutableStateOf(0.0) }
+    var id by remember { mutableStateOf("") }
 
     coroutineScope.launch {
-        var test = Greeting()
+        var test = Home()
         test.getHome()
+        val account = MyAccountAPI().getAccountInfo()
+        myPoint = Home().getPoint(id)
+        myaccount = account.number
+        mybalance = account.balance
     }
 
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
 
+
+    LaunchedEffect(1) {
+        val temp: UserInfo? = store.get()
+
+        if (temp != null) {
+            id = temp.id
+        }
+    }
 
     var bankImg = "drawable/bank.xml"
     var stockImg = "drawable/stock.xml"
@@ -115,9 +162,10 @@ fun Home(navigator: Navigator) {
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                Text("나의 계좌번호:302-535463")
-                Text("나의 화폐: 10,000$")
-                Text("나의 포인트: 12P")
+
+                Text("나의 계좌번호: ${myaccount}")
+                Text("나의 화폐: ${mybalance.toInt()}")
+                Text("나의 포인트: $myPoint")
                 Box(
                     modifier = Modifier
                         .width(200.dp)

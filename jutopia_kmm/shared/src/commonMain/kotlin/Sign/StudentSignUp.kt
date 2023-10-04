@@ -366,7 +366,7 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
 
         when (selectedTab) {
             1 -> {
-                navigator.navigate("/home")
+                navigator.navigate("/mainpage")
             }
 
         }

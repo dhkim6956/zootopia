@@ -1,6 +1,7 @@
 package menus
 
 import BottomTabBar
+import UserInfo
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -19,11 +20,11 @@ import pathTo
 fun Menus(navigator: Navigator) {
 
 //    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
-
-//    val testData = UserInfo(uuid = "testuuid", id = "testid")
-
+//
+//    val testData = UserInfo("0e4ad1d7-6a52-499a-92f2-915c3e6f3cb", "student22", "ssafy초등학교", 6, 1, 3)
+//
 //    var getData by remember { mutableStateOf("데이터 없음") }
-
+//
 //    LaunchedEffect(1) {
 //        store.delete()
 //        store.set(testData)

@@ -71,13 +71,12 @@ class loginAPI {
         )
 
         return try {
+
             val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/member-server/api/sign-in") {
                 contentType(ContentType.Application.Json)
                 body = Json.encodeToString(requestBody)
             }
-
-            // Check the response and return true for success, false for failure.
-            // The condition should be modified based on your server's actual response.
+            log.i { "$response" }
             response.status.value in 200..299
         } catch (e: Exception) {
             log.e(e) { "Error during sign in" }
