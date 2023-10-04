@@ -50,7 +50,7 @@ private fun DrawScope.chartRectangleWithText(
     val rectBounds = Rect(rectTopLeft, rectSize)
     val text = "시간: $xInfo \n가격: ${infoText.toFloat().formatToThousandsMillionsBillions()}"
 
-    val textStyle = TextStyle(fontSize = 9.sp, color = Color.Blue, fontWeight = FontWeight.Bold)
+    val textStyle = TextStyle(fontSize = 12.sp, color = Color.Blue, fontWeight = FontWeight.Bold)
 
     val textLayoutResult = textMeasurer.measure(
         text = AnnotatedString(text),

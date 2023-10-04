@@ -32,7 +32,7 @@ class StockListViewModel : ViewModel() {
                     val apiResponse = Json.decodeFromString<StockListResponse>(response.bodyAsText())
                     val stockList = apiResponse.body
                     _stocks.emit(stockList!!)
-                    delay(60000)
+                    delay(10000)
                 }
             } catch (e: Exception) {
                 log.i { "주식 리스트 에러: ${e}" }
