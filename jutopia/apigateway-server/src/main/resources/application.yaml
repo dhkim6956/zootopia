@@ -11,6 +11,7 @@ eureka:
 spring:
   application:
     name: apigateway-server
+
   # rabbitmq 연동 (포트번호: 5672)
   rabbitmq:
     host: 127.0.0.1
@@ -19,6 +20,11 @@ spring:
     password: guest
   cloud:
     gateway:
+      ssl:
+        key-store: classpath:ssl/keystore.p12
+        key-store-type: PKCS12
+        key-password: juto
+        key-store-password: juto
       routes:
         - id: member-server
           uri: lb://MEMBER-SERVER

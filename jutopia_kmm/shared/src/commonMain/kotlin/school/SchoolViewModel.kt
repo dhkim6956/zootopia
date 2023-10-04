@@ -17,9 +17,9 @@ class SchoolViewModel: ViewModel() {
 
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun fetchData() {
+    fun fetchData(school: String, grade: Int, classRoom: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _notice.emit(SchoolAPI().getNoti())
+            _notice.emit(SchoolAPI().getNoti(school, grade, classRoom))
             _isLoading.emit(false)
         }
     }

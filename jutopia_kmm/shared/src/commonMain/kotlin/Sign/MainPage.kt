@@ -1,5 +1,6 @@
 package Sign
 
+import UserInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -42,55 +43,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.cio.CIO
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.request.post
-import io.ktor.client.statement.HttpResponse
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.util.InternalAPI
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import pathTo
 
 private val log = Logger.withTag("MainPage")
-
-class loginAPI {
-    private val client = HttpClient(CIO) {
-        install(ContentNegotiation){
-            json(
-                Json { ignoreUnknownKeys = true }
-            )
-        }
-    }
-
-    @OptIn(InternalAPI::class)
-    suspend fun login(member_id: String, member_pwd: String): Boolean {
-        val requestBody = mapOf(
-            "member_id" to member_id,
-            "member_pwd" to member_pwd,
-        )
-
-        return try {
-            val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/member-server/api/sign-in") {
-                contentType(ContentType.Application.Json)
-                body = Json.encodeToString(requestBody)
-            }
-
-            // Check the response and return true for success, false for failure.
-            // The condition should be modified based on your server's actual response.
-            response.status.value in 200..299
-        } catch (e: Exception) {
-            log.e(e) { "Error during sign in" }
-            false
-        }
-    }
-}
 
 val navy = Color(0xFF3F51B5)
 val sky = Color(0xFFBDEBFF)
@@ -106,6 +67,18 @@ fun MainPage(navigator: Navigator) {
     var loginModal by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+
+
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+
+    coroutineScope.launch {
+        val storedUserInfo: UserInfo? = store.get()
+
+        if (storedUserInfo != null) {
+            selectedTab = 2
+        }
+    }
+
     Column(
         modifier = Modifier,
         verticalArrangement = Arrangement.Center,
@@ -200,13 +173,24 @@ fun MainPage(navigator: Navigator) {
                     .clip(RoundedCornerShape(5.dp))
                     .background(navy)
                     .clickable {
-                        val api = loginAPI()
                         coroutineScope.launch {
-                            val success = api.login(id!!, pwd!!)
-                            if (success) { // If login is successful.
-                                selectedTab = 2
-                            } else { // If login fails.
-                                loginModal = true // Show the dialog.
+                            val result = SignAPI().login(id!!, pwd!!)
+                            if(result != null) {
+                                val userInfo: UserInfo = UserInfo(result.body.uuid, result.body.id, result.body.school, result.body.grade, result.body.classroom, result.body.studentNumber, "")
+
+                                val classResult = SignAPI().getClassUUID(userInfo.school, userInfo.grade, userInfo.classroom)
+
+                                if(classResult != null) {
+                                    val finalUserInfo: UserInfo = UserInfo(userInfo.uuid, userInfo.id, userInfo.school, userInfo.grade, userInfo.classroom, userInfo.studentNumber, classResult)
+
+                                    store.set(finalUserInfo)
+
+                                    selectedTab = 2
+                                } else {
+                                    loginModal = true
+                                }
+                            } else {
+                                loginModal = true
                             }
                         }
                     },

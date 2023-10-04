@@ -6,7 +6,9 @@ import Variables.ColorsPrimary
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,8 +19,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
@@ -31,23 +39,47 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
+import co.touchlab.kermit.Logger
+import com.svenjacobs.reveal.Reveal
+import com.svenjacobs.reveal.RevealCanvasState
+import com.svenjacobs.reveal.rememberRevealState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 import openUrl
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
+enum class Keys { ModalKey }
+
 @Composable
-fun News(navigator: Navigator) {
-    Contents()
-    BottomTabBar(navigator, 3)
+fun News(navigator: Navigator, revealCanvasState: RevealCanvasState) {
+
+    val revealState = rememberRevealState()
+    val coroutineScope = rememberCoroutineScope()
+
+    Reveal(
+        revealCanvasState = revealCanvasState,
+        revealState = revealState,
+        onRevealableClick = {},
+        onOverlayClick = {},
+    ) {
+        Contents()
+        BottomTabBar(navigator, 3)
+    }
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -134,43 +166,112 @@ fun Contents() {
 @Composable
 fun NewsList(viewModel: NewsViewModel, searchStr: String, stockName: String) {
 
-    val newses by viewModel.newses.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    if (isLoading) viewModel.fetchData(stockName)
+    var isInitial = remember { mutableStateOf(true) }
 
-    LazyColumn (
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .padding(8.dp)
+    val log = Logger.withTag("long")
 
-    ) {
-        items(newses) {newsItem ->
-            if (newsItem.title.contains(searchStr)) {
-                Column (
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    val openDialog = remember { mutableStateOf(false) }
+    val dialogTitle = remember { mutableStateOf("") }
+    val dialogText = remember { mutableStateOf("") }
+
+    when {
+        openDialog.value -> {
+            AlertDialog(title = {Text(dialogTitle.value)}, text = { Text(dialogText.value) }, buttons = {
+                Row (
+                    horizontalArrangement = Arrangement.End,
                     modifier = Modifier
-                        .clickable { openUrl(newsItem.link) }
+                        .fillMaxWidth()
+                        .padding(8.dp)
                 ) {
-                    Text(
-                        newsItem.title,
-                        fontSize = 20.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Button(onClick = { openDialog.value = false }) { Text("확인") }
+                } }, onDismissRequest = {openDialog.value = false}, backgroundColor = Color.LightGray, modifier = Modifier.shadow(4.dp))
+        }
+    }
+
+    Scaffold(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 92.dp),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) {
+        coroutineScope.launch {
+            if (isInitial.value) {
+                snackbarHostState.showSnackbar("궁금한 뉴스를 길게 누르면 설명을 볼 수 있어요~")
+                isInitial.value = false
+            }
+        }
+        val newses by viewModel.newses.collectAsState()
+        val isLoading by viewModel.isLoading.collectAsState()
+        if (isLoading) viewModel.fetchData(stockName)
+
+        LazyColumn (
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .padding(8.dp)
+
+        ) {
+            items(newses.filter { newsDetail -> newsDetail.title.contains(searchStr) }) {newsItem ->
+
+                val isLoading = remember { mutableStateOf(false) }
+                if(isLoading.value) {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(80.dp)
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(20.dp),
-                        ) {
-                            Text(newsItem.date, color = Color(0xFF9E9E9E))
-                            Text(newsItem.time, color = Color(0xFF9E9E9E))
-                        }
-                        Text("|", color = Color(0xFF9E9E9E))
-                        Text(newsItem.publisher, color = Color(0xFF9E9E9E))
+                        CircularProgressIndicator(
+                            color = ColorsPrimary,
+                            backgroundColor = Color.LightGray,
+                            modifier = Modifier.width(64.dp)
+                        )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Divider(color = Color(0x22000000))
+                } else {
+                    Column (
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures (
+                                    onTap = { openUrl(newsItem.link) },
+                                    onLongPress = {
+                                        coroutineScope.launch {
+                                            isLoading.value = true
+                                            var response = NewsAPI().getSummary(newsItem.link)
+                                            openDialog.value = true
+                                            dialogTitle.value = newsItem.title
+                                            dialogText.value = response
+                                            isLoading.value = false
+                                        }
+                                                  },
+                                )
+                            }
+                    ) {
+                        Text(
+                            newsItem.title,
+                            fontSize = 20.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(20.dp),
+                            ) {
+                                Text(newsItem.date, color = Color(0xFF9E9E9E))
+                                Text(newsItem.time, color = Color(0xFF9E9E9E))
+                            }
+                            Text("|", color = Color(0xFF9E9E9E))
+                            Text(newsItem.publisher, color = Color(0xFF9E9E9E))
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Divider(color = Color(0x22000000))
+                    }
                 }
             }
         }
