@@ -34,7 +34,7 @@ public class StockController {
         this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/stocklist/{userId}")
     public Api<List<ResponseStock>> getAllStocks(@PathVariable UUID userId) {
         List<ResponseStock> stockList = stockService.getAllStocks(userId);
         return Api.OK(stockList);
