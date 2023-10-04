@@ -83,9 +83,6 @@ public class Student {
             this.memberStatus = MemberStatus.INACTIVE;
         }
     }
-    public void helpMoneyUpdate(BigDecimal money){
-        this.money = this.money.add(money);
-    }
     public void pointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
         BigDecimal temp = this.point.subtract(studentPointUpdateRequest.getPoint());
         if(temp.compareTo(BigDecimal.ZERO) >= 0) {

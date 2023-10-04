@@ -1,5 +1,7 @@
 package com.ssafy.memberserver.domain.teachers.service;
 
+import com.ssafy.memberserver.domain.account.entity.Account;
+import com.ssafy.memberserver.domain.account.repository.AccountRepository;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
 import com.ssafy.memberserver.domain.teachers.dto.request.TeacherDeleteRequest;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -54,13 +58,13 @@ public class TeacherService {
         List<Student> temp = studentRepository.findBySchoolAndGradeAndAndClassRoom(school, grade, classroom);
         return temp.stream()
                 .map(student -> {
-                    student.helpMoneyUpdate(income);
+                    accountRepository.findAccountByStudentId(student.getStudentId())
+                            .map(account -> {
+                                account.helpMoneyUpdate(income);
+                                throw new IllegalArgumentException("불가능한 값");
+                            });
                     HelpMoney helpMoneyResponse = new HelpMoney();
-                    // HelpMoneyResponse 객체의 필드를 설정하는 코드를 여기에 추가하십시오.
-                    // 예를 들어, helpMoneyResponse.setStudentName(student.getName()); 와 같은 방식으로 설정할 수 있습니다.
                     return helpMoneyResponse;
-                    // HelpMoney 객체의 필드를 설정하는 코드를 여기에 추가하십시오.
-                    // 예를 들어, helpMoney.setStudent(student); 과 같은 방식으로 설정할 수 있습니다.
                 })
                 .collect(Collectors.toList());
     }
