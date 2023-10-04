@@ -22,16 +22,16 @@ class SchoolAPI {
 
     @Throws(Exception::class)
     suspend fun getNoti(): List<NotiDetail> {
-
-
         try {
             val response: List<NotiItem> = httpClient.get("http://j9c108.p.ssafy.io:8000/member-server/api/notice").body<NotiResponse>().body
 
             val transform: List<NotiDetail> = response.map { noti ->
-                NotiDetail(noti.idx, noti.title, "2023.09.07", "10:00:00")
-            }
 
-            Logger.d("fetch data!!!")
+                val date = "${noti.dateNTime[0]}.${noti.dateNTime[1]}.${noti.dateNTime[2]}"
+                val time = "${noti.dateNTime[3]}:${noti.dateNTime[4]}:${noti.dateNTime[5]}"
+
+                NotiDetail(noti.idx, noti.title, date, time)
+            }
 
             return transform
         } catch (e: Exception) {
@@ -44,19 +44,15 @@ class SchoolAPI {
 
     @Throws(Exception::class)
     suspend fun getNotiDetail(id: Int): NoticeDetail {
-
-
         try {
             val response: NotiItem = httpClient.get("http://j9c108.p.ssafy.io:8000/member-server/api/notice/$id").body<NotiDetailResponse>().body
 
-            val transform: NoticeDetail = NoticeDetail(response.title, response.content, "2023.09.07", "10:00:00", response.viewCnt)
-
-            Logger.d("fetch data!!!")
+            val transform: NoticeDetail = NoticeDetail(response.title, response.content, response.viewCnt)
 
             return transform
         } catch (e: Exception) {
             println("Error: ${e.message}")
-            return NoticeDetail("ERROR", "API연결실패", "2023.09.07", "10:00:00", 0)
+            return NoticeDetail("ERROR", "API연결실패", 0)
         } finally {
             httpClient.close()
         }

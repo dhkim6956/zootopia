@@ -27,6 +27,7 @@ import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -61,6 +62,8 @@ fun Contents() {
                     NewsCategory(3, "네이버", "naver.png"),
                     NewsCategory(4, "SM엔터", "sm.png"),
                     ))
+
+    val stockNames = listOf("삼성전자", "현대차", "한화", "네이버", "에스엠")
 
     var idx by remember {mutableStateOf(0)}
 
@@ -124,19 +127,24 @@ fun Contents() {
             NewsViewModel()
         }
 
-        NewsList(newsListViewModel, searchStr)
+        NewsList(newsListViewModel, searchStr, stockNames[idx])
     }
 }
 
 @Composable
-fun NewsList(viewModel: NewsViewModel, searchStr: String) {
+fun NewsList(viewModel: NewsViewModel, searchStr: String, stockName: String) {
+
+    val newses by viewModel.newses.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    if (isLoading) viewModel.fetchData(stockName)
+
     LazyColumn (
         verticalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .padding(8.dp)
 
     ) {
-        items(viewModel.newses) {newsItem ->
+        items(newses) {newsItem ->
             if (newsItem.title.contains(searchStr)) {
                 Column (
                     modifier = Modifier

@@ -15,6 +15,8 @@ data class NotiItem(
     val content: String,
     @SerialName("view_count")
     val viewCnt: Int,
+    @SerialName("created_at")
+    val dateNTime: List<String>,
 )
 
 @Serializable
