@@ -1,5 +1,6 @@
 package Sign
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
@@ -31,12 +33,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
 import common.TopPageBar
+import common.startTopBar
 import home.Product
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -50,8 +54,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
-private val log = Logger.withTag("SignUp")
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
+private val log = Logger.withTag("SignUp")
+val deepsky = Color(0xFF8FE0FF)
 @Serializable
 data class ResultData(
     @SerialName("result_code")
@@ -83,6 +90,7 @@ class SignUpAPI {
     }
 }
 
+@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun SignUp(navigator: Navigator) {
     var ID by remember { mutableStateOf("") }
@@ -99,7 +107,10 @@ fun SignUp(navigator: Navigator) {
     var alertMessageForInput by remember { mutableStateOf("") }
     var showAlertForRole by remember { mutableStateOf(false) }
     var alertMessageForRole by remember { mutableStateOf("") }
-
+    var isStudent by remember { mutableStateOf(false) }
+    var isTeacher by remember { mutableStateOf(false) }
+    var schoolImg = "drawable/school.png"
+    val schoolIcon: Painter = painterResource(schoolImg)
 
     Column {
         Column(
@@ -107,13 +118,23 @@ fun SignUp(navigator: Navigator) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TopPageBar("회원가입", navigator = navigator)
+            startTopBar("회원가입", navigator = navigator)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(130.dp)
                     .background(sky)
-            )
+            ) {
+                Image(painter = schoolIcon, contentDescription = "School Icon",
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = 30.dp)
+                        .size(70.dp)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -257,11 +278,7 @@ fun SignUp(navigator: Navigator) {
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
-
-
-            var isStudent by remember { mutableStateOf(false) }
-            var isTeacher by remember { mutableStateOf(false) }
+            Spacer(modifier = Modifier.height(5.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -271,7 +288,7 @@ fun SignUp(navigator: Navigator) {
                     onCheckedChange = {
                         isStudent = it
                         if (it) {
-                            // 학생이 선택되면 선생님을 비선택 상태로 만
+                            // 학생이 선택되면 선생님을 비선택 상태로
                             isTeacher = false
                         }
                     },

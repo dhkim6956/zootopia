@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -22,47 +25,197 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
 import common.TopPageBar
+import common.startTopBar
+import home.saveAPI
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.InternalAPI
+import io.ktor.util.reflect.typeInfo
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 private val log = Logger.withTag("TeacherSignUp")
 
+class TeacherSignUp {
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation){
+            json(
+                Json { ignoreUnknownKeys = true }
+            )
+        }
+    }
+
+    @OptIn(InternalAPI::class)
+    suspend fun signUpTeacher(teacher_id: String, teacher_pwd: String, teacher_name: String, school: String, grade: String, class_room: String) {
+
+        log.i {"$teacher_id, $teacher_pwd, $teacher_name, $school, $grade, $class_room"}
+
+        val requestBody = mapOf(
+            "student_id" to teacher_id,
+            "student_pwd" to teacher_pwd,
+            "student_name" to teacher_name,
+            "school" to school,
+            "grade" to grade,
+            "class_room" to class_room,
+        )
+
+        try {
+            val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/member-server/api/teacher/sign-up") {
+                contentType(ContentType.Application.Json)
+                body = Json.encodeToString(requestBody)
+            }
+            log.i {"$response"}
+        } catch (e: Exception) {
+            log.e(e) { "Error during sign up" }
+        }
+    }
+}
+
 @Composable
-fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
-    var inviteCode by remember { mutableStateOf("") }
-    var PassWord by remember { mutableStateOf("") }
-    var Name by remember { mutableStateOf("") }
+fun TeacherSignUp(navigator: Navigator, teacher_id: String?, teacher_pwd: String?) {
+    val coroutineScope = rememberCoroutineScope()
+    var school by remember { mutableStateOf("") }
+    var grade by remember { mutableStateOf("") }
+    var class_room by remember { mutableStateOf("") }
+    var teacher_name by remember { mutableStateOf("") }
+    var verification by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
 
     var selectedTab by remember { mutableStateOf(0) }
 
+    log.i { " $teacher_id, $teacher_pwd "}
+
     Column {
-        TopPageBar("선생님 회원가입", navigator = navigator)
+        startTopBar("선생님 회원가입", navigator = navigator)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(170.dp)
-                    .background(sky)
-            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(140.dp)
+                        .height(80.dp)
+                ) {
+                    Text("이메일")
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(5.dp))
+                            .border(2.dp, Color.LightGray)
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .width(300.dp),
+                            value = email,
+                            onValueChange = { email = it }, // 모든 글자 허용
+                            textStyle = TextStyle(fontSize = 20.sp),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = Color.Black,
+                                backgroundColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+                Box(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(60.dp)
+                        .padding(top = 20.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .border(2.dp, Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("인증")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .width(140.dp)
+                        .height(80.dp)
+                ) {
+                    Text("인증번호")
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(5.dp))
+                            .border(2.dp, Color.LightGray)
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .width(300.dp),
+                            value = verification,
+                            onValueChange = { verification = it }, // 모든 글자 허용
+                            textStyle = TextStyle(fontSize = 20.sp),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = Color.Black,
+                                backgroundColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            )
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+                Box(
+                    modifier = Modifier
+                        .width(70.dp)
+                        .height(60.dp)
+                        .padding(top = 20.dp)
+                        .clip(RoundedCornerShape(5.dp))
+                        .border(2.dp, Color.LightGray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("확인")
+                }
+            }
+
             Spacer(modifier = Modifier.height(10.dp))
             Column(
                 modifier = Modifier
                     .width(220.dp)
                     .height(80.dp)
             ) {
-                Text("초대코드")
+                Text("학교")
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -73,8 +226,8 @@ fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
                     TextField(
                         modifier = Modifier
                             .width(300.dp),
-                        value = inviteCode,
-                        onValueChange = { inviteCode = it }, // 모든 글자 허용
+                        value = school,
+                        onValueChange = { school = it }, // 모든 글자 허용
                         textStyle = TextStyle(fontSize = 20.sp),
                         colors = TextFieldDefaults.textFieldColors(
                             textColor = Color.Black,
@@ -85,38 +238,75 @@ fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(5.dp))
-            Column(
+
+            Row(
                 modifier = Modifier
-                    .width(220.dp)
-                    .height(80.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                Text("비밀번호")
-                Box(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                        .clip(RoundedCornerShape(5.dp))
-                        .border(2.dp, Color.LightGray)
+                        .width(80.dp)
+                        .height(80.dp)
                 ) {
-                    TextField(
+                    Text("학년")
+                    Box(
                         modifier = Modifier
-                            .width(300.dp),
-                        value = PassWord,
-                        onValueChange = { PassWord = it }, // 모든 글자 허용
-                        textStyle = TextStyle(fontSize = 20.sp),
-                        visualTransformation = PasswordVisualTransformation(), // 비밀번호 가리기
-                        colors = TextFieldDefaults.textFieldColors(
-                            textColor = Color.Black,
-                            backgroundColor = Color.White,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(5.dp))
+                            .border(2.dp, Color.LightGray)
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .width(300.dp),
+                            value = grade,
+                            onValueChange = { if (it.all { char -> char.isDigit() }) grade = it }, // 숫자만 허용
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), // 숫자 키보드 사용
+                            textStyle = TextStyle(fontSize = 20.sp),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = Color.Black,
+                                backgroundColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            )
                         )
-                    )
+                    }
+                }
+                Spacer(modifier = Modifier.width(55.dp))
+                Column(
+                    modifier = Modifier
+                        .width(80.dp)
+                        .height(80.dp)
+                ) {
+                    Text("반")
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(5.dp))
+                            .border(2.dp, Color.LightGray)
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .width(300.dp),
+                            value = class_room,
+                            onValueChange = { if (it.all { char -> char.isDigit() }) class_room = it }, // 숫자만 허용
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), // 숫자 키보드 사용
+                            textStyle = TextStyle(fontSize = 20.sp),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = Color.Black,
+                                backgroundColor = Color.White,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            )
+                        )
+                    }
                 }
             }
 
 
+            Spacer(modifier = Modifier.height(5.dp))
             Column(
                 modifier = Modifier
                     .width(220.dp)
@@ -133,8 +323,8 @@ fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
                     TextField(
                         modifier = Modifier
                             .width(300.dp),
-                        value = Name,
-                        onValueChange = { Name = it }, // 모든 글자 허용
+                        value = teacher_name,
+                        onValueChange = { teacher_name = it }, // 모든 글자 허용
                         textStyle = TextStyle(fontSize = 20.sp),
                         colors = TextFieldDefaults.textFieldColors(
                             textColor = Color.Black,
@@ -145,6 +335,8 @@ fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
                     )
                 }
             }
+
+
             Spacer(modifier = Modifier.height(10.dp))
             Spacer(modifier = Modifier.width(10.dp))
 
@@ -154,7 +346,13 @@ fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
                     .height(38.dp)
                     .clip(RoundedCornerShape(5.dp))
                     .border(2.dp, Color.LightGray)
-                    .clickable { selectedTab = 1 },
+                    .clickable {
+                        selectedTab = 1
+                        val api = TeacherSignUp()
+                        coroutineScope.launch {
+                            api.signUpTeacher(teacher_id!!, teacher_pwd!!, teacher_name!!, school!!, grade!!, class_room!!)
+                        }
+                    },
                 contentAlignment = Alignment.Center
             )
             {
@@ -164,7 +362,7 @@ fun TeacherSignUp(navigator: Navigator, id: String?, password: String?) {
 
         when (selectedTab) {
             1 -> {
-                navigator.navigate("/signup")
+                navigator.navigate("/home")
             }
 
         }
