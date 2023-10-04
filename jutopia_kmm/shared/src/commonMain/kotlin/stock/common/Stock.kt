@@ -15,7 +15,7 @@ data class Stock(
     val changeRate: Double = 0.0,
     val isOwnedByUser: Boolean = false,
     val changeMoney: Int = 0,
-    val type: Int = 0, // 1증가 -1감소 0 그대로
+    val type: Int = 0,
 )
 
 @Serializable

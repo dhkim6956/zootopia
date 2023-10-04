@@ -14,6 +14,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -83,12 +84,17 @@ fun StockBuyingPage(
 
         Spacer(modifier = Modifier.height(15.dp))
 
+        val customColors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = Color.Black,
+            disabledTextColor = Color.Black,
+            focusedBorderColor = Color.Blue,
+            unfocusedBorderColor = Color.Blue,
+            disabledBorderColor = Color.Blue
+        )
+
         OutlinedTextField(
             value = orderPrice,
             onValueChange = {
-                if (it.all { char -> char.isDigit() || char == '.' }) {
-                    orderPrice = it
-                }
             },
             label = { Text("주문가격") },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -100,7 +106,9 @@ fun StockBuyingPage(
                     keyboardController?.hide()
                 }
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            enabled = false,
+            colors = customColors
         )
 
         Spacer(modifier = Modifier.height(16.dp))
