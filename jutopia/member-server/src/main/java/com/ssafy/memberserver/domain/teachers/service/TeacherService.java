@@ -55,14 +55,12 @@ public class TeacherService {
     }
     @Transactional
     public List<HelpMoney> helpMoney(String school, int grade, int classroom, BigDecimal income) {
-        List<Student> temp = studentRepository.findBySchoolAndGradeAndAndClassRoom(school, grade, classroom);
-        return temp.stream()
+        List<Student> students = studentRepository.findBySchoolAndGradeAndAndClassRoom(school, grade, classroom);
+        return students.stream()
                 .map(student -> {
-                    accountRepository.findAccountByStudentId(student.getStudentId())
-                            .map(account -> {
-                                account.helpMoneyUpdate(income);
-                                throw new IllegalArgumentException("불가능한 값");
-                            });
+                    Account account = accountRepository.findAccountByStudentId(student.getStudentId())
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + student.getStudentId()));
+                    account.helpMoneyUpdate(income);
                     HelpMoney helpMoneyResponse = new HelpMoney();
                     return helpMoneyResponse;
                 })
