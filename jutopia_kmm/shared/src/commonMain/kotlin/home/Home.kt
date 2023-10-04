@@ -281,7 +281,7 @@ fun Home(navigator: Navigator) {
             }
 
             2 -> {
-                navigator.navigate("/stock")
+                navigator.navigate("/stocklist")
             }
 
             3 -> {
@@ -310,6 +310,6 @@ fun Home(navigator: Navigator) {
 
         }
 
-        BottomTabBar(navigator)
+        BottomTabBar(navigator, 0)
     }
 }

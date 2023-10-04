@@ -29,7 +29,7 @@ public class NoticeService {
         return noticeRepository.findById(id)
                 .map(NoticeResponse::from)
                 .map(response -> {
-                    noticeRepository.updateByViewCount(response.viewCount(), id);
+                    noticeRepository.updateViewCount(id);
                     return response;
                 })
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 공지사항입니다."));

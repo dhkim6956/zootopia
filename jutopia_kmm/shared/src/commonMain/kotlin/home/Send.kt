@@ -191,5 +191,5 @@ fun Send(navigator: Navigator) {
         }
 
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 0)
 }

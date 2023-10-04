@@ -202,6 +202,6 @@ fun Bank(navigator: Navigator) {
                 navigator.navigate("/asset")
             }
         }
-        BottomTabBar(navigator)
+        BottomTabBar(navigator, 0)
     }
 }

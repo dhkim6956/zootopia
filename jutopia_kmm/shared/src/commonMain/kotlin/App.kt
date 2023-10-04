@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import asset.Asset
+import chatbot.ChatbotScreen
 import com.svenjacobs.reveal.RevealCanvas
 import com.svenjacobs.reveal.rememberRevealCanvasState
 import home.Bank
@@ -136,16 +137,18 @@ fun App() {
                     StockListScreen(navigator)
                 }
                 scene(
-                    route = "/stockChart/{stockId}?"
+                    route = "/stockChart/{stockId}/{stockCode}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockScreen(stockId!!, navigator)
+                    val stockCode: String? = backStackEntry.path<String>("stockCode")
+                    StockScreen(stockId!!,stockCode!!, navigator)
                 }
                 scene(
-                    route = "/stocktrade/{stockId}?"
+                    route = "/stocktrade/{stockId}/{stockCode}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockScreen(stockId!!, navigator)
+                    val stockCode: String? = backStackEntry.path<String>("stockCode")
+                    StockScreen(stockId!!,stockCode!!, navigator)
                 }
                 scene(
                     route = "/send"
@@ -161,6 +164,11 @@ fun App() {
                     route = "/send_detail"
                 ) {
                     Send_detail(navigator)
+                }
+                scene(
+                    route = "/chatbot"
+                ) {
+                    ChatbotScreen(navigator)
                 }
                 scene(
                     route = "/signup"
@@ -196,3 +204,6 @@ expect val icesiminFontFamily: FontFamily
 expect val icesotongFontFamily: FontFamily
 expect val pretendardFontFamily: FontFamily
 expect fun formatDouble(value: Double, decimalPlaces: Int): String
+expect fun addComma(value: Double): String
+
+expect fun openUrl(url: String?)

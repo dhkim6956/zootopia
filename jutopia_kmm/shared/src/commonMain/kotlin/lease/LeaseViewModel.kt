@@ -2,6 +2,7 @@ package lease
 
 
 import co.touchlab.kermit.Logger
+import common.TmpUserInfo
 import io.ktor.client.call.body
 import io.ktor.client.statement.bodyAsChannel
 import io.ktor.client.statement.bodyAsText
@@ -46,7 +47,7 @@ class LeaseViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                val response = apiService.getAllSeats("ssafy", 1, 1)
+                val response = apiService.getAllSeats(TmpUserInfo.getSchool(), TmpUserInfo.getGrade(), TmpUserInfo.getClassNumber())
                 val apiResponse = Json.decodeFromString<ListResponse>(response.bodyAsText())
                 val seatList: List<Seat>? = apiResponse.body
                 log.i{"${seatList}"}
@@ -64,8 +65,9 @@ class LeaseViewModel : ViewModel() {
                 val response = apiService.setSeat(id)
                 val apiResponse = Json.decodeFromString<Response>(response.bodyAsText())
                 log.i { "${apiResponse.result}" }
-
+                log.i { " 결과 코드 $apiResponse.result.resultCode" }
                 when (apiResponse.result.resultCode) {
+
                     200 -> {
                         this@LeaseViewModel.apiResponse.emit(ApiResponse.Success)
                         val seat: Seat? = apiResponse.body

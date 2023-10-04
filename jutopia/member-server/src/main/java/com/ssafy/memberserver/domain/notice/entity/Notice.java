@@ -22,22 +22,17 @@ public class Notice {
     private Long id;
     private String title;
     private String content;
-
     private LocalDateTime createdAt;
     private LocalDateTime updateAt;
     private Long viewCount;
     @Enumerated(EnumType.STRING)
     private NoticeStatus noticeStatus;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "teacher_id")
-//    private Teacher teacher;
-
     public static Notice from(NoticeRequest noticeRequest){
         return Notice.builder()
-                .id(noticeRequest.id())
-                .title(noticeRequest.title())
-                .content(noticeRequest.content())
+                .id(noticeRequest.getId())
+                .title(noticeRequest.getTitle())
+                .content(noticeRequest.getContent())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .viewCount(0L)
@@ -46,16 +41,16 @@ public class Notice {
     }
 
     public void update(NoticeUpdateRequest noticeUpdateRequest) {
-        if (noticeUpdateRequest.newTitle() != null) {
-            this.title = noticeUpdateRequest.newTitle();
+        if (noticeUpdateRequest.getNewTitle() != null) {
+            this.title = noticeUpdateRequest.getNewTitle();
         }
-        if (noticeUpdateRequest.newContent() != null) {
-            this.content = noticeUpdateRequest.newContent();
+        if (noticeUpdateRequest.getNewContent() != null) {
+            this.content = noticeUpdateRequest.getContent();
         }
         this.updateAt = LocalDateTime.now();
     }
     public void delete(NoticeDeleteRequest noticeDeleteRequest){
-        if(noticeDeleteRequest.noticeStatus() == NoticeStatus.ACTIVE){
+        if(noticeDeleteRequest.getNoticeStatus() == NoticeStatus.ACTIVE){
             this.noticeStatus = NoticeStatus.INACTIVE;
         }
     }

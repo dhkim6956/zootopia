@@ -1,51 +1,120 @@
 package stock.stockchart
 
+import co.touchlab.kermit.Logger
+import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
-import stock.stocklist.Stock
-import kotlin.random.Random
+import stock.common.StockChart
 
-class StockChartViewModel(stockId: String) : ViewModel() {
-    private val _chartData = MutableStateFlow<List<Pair<Int, Double>>>(listOf())
-    val chartData: StateFlow<List<Pair<Int, Double>>> = _chartData
-    var currentTime = 0
-    private val dataQueue= ArrayDeque<Pair<Int, Double>>(60)
-//    private val _stock = MutableLiveData<Stock>()
-//    val stock: LiveData<Stock> get() = _stock
-//
-//    init {
-//        // 서버나 데이터베이스에서 Stock 객체 불러오는 로직
-//        _stock.value = fetchStockById(stockId) // 예시 함수
-//    }
+private val log = Logger.withTag("stockChart")
+
+class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
+    private val _minuteChartData  = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val minuteChartData: StateFlow<List<Pair<String, Double?>>> = _minuteChartData
+
+    private val _hourChartData = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val hourChartData: StateFlow<List<Pair<String, Double?>>> = _hourChartData
+
+    private val _dayChartData = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val dayChartData: StateFlow<List<Pair<String, Double?>>> = _dayChartData
+
+    private val _currentChartData = MutableStateFlow<List<Pair<String, Double?>>>(emptyList())
+    val currentChartData: StateFlow<List<Pair<String, Double?>>> = _currentChartData
+
+    private val _isLoading = MutableStateFlow<Boolean>(true)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    private val _timeFrame = MutableStateFlow(TimeFrame.day)
+    val timeFrame: StateFlow<TimeFrame> = _timeFrame
+
+    private val apiService = StockChartApiService()
+
+    fun setTimeFrame(timeFrame: TimeFrame) {
+        when (timeFrame) {
+            TimeFrame.minute -> _currentChartData.value = _minuteChartData.value
+            TimeFrame.hour -> _currentChartData.value = _hourChartData.value
+            TimeFrame.day-> _currentChartData.value = _dayChartData.value
+        }
+    }
+
+    private suspend fun getChartData(timeFrame: TimeFrame, stockCode: String){
+        try {
+            val res = apiService.getStockChart(stockCode,timeFrame)
+            val jsonRes = Json.decodeFromString<StockChart>(res.bodyAsText())
+            val priceMapData = jsonRes.price
+            val convertedData = priceMapData.map { (key, value) ->
+                if (value == null) {
+                    Pair(key, null)
+                } else {
+                    value.replace(",", "").toDoubleOrNull()?.let {
+                        Pair(key, it)
+                    } ?: Pair(key, null)
+                }
+            }
+            when(timeFrame){
+                TimeFrame.minute -> _minuteChartData.emit(convertedData)
+                TimeFrame.hour -> _hourChartData.emit(convertedData)
+                TimeFrame.day -> _dayChartData.emit(convertedData)
+            }
+        } catch (e: Exception) {
+            log.i{"차트 코드 : ${stockCode} 차트 데이터 에러 : ${e}"}
+        }
+    }
+
+
     init {
         viewModelScope.launch {
-            while(true) {
-                val newData = fetchNewDataForStock(stockId)
-                currentTime += 1
-                dataQueue.add(Pair(currentTime, newData))
-
-                // 큐에 데이터가 60개 이상이면 맨 처음 데이터를 제거합니다.
-                if (dataQueue.size > 10) {
-                    dataQueue.removeFirst()
-                }
-
-                _chartData.emit(dataQueue.toList())
-                delay(10000)
+            _isLoading.emit(true)
+            val minuteData = async { getChartData(TimeFrame.minute, stockCode) }
+            val hourData = async { getChartData(TimeFrame.hour, stockCode) }
+            val dayData = async { getChartData(TimeFrame.day, stockCode) }
+            try {
+                awaitAll(minuteData, hourData, dayData)
+                log.i { "분 데이터: ${minuteChartData.value}" }
+                log.i { "시 데이터: ${hourChartData.value}" }
+                log.i { "일 데이터: ${dayChartData.value}" }
+            } catch (e: Exception) {
+                log.i { "비동기 처리 에러 : $e" }
+            } finally {
+                log.i{"finally 진입"}
+                _currentChartData.value = _minuteChartData.value
+                _isLoading.emit(false)
             }
         }
-    }
 
-    private fun fetchNewDataForStock(stockId: String): Double {
-        // Dummy data generation logic depending on the stockId
-        return when (stockId) {
-            "AAPL" -> Random.nextDouble(140.0, 160.0)
-            "GOOGL" -> Random.nextDouble(2000.0, 2500.0)
-            "MSFT" -> Random.nextDouble(250.0, 300.0)
-            else -> Random.nextDouble(50.0, 100.0)
+        viewModelScope.launch {
+            while(true) {
+                delay(60_000)
+                log.i { "분 데이터 갱신" }
+                getChartData(TimeFrame.minute, stockCode)
+            }
         }
+
+        viewModelScope.launch {
+            while(true) {
+                delay(3_600_000)
+                log.i { "시 데이터 갱신" }
+                getChartData(TimeFrame.hour, stockCode)
+            }
+        }
+
+        viewModelScope.launch {
+            while(true) {
+                delay(86_400_000)
+                log.i { "일 데이터 갱신" }
+                getChartData(TimeFrame.day, stockCode)
+            }
+        }
+
     }
 }
+
+
+

@@ -2,14 +2,11 @@ package news
 
 import BottomTabBar
 import Variables.ColorsOnPrimary
-import Variables.ColorsOnPrimaryVariant
 import Variables.ColorsPrimary
-import Variables.ColorsPrimaryVariant
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,7 +23,6 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldColors
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
@@ -38,19 +34,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
+import openUrl
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun News(navigator: Navigator) {
     Contents()
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 3)
 }
 
 @OptIn(ExperimentalResourceApi::class)
@@ -144,7 +140,7 @@ fun NewsList(viewModel: NewsViewModel, searchStr: String) {
             if (newsItem.title.contains(searchStr)) {
                 Column (
                     modifier = Modifier
-                        .clickable {  }
+                        .clickable { openUrl(newsItem.link) }
                 ) {
                     Text(
                         newsItem.title,

@@ -33,12 +33,12 @@ public class Teacher {
     @Enumerated(EnumType.STRING)
     private MemberBioStatus memberBioStatus;
 
-    public static Teacher from(TeacherSignUpRequest teacherSignUpRequest, PasswordEncoder passwordEncoder){
+    public static Teacher from(TeacherSignUpRequest teacherSignUpRequest, PasswordEncoder passwordEncoder) {
         return Teacher.builder()
-                .teacherId(teacherSignUpRequest.teacherId())
-                .teacherPwd(passwordEncoder.encode(teacherSignUpRequest.teacherPwd()))
-                .teacherName(teacherSignUpRequest.Name())
-                .teacherEmail(teacherSignUpRequest.teacherEmail())
+                .teacherId(teacherSignUpRequest.getTeacherId())
+                .teacherPwd(passwordEncoder.encode(teacherSignUpRequest.getTeacherPwd()))
+                .teacherName(teacherSignUpRequest.getTeacherName())
+                .teacherEmail(teacherSignUpRequest.getTeacherEmail())
                 .memberRole(MemberRole.TEACHER)
                 .memberStatus(MemberStatus.ACTIVE)
                 .memberBioStatus(MemberBioStatus.INACTIVE)
@@ -46,12 +46,12 @@ public class Teacher {
     }
     //TODO:삼항 연사자 변경 필요
     public void update(TeacherUpdateRequest teacherUpdateRequest,PasswordEncoder passwordEncoder){
-        if(teacherUpdateRequest.teacherNewPwd() != null || !teacherUpdateRequest.teacherPwd().isBlank()){
-            this.teacherPwd = passwordEncoder.encode(teacherUpdateRequest.teacherNewPwd());
+        if(teacherUpdateRequest.getTeacherNewPwd() != null || !teacherUpdateRequest.getTeacherPwd().isBlank()){
+            this.teacherPwd = passwordEncoder.encode(teacherUpdateRequest.getTeacherNewPwd());
         }
     }
-    public void delete(TeacherDeleteRequest teacherDeleteRequest,PasswordEncoder passwordEncoder){
-        if(teacherDeleteRequest.memberStatus() == MemberStatus.ACTIVE){
+    public void delete(TeacherDeleteRequest teacherDeleteRequest){
+        if(teacherDeleteRequest.getMemberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }
     }

@@ -1,36 +1,33 @@
 package com.ssafy.memberserver.domain.pointtransaction.controller;
 
 import com.ssafy.memberserver.common.api.ApiResponse;
-import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointDepositRequest;
-import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointUpdateRequest;
-import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointWithDrawRequest;
+import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointExpenseRequest;
+import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointIncomeRequest;
 import com.ssafy.memberserver.domain.pointtransaction.service.PointTransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/member-server/api")
+@RequestMapping("/member-server/api/pointtransaction")
     public class PointTransactionController {
         private final PointTransactionService pointTransactionService;
-
-        @Operation(summary = "포인트 조회")
-        @GetMapping
-        public ApiResponse getAllpoint(@RequestParam String studentId) {
-            return ApiResponse.success(pointTransactionService.getPointAll(UUID.fromString(studentId)));
+        @Operation(summary = "학생의 포인트 조회")
+        @GetMapping("/point/student")
+        public ApiResponse getStudentPoint(@RequestParam String studentId) {
+            return ApiResponse.success(pointTransactionService.getStudentPoint(studentId));
         }
-        @Operation(summary = "포인트 입금")
-        @PostMapping("/point/deposit")
-        public ApiResponse deposit(@RequestBody PointDepositRequest pointDepositRequest, @RequestParam String studentId, @RequestParam BigDecimal deposit){
-            return ApiResponse.success(pointTransactionService.pointDeposit(pointDepositRequest,studentId,deposit));
+        @Operation(summary = "포인트 수입")
+        @PostMapping("/income")
+        public ApiResponse income(@RequestBody PointIncomeRequest pointIncomeRequest, @RequestParam String studentId, @RequestParam BigDecimal income){
+            return ApiResponse.success(pointTransactionService.pointIncome(pointIncomeRequest,studentId,income));
         }
-        @Operation(summary = "포인트 출금")
-        @PostMapping("/point/withdraw")
-        public ApiResponse withDraw(@RequestBody PointWithDrawRequest pointWithDrawRequest,@RequestParam String studentId,@RequestParam BigDecimal withDraw){
-            return ApiResponse.success(pointTransactionService.pointWithDraw(pointWithDrawRequest,studentId,withDraw));
+        @Operation(summary = "포인트 지출")
+        @PostMapping("/expense")
+        public ApiResponse expense(@RequestBody PointExpenseRequest pointExpenseRequest, @RequestParam String studentId, @RequestParam BigDecimal expense){
+            return ApiResponse.success(pointTransactionService.pointExpense(pointExpenseRequest,studentId,expense));
         }
     }

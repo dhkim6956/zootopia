@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalResourceApi::class, ExperimentalMaterialApi::class)
-
 package asset
 
 import BottomTabBar
@@ -29,14 +27,14 @@ import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-data class chipItem(val idx: Int, val name: String, val bgColor: Color, val conColor: Color, val desc: String)
+data class ChipItem(val idx: Int, val name: String, val bgColor: Color, val conColor: Color, val desc: String)
 
-val chipItems: List<chipItem> = listOf(
-    chipItem(0, "deposit", Color(0xFFF1D3FB), Color(0xFFAF30C9), "입출금"),
-    chipItem(1, "save", Color(0xFFDFDBF9), Color(0xFF7E51D6), "적금"),
-    chipItem(2, "point", Color(0xFFCBD8F2), Color(0xFF4963C7), "포인트"),
-    chipItem(3, "stock", Color(0xFFB7E7FF), Color(0xFF0087D1), "주식"),
-    chipItem(4, "building", Color(0xFFC8EAC9), Color(0xFF358438), "부동산")
+val chipItems: List<ChipItem> = listOf(
+    ChipItem(0, "deposit", Color(0xFFF1D3FB), Color(0xFFAF30C9), "입출금"),
+    ChipItem(1, "save", Color(0xFFDFDBF9), Color(0xFF7E51D6), "적금"),
+    ChipItem(2, "point", Color(0xFFCBD8F2), Color(0xFF4963C7), "포인트"),
+    ChipItem(3, "stock", Color(0xFFB7E7FF), Color(0xFF0087D1), "주식"),
+    //chipItem(4, "building", Color(0xFFC8EAC9), Color(0xFF358438), "부동산")
 )
 
 @Composable
@@ -59,9 +57,10 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
             else -> Text("Error Page")
         }
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 1)
 }
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalResourceApi::class)
 @Composable
 fun Chips(navigator: Navigator, selectedIdx: Int, viewModel: AssetViewModel ) {
     Box(

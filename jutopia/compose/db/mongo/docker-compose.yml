@@ -5,11 +5,12 @@ services:
     image: mongo:7.0.1
     container_name: mongo1
     restart: always
-    command: mongod --replSet jutopia-repl --bind_ip_all
+    command: mongod --config /etc/mongod.conf --replSet jutopia-repl --bind_ip_all
     ports:
       - 27017:27017
     volumes:
       - ~/data/mongo/mongo1:/data/db
+      - ./mongod.conf:/etc/mongod.conf
     networks:
       - jutopia-network
 
@@ -17,11 +18,12 @@ services:
     image: mongo:7.0.1
     container_name: mongo2
     restart: always
-    command: mongod --replSet jutopia-repl --bind_ip_all --port 27018
+    command: mongod --config /etc/mongod.conf --replSet jutopia-repl --bind_ip_all
     ports:
-      - 27018:27018
+      - 27018:27017
     volumes:
       - ~/data/mongo/mongo2:/data/db
+      - ./mongod.conf:/etc/mongod.conf
     networks:
       - jutopia-network
 
@@ -29,11 +31,12 @@ services:
     image: mongo:7.0.1
     container_name: mongo3
     restart: always
-    command: mongod --replSet jutopia-repl --bind_ip_all --port 27019
+    command: mongod --config /etc/mongod.conf --replSet jutopia-repl --bind_ip_all
     ports:
-      - 27019:27019
+      - 27019:27017
     volumes:
       - ~/data/mongo/mongo3:/data/db
+      - ./mongod.conf:/etc/mongod.conf
     networks:
       - jutopia-network
 
