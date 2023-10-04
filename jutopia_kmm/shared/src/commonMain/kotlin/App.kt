@@ -89,7 +89,7 @@ fun App() {
                 scene(
                     route = "/news"
                 ) {
-                    News(navigator)
+                    News(navigator, revealCanvasState)
                 }
                 scene(
                     route = "/menus"

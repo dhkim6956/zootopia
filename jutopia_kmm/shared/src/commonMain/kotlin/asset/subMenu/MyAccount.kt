@@ -34,12 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun MyAccount(userInfo: UserInfo, viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
+fun MyAccount(navigator: Navigator, userInfo: UserInfo, viewModel: MyAccountViewModel = viewModel(modelClass = MyAccountViewModel::class) {
     MyAccountViewModel()
 }) {
 
@@ -61,14 +62,14 @@ fun MyAccount(userInfo: UserInfo, viewModel: MyAccountViewModel = viewModel(mode
             )
         }
     } else {
-        AccountInfo(accountInformation!!)
+        AccountInfo(navigator, accountInformation!!)
         History(viewModel)
     }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun AccountInfo(accountInfo: AccountInformation) {
+fun AccountInfo(navigator: Navigator, accountInfo: AccountInformation) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,7 +100,7 @@ fun AccountInfo(accountInfo: AccountInformation) {
             ) {
                 Text("${addComma(accountInfo.balance.toDouble())}원", color = ColorsOnPrimary, fontSize = 36.sp)
                 Button(
-                    onClick = { Logger.d { "test" } },
+                    onClick = { navigator.navigate("/send") },
                     colors = buttonColors(
                         backgroundColor = ColorsPrimaryVariant
                     )

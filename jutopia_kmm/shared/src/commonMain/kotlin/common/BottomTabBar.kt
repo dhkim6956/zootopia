@@ -79,11 +79,11 @@ fun BottomTabBar(navigator: Navigator, idx: Int) {
                 }
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp)
-                .background(color = ColorsPrimary)
-        )
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(20.dp)
+//                .background(color = ColorsPrimary)
+//        )
     }
 }

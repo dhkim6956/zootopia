@@ -26,3 +26,9 @@ data class ResponseNewsData(
     @SerialName("items")
     val body: List<NewsItem>
 )
+
+@Serializable
+data class RequestSummary(
+    @SerialName("link")
+    val link: String
+)
