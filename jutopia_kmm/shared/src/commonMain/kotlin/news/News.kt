@@ -6,6 +6,7 @@ import Variables.ColorsPrimary
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.Text
@@ -31,13 +35,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import co.touchlab.kermit.Logger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 import openUrl
@@ -134,21 +143,41 @@ fun Contents() {
 @Composable
 fun NewsList(viewModel: NewsViewModel, searchStr: String, stockName: String) {
 
-    val newses by viewModel.newses.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    if (isLoading) viewModel.fetchData(stockName)
+    val log = Logger.withTag("long")
 
-    LazyColumn (
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
         modifier = Modifier
-            .padding(8.dp)
-
+            .fillMaxWidth()
+            .padding(bottom = 92.dp),
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) {
-        items(newses) {newsItem ->
-            if (newsItem.title.contains(searchStr)) {
+        coroutineScope.launch {
+            snackbarHostState.showSnackbar("궁금한 뉴스를 길게 누르면 설명을 볼 수 있어요~")
+        }
+        val newses by viewModel.newses.collectAsState()
+        val isLoading by viewModel.isLoading.collectAsState()
+        if (isLoading) viewModel.fetchData(stockName)
+
+        LazyColumn (
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .padding(8.dp)
+
+        ) {
+            items(newses.filter { newsDetail -> newsDetail.title.contains(searchStr) }) {newsItem ->
                 Column (
                     modifier = Modifier
                         .clickable { openUrl(newsItem.link) }
+                        .pointerInput(Unit) {
+                            detectTapGestures (
+                                onLongPress = { log.d("${newsItem.title} pressed") }
+                            )
+                        }
                 ) {
                     Text(
                         newsItem.title,

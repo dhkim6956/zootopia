@@ -53,15 +53,18 @@ fun MyStock(viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewMode
             )
         }
     } else {
-        StockInfo(ownedStock)
-        Content(ownedStock)
+        if(ownedStock.isEmpty()) {
+            Text("주식없음")
+        } else {
+            StockInfo(ownedStock)
+            Content(ownedStock)
+        }
     }
 }
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun StockInfo(ownedStock: List<StockDetail>) {
-
     val totalBought = ownedStock.map { it.bought * it.qty }.reduce {acc, i -> acc + i }
     val totalCurrent = ownedStock.map { it.current * it.qty }.reduce {acc, i -> acc + i }
 
