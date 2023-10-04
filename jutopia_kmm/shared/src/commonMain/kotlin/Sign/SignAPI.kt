@@ -8,6 +8,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
+import io.ktor.http.appendPathSegments
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -38,6 +39,29 @@ class SignAPI {
             log.d("${response}")
 
             return response
+
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            return null
+        } finally {
+            httpClient.close()
+        }
+    }
+
+    private  val nonSerializeHttpClient = HttpClient()
+    @Throws(Exception::class)
+    suspend fun getClassUUID(school: String, grade: Int, classroom: Int): String? {
+
+        val log = Logger.withTag("loginAPI")
+
+        try {
+            val response: String = nonSerializeHttpClient.get("http://j9c108.p.ssafy.io:8000/class-server/api/school") {
+                url {
+                    appendPathSegments(school, "$grade", "$classroom")
+                }
+            }.body<String>()
+
+            return response.removeSurrounding("\"")
 
         } catch (e: Exception) {
             println("Error: ${e.message}")

@@ -160,11 +160,19 @@ fun MainPage(navigator: Navigator) {
                         coroutineScope.launch {
                             val result = SignAPI().login(id!!, pwd!!)
                             if(result != null) {
-                                val userInfo: UserInfo = UserInfo(result.body.uuid, result.body.id, result.body.school, result.body.grade, result.body.classroom, result.body.studentNumber)
+                                val userInfo: UserInfo = UserInfo(result.body.uuid, result.body.id, result.body.school, result.body.grade, result.body.classroom, result.body.studentNumber, "")
 
-                                store.set(userInfo)
+                                val classResult = SignAPI().getClassUUID(userInfo.school, userInfo.grade, userInfo.classroom)
 
-                                selectedTab = 2
+                                if(classResult != null) {
+                                    val finalUserInfo: UserInfo = UserInfo(userInfo.uuid, userInfo.id, userInfo.school, userInfo.grade, userInfo.classroom, userInfo.studentNumber, classResult)
+
+                                    store.set(finalUserInfo)
+
+                                    selectedTab = 2
+                                } else {
+                                    loginModal = true
+                                }
                             } else {
                                 loginModal = true
                             }
