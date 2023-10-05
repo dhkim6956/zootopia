@@ -8,7 +8,7 @@
 ---
 
 # 🎬UCC
-[<img style="width: 20%;" src="./readme_assets/images/ucc.JPG">](https://youtu.be/SWT-23KWAW8)
+[<img style="width: 10%;" src="./readme_assets/images/ucc.JPG">](https://youtu.be/SWT-23KWAW8)
 
 ※ 이미지 클릭시 UCC youtube 이동 
 
@@ -63,7 +63,7 @@
 | java17 | spring boot | spring cloud | netflix Eureka | MySQL | H2 | 
 
 
-| <img src="./readme_assets/images/redis.png"  alt="redis" width="100px" height="100px" /> | <img src="./readme_assets/images/python.png"  alt="python" width="100px" height="100px" /> | <img src="./readme_assets/images/fastapi.png"  alt="fastapi" width="100px" height="100px" /> | <img src="./readme_assets/images/mongodb.jpg"  alt="mongodb" width="100px" height="100px" /> | <img src="./readme_assets/images/bart.jpg"  alt="mongodb" width="100px" height="100px" /> | <img src="./readme_assets/images/openai.png"  alt="mongodb" width="100px" height="100px" /> |
+| <img src="./readme_assets/images/redis.png"  alt="redis" width="100px" height="100px" /> | <img src="./readme_assets/images/python.png"  alt="python" width="100px" height="100px" /> | <img src="./readme_assets/images/fastapi.png"  alt="fastapi" width="100px" height="100px" /> | <img src="./readme_assets/images/mongodb.jpg"  alt="mongodb" width="100px" height="100px" /> | <img src="./readme_assets/images/bart.JPG"  alt="mongodb" width="100px" height="100px" /> | <img src="./readme_assets/images/openai.png"  alt="mongodb" width="100px" height="100px" /> |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:------:|
 | redis | python | FastAPI | mongoDB | SKT-AI : KoBART | OpenAI |
 
