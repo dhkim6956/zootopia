@@ -20,13 +20,13 @@ class MyAccountAPI {
     }
 
     @Throws(Exception::class)
-    suspend fun getAccountInfo(): AccountInformation {
+    suspend fun getAccountInfo(studentId:String ): AccountInformation {
 
 
         try {
             val response: AccountResponseData = httpClient.get("http://j9c108.p.ssafy.io:8000/member-server/api/account") {
                 url {
-                    parameters.append("studentId", "student22")
+                    parameters.append("studentId", studentId)
                 }
             }.body<AccountResponseData>()
 

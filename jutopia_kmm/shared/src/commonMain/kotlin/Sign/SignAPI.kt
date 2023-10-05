@@ -36,8 +36,6 @@ class SignAPI {
                 setBody(LoginRequest(id, pwd))
             }.body<LoginResponseData>()
 
-            log.d("${response}")
-
             return response
 
         } catch (e: Exception) {

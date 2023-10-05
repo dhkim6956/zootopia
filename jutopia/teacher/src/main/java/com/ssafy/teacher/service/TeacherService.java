@@ -3,6 +3,8 @@ package com.ssafy.teacher.service;
 import com.ssafy.teacher.client.MemberClient;
 import com.ssafy.teacher.client.RentClient;
 import com.ssafy.teacher.dto.member.Member;
+import com.ssafy.teacher.dto.member.NoticeRequest;
+import com.ssafy.teacher.dto.member.PointRequest;
 import com.ssafy.teacher.dto.member.TeacherRequest;
 import com.ssafy.teacher.dto.rent.SeatRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,14 @@ public class TeacherService {
     }
 
     public String createSeat(SeatRequest request){
-
         return rentClient.createSeats(request);
+    }
+
+    public void createNotice(NoticeRequest request){
+        memberClient.createNotice(request);
+    }
+
+    public void givePoint(PointRequest request){
+        memberClient.givePoint(request.getSchool(), request.getGrade(), request.getClassroom(), request.getIncome());
     }
 }

@@ -28,6 +28,7 @@ import home.Send_detail
 import home.Stock
 import home.Trade
 import lease.LeaseScreen
+import menus.ChangePassword
 import menus.Menus
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.transition.NavTransition
@@ -97,6 +98,11 @@ fun App() {
                     Menus(navigator)
                 }
                 scene(
+                    route = "/changepassword"
+                ) {
+                    ChangePassword(navigator)
+                }
+                scene(
                     route = "/bank"
                 ) {
                     Bank(navigator)
@@ -161,9 +167,11 @@ fun App() {
                     Save(navigator, revealCanvasState = revealCanvasState)
                 }
                 scene(
-                    route = "/send_detail"
-                ) {
-                    Send_detail(navigator)
+                    route = "/send_detail/{studentName}/{studentNumber}"
+                ) { backStackEntry ->
+                    val studentName: String? = backStackEntry.path<String>("studentName")
+                    val studentNumber: Int? = backStackEntry.path<String>("studentNumber")?.toIntOrNull()
+                    Send_detail(navigator, studentName!!, studentNumber!!)
                 }
                 scene(
                     route = "/chatbot"

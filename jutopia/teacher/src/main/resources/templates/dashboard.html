@@ -19,7 +19,7 @@
             padding: 30px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 45%; /* 변경된 부분 */
+            width: 40%; /* 변경된 부분 */
             margin-bottom: 20px;
         }
         h2 {
@@ -51,51 +51,52 @@
     </style>
 </head>
 <body>
-<h1>Welcome to the Dashboard!</h1>
-<!--<h1 th:text="'Welcome to ' + ${session.user.school} Dashboard!'">Welcome to the Dashboard!</h1>-->
+<!--<h1>Welcome to the Dashboard!</h1>-->
+<h1 th:text="|Welcome to ${session.user.school} Dashboard!|">Welcome to the Dashboard!</h1>
+
 <div class="grid">
     <form th:action="@{/createSeat}" method="post">
-        <h2>Create Seat</h2>
-        <label>Total Count:</label>
+        <h2>좌석 생성</h2>
+        <label>총 좌석 수:</label>
         <input type="number" name="totalCount" required>
-        <label>Grade:</label>
+        <label>학년:</label>
         <input type="number" name="grade" required>
-        <label>Class Number:</label>
+        <label>반:</label>
         <input type="number" name="clazzNumber" required>
-        <button type="submit">Create</button>
+        <button type="submit">생성</button>
     </form>
 
     <form th:action="@{/createProduct}" method="post">
-        <h2>Create Product</h2>
-        <label>Product Name:</label>
+        <h2>적금 상품 생성</h2>
+        <label>상품명:</label>
         <input type="text" name="productName" required>
-        <label>Product Detail:</label>
+        <label>상세 내용:</label>
         <input type="text" name="productDetail" required>
-        <label>Min Money:</label>
+        <label>최소 금액:</label>
         <input type="number" name="minMoney" required>
-        <label>Max Money:</label>
+        <label>최대 금액:</label>
         <input type="number" name="maxMoney" required>
-        <label>Interest Rate:</label>
+        <label>이자율:</label>
         <input type="number" name="interestRate" required>
-        <label>Term:</label>
+        <label>약관:</label>
         <input type="number" name="term" required>
-        <button type="submit">Create</button>
+        <button type="submit">생성</button>
     </form>
 
     <form th:action="@{/createNotice}" method="post">
-        <h2>Post Notice</h2>
-        <label>Title:</label>
+        <h2>공지사항 생성</h2>
+        <label>제목:</label>
         <input type="text" name="title" required>
-        <label>Content:</label>
+        <label>내용:</label>
         <textarea name="content" rows="5" required></textarea>
-        <button type="submit">Post</button>
+        <button type="submit">공지</button>
     </form>
 
     <form th:action="@{/providePoints}" method="post">
-        <h2>Provide Points</h2>
-        <label>Amount:</label>
+        <h2>포인트 일괄 지급</h2>
+        <label>금액:</label>
         <input type="number" name="points" required>
-        <button type="submit">Provide</button>
+        <button type="submit">지급</button>
     </form>
 </div>
 </body>

@@ -1,25 +1,30 @@
 package com.ssafy.memberserver.domain.mail.config;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.util.Properties;
 
 @Configuration
+@RequiredArgsConstructor
+@Slf4j
 public class MailConfig {
+    private final Environment environment;
+    private static final String id = "hans0537@naver.com";
 
-    @Value("${spring.mail.username}")
-    String id;
-    @Value("${spring.mail.password}")
-    String password;
+    private static final String password = "hans1224";
 
     @Bean
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        log.info("env:{}",environment.getProperty(id));
+        log.info("id:{}",id);
 
         javaMailSender.setHost("smtp.naver.com");
         javaMailSender.setUsername(id);

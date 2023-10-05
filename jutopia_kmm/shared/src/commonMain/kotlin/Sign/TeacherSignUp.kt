@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
 import common.TopPageBar
 import home.deepSky
+import home.startColor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -116,7 +117,7 @@ fun TeacherSignUp(navigator: Navigator, teacher_id: String?, teacher_pwd: String
     log.i { " $teacher_id, $teacher_pwd " }
 
     Column {
-        TopPageBar("선생님 회원가입", navigator = navigator, showChatBot = false, bgColor = deepSky)
+        TopPageBar("선생님 회원가입", navigator = navigator, showChatBot = false, bgColor = startColor)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
