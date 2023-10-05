@@ -45,8 +45,15 @@ fun MyAccount(navigator: Navigator, userInfo: UserInfo, viewModel: MyAccountView
 }) {
 
     val accountInformation by viewModel.accountInformation.collectAsState()
+    val transactionHistory by viewModel.transactionHistory.collectAsState()
+
+    Logger.d("입출금 내역 : $transactionHistory")
+
+    val isLoadingAccount by viewModel.isLoadingAccount.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    if (isLoading) viewModel.fetchData()
+
+    if (isLoadingAccount && isLoading) viewModel.fetchData(userInfo.id)
+    if (!isLoadingAccount && isLoading) viewModel.fetchHistory(accountInformation!!.uuid)
 
     if(isLoading) {
         Box(
@@ -63,7 +70,7 @@ fun MyAccount(navigator: Navigator, userInfo: UserInfo, viewModel: MyAccountView
         }
     } else {
         AccountInfo(navigator, accountInformation!!)
-        History(viewModel)
+        History(transactionHistory)
     }
 }
 
@@ -113,7 +120,7 @@ fun AccountInfo(navigator: Navigator, accountInfo: AccountInformation) {
 }
 
 @Composable
-fun History(viewModel: MyAccountViewModel) {
+fun History(transactionHistory: List<DepositDetail>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -127,7 +134,7 @@ fun History(viewModel: MyAccountViewModel) {
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         var prev = ""
-        items(viewModel.transactionHistory) { detail ->
+        items(transactionHistory.reversed()) { detail ->
             if (prev != detail.date) {
                 prev = detail.date
 
@@ -143,7 +150,7 @@ fun History(viewModel: MyAccountViewModel) {
             ) {
                 Text(detail.time, color = Color(0xFF7B7B7B))
                 Text(
-                    if (detail.type == transactionType.Deposit) "입금" else "출금",
+                    if (detail.type == TransactionType.Deposit) "입금" else "출금",
                     color = Color(0xFF7B7B7B)
                 )
             }
@@ -154,9 +161,9 @@ fun History(viewModel: MyAccountViewModel) {
             ) {
                 Text(detail.memo, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    addComma(detail.amount.toDouble()) + "원",
+                    addComma(detail.amount) + "원",
                     fontSize = 20.sp,
-                    color = if (detail.type == transactionType.Deposit) Color(0xFFCB0B47) else Color(0xFF167BDF),
+                    color = if (detail.type == TransactionType.Deposit) Color(0xFFCB0B47) else Color(0xFF167BDF),
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -165,7 +172,7 @@ fun History(viewModel: MyAccountViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                Text(addComma(detail.changes.toDouble()) + "원", color = Color(0xFF7B7B7B))
+                Text(addComma(detail.changes) + "원", color = Color(0xFF7B7B7B))
             }
         }
     }

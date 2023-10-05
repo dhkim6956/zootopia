@@ -122,7 +122,7 @@ fun UserBoard(userInfo: UserInfo) {
                         horizontalAlignment = Alignment.Start,
                     ) {
                         Text(
-                            "이름 : 임준환",
+                            "이름 : ${userInfo.name}",
                             fontSize = 24.sp,
                             color = Color.White,
                             fontFamily = icehimchanFontFamily
