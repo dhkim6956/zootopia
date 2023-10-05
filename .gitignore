@@ -27,7 +27,7 @@ deploymentTargetDropDown.xml
 render.experimental.xml
 
 # Keystore files
-*.jks
+# *.jks
 *.keystore
 
 # Google Services (e.g. APIs or Firebase)
@@ -236,6 +236,18 @@ gradle-app.setting
 .project
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
+
+
+*.iml
+.gradle
+.idea
+.DS_Store
+build
+captures
+.externalNativeBuild
+.cxx
+local.properties
+xcuserdata
 
 ### Gradle Patch ###
 # Java heap dump
