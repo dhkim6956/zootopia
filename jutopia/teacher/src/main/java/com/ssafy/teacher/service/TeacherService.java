@@ -30,6 +30,6 @@ public class TeacherService {
     }
 
     public void givePoint(PointRequest request){
-        memberClient.givePoint(request);
+        memberClient.givePoint(request.getSchool(), request.getGrade(), request.getClassroom(), request.getIncome());
     }
 }
