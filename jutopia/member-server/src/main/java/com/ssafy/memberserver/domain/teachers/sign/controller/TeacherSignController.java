@@ -5,6 +5,8 @@ import com.ssafy.memberserver.common.api.ApiResponse;
 import com.ssafy.memberserver.domain.mail.service.MailService;
 
 import com.ssafy.memberserver.domain.students.sign.service.StudentSignService;;
+import com.ssafy.memberserver.domain.teachers.dto.request.MailConfirmRequest;
+import com.ssafy.memberserver.domain.teachers.dto.request.VerifyRequest;
 import com.ssafy.memberserver.domain.teachers.sign.dto.SignUp.request.TeacherSignUpRequest;
 import com.ssafy.memberserver.domain.teachers.sign.service.TeacherSignService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -34,16 +36,16 @@ public class TeacherSignController {
     @Operation(summary = "이메일 인증 코드 발송")
     @PostMapping("/sign-in/mailConfirm")
     @ResponseBody
-    public ApiResponse mailConfirm(@RequestParam("email") String email) throws Exception{
-        return ApiResponse.success(mailService.sendSimpleMessage(email));
+    public ApiResponse mailConfirm(@RequestBody MailConfirmRequest mailConfirmRequest) throws Exception{
+        return ApiResponse.success(mailService.sendSimpleMessage(mailConfirmRequest.getEmailId()));
     }
     @Operation(summary = "이메일 인증 코드 비교")
     @PostMapping("/sign-in/verifyCode")
     @ResponseBody
-    public boolean verifyCode(@RequestParam("code") String code) throws ChangeSetPersister.NotFoundException {
+    public boolean verifyCode(@RequestBody VerifyRequest verifyRequest) throws ChangeSetPersister.NotFoundException {
         boolean result = false;
-        String temp = mailService.verifyEmail(code);
-        if(temp.equals(code)){
+        String temp = mailService.verifyEmail(verifyRequest.getCode());
+        if(temp.equals(verifyRequest.getCode())){
             return result;
         }
         return true;
