@@ -7,7 +7,7 @@ from pykrx import stock
 import pandas as pd
 
 router = APIRouter()
-connection_string = "mongodb://juto:juto1234@127.0.0.1:27017/jutopia"
+connection_string = "mongodb://juto:juto1234@172.17.0.1:27017/jutopia"
 
 client = MongoClient(connection_string)
 db = client['jutopia']
@@ -64,23 +64,6 @@ def get_chart(ticker: str, time_frame: str):
             result["percent"][timestamp_str] = None
         
         return result
-        
-        # 최근 30개의 일별 종가 데이터
-        # pykrx_data = pykrx_collection.find_one({"_id": stock_name})
-        # if not pykrx_data or "OHLCV" not in pykrx_data:
-        #     raise HTTPException(status_code=404, detail="pykrx's OHLCV data not found")
-        
-        # daily_data = list(pykrx_data["OHLCV"].items())
-        # daily_data.sort(key=lambda x: x[0], reverse=True) # 날짜 기준 내림차순 정렬
-        # latest_data = daily_data[:30]
-        
-        # stocks = [{"회사명": stock_name, "시간": date, "현재 주식 가격": data["종가"]} for date, data in latest_data]
-        
-        # # start_date = now - timedelta(days=30)
-        # # results = realtime_collection.find({
-        # #     "회사명": stock_name,
-        # #     "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
-        # # }).sort("시간", -1).limit(30)
 
     elif time_frame == "hour": # 지난 24시간간 1시간 단위 종가 데이터
         results = realtime_collection.find({ # results의 타입은 cursor -> MongoDB find()의 결과
