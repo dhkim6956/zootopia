@@ -167,9 +167,11 @@ fun App() {
                     Save(navigator, revealCanvasState = revealCanvasState)
                 }
                 scene(
-                    route = "/send_detail"
-                ) {
-                    Send_detail(navigator)
+                    route = "/send_detail/{studentName}/{studentNumber}"
+                ) { backStackEntry ->
+                    val studentName: String? = backStackEntry.path<String>("studentName")
+                    val studentNumber: Int? = backStackEntry.path<String>("studentNumber")?.toIntOrNull()
+                    Send_detail(navigator, studentName!!, studentNumber!!)
                 }
                 scene(
                     route = "/chatbot"

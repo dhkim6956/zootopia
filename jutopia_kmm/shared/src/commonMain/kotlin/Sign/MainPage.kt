@@ -194,7 +194,7 @@ fun MainPage(navigator: Navigator) {
                             }
                         }
                     },
-                        contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center
             )
             {
                 Text("로그인", color = Color.White)
