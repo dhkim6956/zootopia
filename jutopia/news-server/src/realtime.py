@@ -7,7 +7,7 @@ from pykrx import stock
 import pandas as pd
 
 router = APIRouter()
-connection_string = "mongodb://juto:juto1234@172.17.0.1:27017/jutopia"
+connection_string = "mongodb://juto:juto1234@127.0.0.1:27017/jutopia"
 
 client = MongoClient(connection_string)
 db = client['jutopia']
@@ -138,22 +138,6 @@ def get_chart(ticker: str, time_frame: str):
     else:
         raise HTTPException(status_code=400, detail="Invalid time_frame value")
 
-    # 데이터 변환
-    # if time_frame != "day":
-    #     stocks_temp = list(results)
-    #     print(f"debug stocks_temp : {stocks_temp}")
-    #     stocks = []
-    #     for stock in stocks_temp:
-    #         print(f"debug stock in stocks_temp : {stock}")
-    #         stock_info = {
-    #             "회사명": stock["회사명"],
-    #             "시간": stock["시간"],
-    #             "현재 주식 가격": stock["현재 주식 가격"]
-    #         }
-    #         stocks.append(stock_info)
-    #     print(f"debug stocks before return : {stocks}")
-    # return stocks
-
 @router.get("/stocks/")
 def get_latest_stocks():
     company_names = ['삼성전자', '현대차', 'NAVER', '에스엠', '한화']
@@ -177,7 +161,10 @@ def get_latest_stocks():
                 "data": {
                     "$push": {
                         "currentPrice": "$현재 주식 가격",
-                        "timestamp": "$시간"
+                        "timestamp": "$시간",
+                        "changeRate": "$퍼센트",
+                        "changeMoney": "$전일대비 변화 가격",
+                        "type": "$부호"
                     }
                 }
             }
@@ -185,8 +172,17 @@ def get_latest_stocks():
         {
             "$project": {
                 "stockName": "$_id",
-                "nowMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 0]
+                "stockCode": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": ["$_id", "삼성전자"]}, "then": "005930"},
+                            {"case": {"$eq": ["$_id", "현대차"]}, "then": "005380"},
+                            {"case": {"$eq": ["$_id", "NAVER"]}, "then": "035420"},
+                            {"case": {"$eq": ["$_id", "에스엠"]}, "then": "041510"},
+                            {"case": {"$eq": ["$_id", "한화"]}, "then": "000880"},
+                        ],
+                        "default": "Unknown"
+                    }
                 },
                 "price": {
                     "$toInt": {
@@ -221,6 +217,8 @@ def get_latest_stocks():
     ]
 
     try:
+        print(f"pipeline : {pipeline}")
+        print(f"type of pipeline : {type(pipeline)}")
         result = list(realtime_collection.aggregate(pipeline))
         # '_id' 제거
         for item in result:
@@ -260,7 +258,10 @@ def get_latest_stocks(ticker: str):
                 "data": {
                     "$push": {
                         "currentPrice": "$현재 주식 가격",
-                        "timestamp": "$시간"
+                        "timestamp": "$시간",
+                        "changeRate": "$퍼센트",
+                        "changeMoney": "$전일대비 변화 가격",
+                        "type": "$부호"
                     }
                 }
             }
@@ -268,8 +269,17 @@ def get_latest_stocks(ticker: str):
         {
             "$project": {
                 "stockName": "$_id",
-                "nowMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 0]
+                "stockCode": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": ["$_id", "삼성전자"]}, "then": "005930"},
+                            {"case": {"$eq": ["$_id", "현대차"]}, "then": "005380"},
+                            {"case": {"$eq": ["$_id", "NAVER"]}, "then": "035420"},
+                            {"case": {"$eq": ["$_id", "에스엠"]}, "then": "041510"},
+                            {"case": {"$eq": ["$_id", "한화"]}, "then": "000880"},
+                        ],
+                        "default": "Unknown"
+                    }
                 },
                 "price": {
                     "$toInt": {
@@ -305,10 +315,8 @@ def get_latest_stocks(ticker: str):
 
     try:
         result = list(realtime_collection.aggregate(pipeline))
-        # Check if a result was found
         if not result:
             raise HTTPException(status_code=404, detail=f"No data found for ticker: {ticker}")
-        # Return the first item in the result
         stock_data = result[0]
         stock_data.pop("_id", None)
         return JSONResponse(content=stock_data)
