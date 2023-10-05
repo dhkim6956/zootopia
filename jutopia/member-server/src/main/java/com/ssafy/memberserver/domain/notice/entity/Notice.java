@@ -33,7 +33,6 @@ public class Notice {
 
     public static Notice from(NoticeRequest noticeRequest){
         return Notice.builder()
-                .id(noticeRequest.getId())
                 .title(noticeRequest.getTitle())
                 .content(noticeRequest.getContent())
                 .createdAt(LocalDateTime.now())
@@ -41,7 +40,6 @@ public class Notice {
                 .grade(noticeRequest.getGrade())
                 .classroom(noticeRequest.getClassroom())
                 .updateAt(LocalDateTime.now())
-                .viewCount(0L)
                 .noticeStatus(NoticeStatus.ACTIVE)
                 .build();
     }
