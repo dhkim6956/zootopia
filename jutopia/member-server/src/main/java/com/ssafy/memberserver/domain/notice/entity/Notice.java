@@ -40,6 +40,9 @@ public class Notice {
                 .updateAt(LocalDateTime.now())
                 .viewCount(0L)
                 .noticeStatus(NoticeStatus.ACTIVE)
+                .school(noticeRequest.getSchool())
+                .grade(noticeRequest.getGrade())
+                .classroom(noticeRequest.getClassroom())
                 .build();
     }
 
