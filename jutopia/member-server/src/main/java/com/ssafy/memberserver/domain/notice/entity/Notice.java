@@ -27,16 +27,22 @@ public class Notice {
     private Long viewCount;
     @Enumerated(EnumType.STRING)
     private NoticeStatus noticeStatus;
+    private String school;
+    private int grade;
+    private int classroom;
 
     public static Notice from(NoticeRequest noticeRequest){
         return Notice.builder()
-                .id(noticeRequest.getId())
+                .id(0L)
                 .title(noticeRequest.getTitle())
                 .content(noticeRequest.getContent())
                 .createdAt(LocalDateTime.now())
                 .updateAt(LocalDateTime.now())
                 .viewCount(0L)
                 .noticeStatus(NoticeStatus.ACTIVE)
+                .school(noticeRequest.getSchool())
+                .grade(noticeRequest.getGrade())
+                .classroom(noticeRequest.getClassroom())
                 .build();
     }
 

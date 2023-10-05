@@ -46,10 +46,10 @@ data class ChipItem(val idx: Int, val name: String, val bgColor: Color, val conC
 
 val chipItems: List<ChipItem> = listOf(
     ChipItem(0, "deposit", Color(0xFFF1D3FB), Color(0xFFAF30C9), "입출금"),
-    ChipItem(1, "save", Color(0xFFDFDBF9), Color(0xFF7E51D6), "적금"),
-    ChipItem(2, "point", Color(0xFFCBD8F2), Color(0xFF4963C7), "포인트"),
+//    ChipItem(1, "save", Color(0xFFDFDBF9), Color(0xFF7E51D6), "적금"),
+//    ChipItem(2, "point", Color(0xFFCBD8F2), Color(0xFF4963C7), "포인트"),
     ChipItem(3, "stock", Color(0xFFB7E7FF), Color(0xFF0087D1), "주식"),
-    //chipItem(4, "building", Color(0xFFC8EAC9), Color(0xFF358438), "부동산")
+//    ChipItem(4, "building", Color(0xFFC8EAC9), Color(0xFF358438), "부동산")
 )
 
 @Composable
@@ -58,8 +58,6 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
 }) {
 
     val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
-
-//    더미데이터 : UserInfo("0e4ad1d7-6a52-499a-92f2-915c3e6f3cb", "student22", "ssafy초등학교", 6, 1, 3)
 
     var userInfo by remember { mutableStateOf<UserInfo?>(null) }
     var isLoading by remember { mutableStateOf(true) }
@@ -91,10 +89,10 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
             Chips(navigator, viewModel.chipIdx.value, viewModel)
 
             when (viewModel.chipIdx.value) {
-                0 -> MyAccount(userInfo!!)
+                0 -> MyAccount(navigator, userInfo!!)
                 1 -> MySave()
                 2 -> MyPoint()
-                3 -> MyStock()
+                3 -> MyStock(navigator)
                 4 -> MyBuilding()
                 else -> Text("Error Page")
             }

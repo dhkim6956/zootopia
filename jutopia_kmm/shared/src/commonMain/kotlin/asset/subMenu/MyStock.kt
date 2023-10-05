@@ -1,8 +1,10 @@
 package asset.subMenu
 
 import Variables.ColorsOnPrimary
+import Variables.ColorsOnSecondary
 import Variables.ColorsPrimary
 import Variables.ColorsPrimaryVariant
+import Variables.ColorsSecondary
 import addComma
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,23 +18,33 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.Button
+import androidx.compose.material.Chip
+import androidx.compose.material.ChipColors
+import androidx.compose.material.ChipDefaults
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun MyStock(viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewModel::class) {
+fun MyStock(navigator: Navigator, viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewModel::class) {
     MyStockViewModel()
 }) {
     val ownedStock by viewModel.ownedStock.collectAsState()
@@ -54,10 +66,48 @@ fun MyStock(viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewMode
         }
     } else {
         if(ownedStock.isEmpty()) {
-            Text("주식없음")
+            NoStock(navigator)
         } else {
             StockInfo(ownedStock)
             Content(ownedStock)
+        }
+    }
+}
+
+@OptIn(ExperimentalResourceApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun NoStock(navigator: Navigator) {
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Top)
+    ) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ColorsPrimary)
+                .padding(8.dp)
+        ) {
+            Image(
+                painterResource("drawable/coin_rabbit.png"),
+                null,
+                modifier = Modifier.width(24.dp)
+            )
+            Text("SSAFY 증권", color = ColorsOnPrimary.copy(alpha = 0.74F))
+        }
+        Text("보유하고 있는 주식이 없습니다.")
+        Chip(
+            onClick = { navigator.navigate("/stocklist") },
+            leadingIcon = { Icon(Icons.Default.Add, "", tint = ColorsOnSecondary)},
+            colors = ChipDefaults.chipColors(backgroundColor = ColorsSecondary),
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(12.dp)
+            ) {
+                Text("주식 매수", color = ColorsOnSecondary, fontSize = 16.sp)
+            }
         }
     }
 }
@@ -89,7 +139,7 @@ fun StockInfo(ownedStock: List<StockDetail>) {
                     null,
                     modifier = Modifier.width(24.dp)
                 )
-                Text("삼다수 증권", color = ColorsOnPrimary.copy(alpha = 0.74F))
+                Text("SSAFY 증권", color = ColorsOnPrimary.copy(alpha = 0.74F))
             }
             Row (
                 horizontalArrangement = Arrangement.SpaceBetween,

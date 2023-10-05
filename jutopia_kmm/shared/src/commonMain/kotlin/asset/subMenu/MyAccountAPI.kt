@@ -30,11 +30,7 @@ class MyAccountAPI {
                 }
             }.body<AccountResponseData>()
 
-            Logger.d("${response.body.bank}")
-
             val transform: AccountInformation = AccountInformation(response.body.uuid, response.body.bank, response.body.number, response.body.balance)
-
-            Logger.d("fetch data!!!")
 
             return transform
 

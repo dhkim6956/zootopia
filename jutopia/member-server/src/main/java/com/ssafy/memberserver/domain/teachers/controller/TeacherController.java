@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -25,5 +26,10 @@ public class TeacherController {
     @DeleteMapping("/delete")
     public ApiResponse teacherDelete(@RequestBody TeacherDeleteRequest teacherDeleteRequest){
         return ApiResponse.success(teacherService.teacherDelete(teacherDeleteRequest));
+    }
+    @Operation(summary = "기본 지원금(계좌로 송금)")
+    @PutMapping("/helpMoney")
+    public ApiResponse helpMony(@RequestParam String school, @RequestParam int grade, @RequestParam int classroom, @RequestParam BigDecimal income){
+        return ApiResponse.success(teacherService.helpMoney(school, grade, classroom, income));
     }
 }

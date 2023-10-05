@@ -45,6 +45,9 @@ public class Account {
         }
         this.accountBalance = this.accountBalance.subtract(amount);
     }
+    public void helpMoneyUpdate(BigDecimal number){
+        this.accountBalance = this.accountBalance.add(number);
+    }
     public void delete(AccountDeleteRequest accountDeleteRequest){
         if(accountDeleteRequest.getAccountStatus() == AccountStatus.ACTIVE){
             this.accountStatus = AccountStatus.INACTIVE;

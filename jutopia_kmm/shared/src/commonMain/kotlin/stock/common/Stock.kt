@@ -11,7 +11,6 @@ data class Stock(
     val stockCode: String,
     val stockName: String,
     val nowMoney: Int = 1000,
-    val prevMoney: Int = 1000,
     val changeRate: Double = 0.0,
     val isOwnedByUser: Boolean = false,
     val changeMoney: Int = 0,
@@ -40,7 +39,7 @@ data class ApiResult(
 
 @Serializable
 data class StockRequest(
-    val memberId: String,
+    var memberId: String,
     val stockId: String,
     val type: TradeType, //BUY, SELL
     val volume: Long,

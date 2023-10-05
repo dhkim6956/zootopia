@@ -1,10 +1,10 @@
 package lease
 
 
+import UserInfo
 import co.touchlab.kermit.Logger
-import common.TmpUserInfo
-import io.ktor.client.call.body
-import io.ktor.client.statement.bodyAsChannel
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import pathTo
+
 private val log = Logger.withTag("LeaseAPI")
 
 sealed class ApiResponse {
@@ -23,6 +25,9 @@ sealed class ApiResponse {
 }
 
 class LeaseViewModel : ViewModel() {
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+
+
     private val _selectedSeat = MutableStateFlow<Seat?>(null)
 
     val selectedSeat: StateFlow<Seat?> = _selectedSeat
@@ -47,7 +52,8 @@ class LeaseViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                val response = apiService.getAllSeats(TmpUserInfo.getSchool(), TmpUserInfo.getGrade(), TmpUserInfo.getClassNumber())
+                val storedUserInfo: UserInfo? = store.get()
+                val response = apiService.getAllSeats(storedUserInfo!!.school, storedUserInfo!!.grade, storedUserInfo!!.classroom)
                 val apiResponse = Json.decodeFromString<ListResponse>(response.bodyAsText())
                 val seatList: List<Seat>? = apiResponse.body
                 log.i{"${seatList}"}

@@ -9,6 +9,8 @@ data class LoginInfo(
     val uuid: String,
     @SerialName("member_id")
     val id: String,
+    @SerialName("name")
+    val name: String,
     @SerialName("school")
     val school: String,
     @SerialName("grade")
