@@ -95,7 +95,7 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
             try {
                 val storedUserInfo: UserInfo? = store.get()
 
-                stockRequest.memberId = storedUserInfo!!.id
+                stockRequest.memberId = storedUserInfo!!.uuid
                 log.i{
                     "거래요청 내용 : $stockRequest"
                 }
