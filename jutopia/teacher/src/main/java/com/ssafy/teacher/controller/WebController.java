@@ -58,10 +58,10 @@ public class WebController {
             , int grade
             , int clazzNumber
             , HttpSession session) {
-//        Member user = (Member) session.getAttribute("user");
+        Member user = (Member) session.getAttribute("user");
         SeatRequest request = SeatRequest.builder()
-//                .school(user.getSchool())
-                .school("싸피초등학교")
+                .school(user.getSchool())
+//                .school("싸피초등학교")
                 .grade(grade)
                 .clazzNumber(clazzNumber)
                 .totalCount(totalCount)
