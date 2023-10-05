@@ -60,7 +60,7 @@ public class Student {
                 .studentName(studentSignUpRequest.getStudentName())
                 .memberBioStatus(MemberBioStatus.INACTIVE)
                 .money(BigDecimal.ZERO)
-                .point(BigDecimal.ZERO)
+                .point(new BigDecimal(300000))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .memberRole(MemberRole.STUDENT)
@@ -82,9 +82,6 @@ public class Student {
         if(studentDeleteRequest.getMemberStatus() == MemberStatus.ACTIVE){
             this.memberStatus = MemberStatus.INACTIVE;
         }
-    }
-    public void helpMoneyUpdate(BigDecimal money){
-        this.money = this.money.add(money);
     }
     public void pointUpdate(StudentPointUpdateRequest studentPointUpdateRequest){
         BigDecimal temp = this.point.subtract(studentPointUpdateRequest.getPoint());

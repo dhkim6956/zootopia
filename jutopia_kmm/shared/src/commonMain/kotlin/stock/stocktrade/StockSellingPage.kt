@@ -144,7 +144,7 @@ fun StockSellingPage(
                     Button(
                         onClick = {
                             val request = StockRequest(
-                                memberId = TmpUserInfo.getMemberId(),
+                                memberId = "",
                                 stockId = stock.id,
                                 type = TradeType.SELL,
                                 volume = orderQuantity.toLong(),

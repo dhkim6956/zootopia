@@ -45,7 +45,7 @@ public class MailService {
             msgg += "</div>";
             message.setText(msgg, "utf-8", "html");// 내용, charset 타입, subtype
             // 보내는 사람의 이메일 주소, 보내는 사람 이름
-            message.setFrom(new InternetAddress("kotworld1004@naver.com", "소영섭"));// 보내는 사람
+            message.setFrom(new InternetAddress("hans0537@naver.com", "Jutopia"));// 보내는 사람
             return message;
         }else{
             throw new NoSuchProviderException("존재하는 이메일 입니다");

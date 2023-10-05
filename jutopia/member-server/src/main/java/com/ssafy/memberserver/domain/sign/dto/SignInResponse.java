@@ -56,6 +56,9 @@ public class SignInResponse {
                 .name(teacher.getTeacherName())
                 .memberStatus(teacher.getMemberStatus())
                 .memberRole(teacher.getMemberRole())
+                .school(teacher.getSchool())
+                .grade(teacher.getGrade())
+                .classroom(teacher.getClassroom())
                 .token(token)
                 .build();
     }

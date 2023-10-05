@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
@@ -26,16 +27,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
 import common.TopPageBar
 import home.deepSky
+import home.startColor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -59,7 +65,7 @@ private val log = Logger.withTag("StudentSignUp")
 
 class StudentSignUpAPI {
     private val client = HttpClient(CIO) {
-        install(ContentNegotiation){
+        install(ContentNegotiation) {
             json(
                 Json { ignoreUnknownKeys = true }
             )
@@ -67,9 +73,17 @@ class StudentSignUpAPI {
     }
 
     @OptIn(InternalAPI::class)
-    suspend fun signUpStudent(student_id: String, student_pwd: String, student_name: String, school: String, grade: String, class_room: String, student_number: String) {
+    suspend fun signUpStudent(
+        student_id: String,
+        student_pwd: String,
+        student_name: String,
+        school: String,
+        grade: String,
+        class_room: String,
+        student_number: String
+    ) {
 
-        log.i {"$student_id, $student_pwd, $student_name, $school, $grade, $class_room, $student_number"}
+        log.i { "$student_id, $student_pwd, $student_name, $school, $grade, $class_room, $student_number" }
 
         val requestBody = mapOf(
             "student_id" to student_id,
@@ -82,11 +96,12 @@ class StudentSignUpAPI {
         )
 
         try {
-            val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/member-server/api/student/sign-up") {
-                contentType(ContentType.Application.Json)
-                body = Json.encodeToString(requestBody)
-            }
-            log.i {"$response"}
+            val response: HttpResponse =
+                client.post("http://j9c108.p.ssafy.io:8000/member-server/api/student/sign-up") {
+                    contentType(ContentType.Application.Json)
+                    body = Json.encodeToString(requestBody)
+                }
+            log.i { "$response" }
         } catch (e: Exception) {
             log.e(e) { "Error during sign up" }
         }
@@ -94,10 +109,11 @@ class StudentSignUpAPI {
 
     suspend fun getClass(school: String, grade: String, class_room: String): String? {
         val encodedSchool = school.encodeURLQueryComponent()
-        val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/member-server/api/student/$encodedSchool/$grade/$class_room")
+        val response: HttpResponse =
+            client.get("http://j9c108.p.ssafy.io:8000/member-server/api/student/$encodedSchool/$grade/$class_room")
         val body: String = response.bodyAsText()
-        log.i {"$response"}
-        log.i {"$body"}
+        log.i { "$response" }
+        log.i { "$body" }
 
         // JSON을 파싱하여 필요한 값을 추출
         return try {
@@ -124,6 +140,7 @@ class StudentSignUpAPI {
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String?) {
     val coroutineScope = rememberCoroutineScope()
@@ -135,11 +152,12 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
     var selectedTab by remember { mutableStateOf(0) }
     var getClassMessage by remember { mutableStateOf<String?>(null) }
     var showSchool by remember { mutableStateOf(false) }
-
-    log.i { " $student_id, $student_pwd "}
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    log.i { " $student_id, $student_pwd " }
 
     Column {
-        TopPageBar("학생 회원가입", navigator = navigator, showChatBot = false, bgColor = deepSky)
+        TopPageBar("학생 회원가입", navigator = navigator, showChatBot = false, bgColor = startColor)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -169,7 +187,12 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        })
                     )
                 }
             }
@@ -198,15 +221,24 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                             modifier = Modifier
                                 .width(300.dp),
                             value = grade,
-                            onValueChange = { if (it.all { char -> char.isDigit() }) grade = it }, // 숫자만 허용
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), // 숫자 키보드 사용
+                            onValueChange = {
+                                if (it.all { char -> char.isDigit() }) grade = it
+                            }, // 숫자만 허용
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ), // 숫자 키보드 사용
                             textStyle = TextStyle(fontSize = 20.sp),
                             colors = TextFieldDefaults.textFieldColors(
                                 textColor = Color.Black,
                                 backgroundColor = Color.White,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
-                            )
+                            ),
+                            keyboardActions = KeyboardActions(onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            })
                         )
                     }
                 }
@@ -228,15 +260,24 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                             modifier = Modifier
                                 .width(300.dp),
                             value = class_room,
-                            onValueChange = { if (it.all { char -> char.isDigit() }) class_room = it }, // 숫자만 허용
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), // 숫자 키보드 사용
+                            onValueChange = {
+                                if (it.all { char -> char.isDigit() }) class_room = it
+                            }, // 숫자만 허용
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number,
+                                imeAction = ImeAction.Done
+                            ), // 숫자 키보드 사용
                             textStyle = TextStyle(fontSize = 20.sp),
                             colors = TextFieldDefaults.textFieldColors(
                                 textColor = Color.Black,
                                 backgroundColor = Color.White,
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent
-                            )
+                            ),
+                            keyboardActions = KeyboardActions(onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            })
                         )
                     }
                 }
@@ -273,11 +314,11 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                         showSchool = false
                     },
                     title = {},
-                    text ={
+                    text = {
                         Text(getClassMessage!!, fontSize = 20.sp)
                     },
-                    confirmButton ={
-                        Button(onClick ={showSchool=false}){
+                    confirmButton = {
+                        Button(onClick = { showSchool = false }) {
                             Text("확인")
                         }
                     },
@@ -309,7 +350,12 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        })
                     )
                 }
             }
@@ -338,7 +384,12 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent
-                        )
+                        ),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        })
                     )
                 }
             }
@@ -355,9 +406,17 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
                         selectedTab = 1
                         val api = StudentSignUpAPI()
                         coroutineScope.launch {
-                            api.signUpStudent(student_id!!, student_pwd!!, student_name!!, school!!, grade!!, class_room!!, student_number!!)
+                            api.signUpStudent(
+                                student_id!!,
+                                student_pwd!!,
+                                student_name!!,
+                                school!!,
+                                grade!!,
+                                class_room!!,
+                                student_number!!
+                            )
                         }
-                               },
+                    },
                 contentAlignment = Alignment.Center
             )
             {

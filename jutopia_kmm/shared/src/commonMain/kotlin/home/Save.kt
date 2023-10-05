@@ -1,6 +1,7 @@
 package home
 
 import BottomTabBar
+import UserInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +41,8 @@ import com.svenjacobs.reveal.Reveal
 import com.svenjacobs.reveal.RevealCanvasState
 import com.svenjacobs.reveal.rememberRevealState
 import common.TopPageBar
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -58,6 +62,7 @@ import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import pathTo
 import kotlin.js.JsName
 
 @Serializable
@@ -112,6 +117,7 @@ class saveAPI {
             contentType(ContentType.Application.Json)
             body = Json.encodeToString(requestBody)
         }
+
         log.i { "$response" }
     }
 }
@@ -125,7 +131,16 @@ enum class Keys { subscript }
 fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
     var firstProduct by remember { mutableStateOf<Product?>(null) }
     val coroutineScope = rememberCoroutineScope()
-    val memberId = "e1f2f129-b317-42e0-9c87-4d98ce6cf35b"
+    var student_member_id by remember { mutableStateOf("") }
+
+
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+    LaunchedEffect(1) {
+        val temp: UserInfo? = store.get()
+        if (temp != null) {
+            student_member_id = temp.uuid
+        }
+    }
 
 
     coroutineScope.launch {
@@ -141,6 +156,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
     var productDetail = firstProduct?.productDetail
     var interestRate = firstProduct?.interestRate
     var term = firstProduct?.term
+    var showConfirmationDialog by remember { mutableStateOf(false) }
 
     fun formatThousandSeparator(number: Int?): String? {
         return number?.let {
@@ -197,7 +213,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                     Text("6학년 1반", fontSize = 25.sp)
                     Row {
                         Text("$productName ", fontSize = 25.sp, color = deepNavy)
-                        Text("적금", fontSize = 25.sp)
+//                        Text("적금", fontSize = 25.sp)
                     }
                     Row(
                         modifier = Modifier
@@ -251,7 +267,6 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                             contentAlignment = Alignment.Center
                         ) {
                             Text("가입하기", color = deepNavy)
-
                         }
 
                         if (showDialog) {
@@ -307,18 +322,31 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                                         if (moneyValue != null && moneyValue in min.toDouble()..max.toDouble()) {
                                             val api = saveAPI()
                                             coroutineScope.launch {
-                                                api.subscriptionSave(memberId, productId, money)
+                                                api.subscriptionSave(student_member_id, productId, money)
+                                                showConfirmationDialog = true  // Show the confirmation dialog after subscription is done.
                                             }
+
                                         } else {
                                             // 저축 한도를 확인해주세요 다이얼로그 띄우기
                                             showLimitWarningDialog = true
                                         }
-
                                     },
                                         colors = ButtonDefaults.buttonColors(deepSky)
                                     ) {
                                         Text("확인")
                                     }
+                                }
+                            )
+                        }
+                        if (showConfirmationDialog) {
+                            AlertDialog(
+                                onDismissRequest = { showConfirmationDialog = false },
+                                title= {"확인"},
+                                text={
+                                    Text("적금 가입이 완료되었습니다.", style=TextStyle(color=Color.Black, fontSize=20.sp))
+                                },
+                                confirmButton={
+                                    Button(onClick={showConfirmationDialog=false}){Text("확인")}
                                 }
                             )
                         }

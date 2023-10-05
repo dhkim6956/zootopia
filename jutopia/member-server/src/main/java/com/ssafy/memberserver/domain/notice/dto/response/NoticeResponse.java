@@ -11,6 +11,9 @@ public record NoticeResponse(
         String title,
         String content,
         Long viewCount,
+        String school,
+        int grade,
+        int classroom,
         LocalDateTime createdAt,
         NoticeStatus noticeStatus
 ) {
@@ -22,6 +25,9 @@ public record NoticeResponse(
                 .viewCount(notice.getViewCount())
                 .createdAt(notice.getCreatedAt())
                 .noticeStatus(notice.getNoticeStatus())
+                .school(notice.getSchool())
+                .grade(notice.getGrade())
+                .classroom(notice.getClassroom())
                 .build();
     }
 }

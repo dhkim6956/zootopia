@@ -28,6 +28,9 @@ public class Teacher {
     private String teacherEmail;
     @Enumerated(EnumType.STRING)
     private MemberRole memberRole;
+    private String school;
+    private int grade;
+    private int classroom;
     @Enumerated(EnumType.STRING)
     private MemberStatus memberStatus;
     @Enumerated(EnumType.STRING)
@@ -42,6 +45,9 @@ public class Teacher {
                 .memberRole(MemberRole.TEACHER)
                 .memberStatus(MemberStatus.ACTIVE)
                 .memberBioStatus(MemberBioStatus.INACTIVE)
+                .school(teacherSignUpRequest.getSchool())
+                .grade(teacherSignUpRequest.getGrade())
+                .classroom(teacherSignUpRequest.getClassroom())
                 .build();
     }
     //TODO:삼항 연사자 변경 필요

@@ -140,7 +140,7 @@ fun StockBuyingPage(
                     Button(
                         onClick = {
                             val request = StockRequest(
-                                memberId = TmpUserInfo.getMemberId(),
+                                memberId = "",
                                 stockId = stock.id,
                                 type = TradeType.BUY,
                                 volume = orderQuantity.toLong(),

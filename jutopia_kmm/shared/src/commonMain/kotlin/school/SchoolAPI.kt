@@ -21,9 +21,15 @@ class SchoolAPI {
     }
 
     @Throws(Exception::class)
-    suspend fun getNoti(): List<NotiDetail> {
+    suspend fun getNoti(school: String, grade: Int, classRoom: Int): List<NotiDetail> {
         try {
-            val response: List<NotiItem> = httpClient.get("http://j9c108.p.ssafy.io:8000/member-server/api/notice").body<NotiResponse>().body
+            val response: List<NotiItem> = httpClient.get("http://j9c108.p.ssafy.io:8000/member-server/api/notice") {
+                url {
+                    parameters.append("school", school)
+                    parameters.append("grade", "$grade")
+                    parameters.append("classroom", "$classRoom")
+                }
+            }.body<NotiResponse>().body
 
             val transform: List<NotiDetail> = response.map { noti ->
 

@@ -51,7 +51,9 @@ public class AccountService {
         Account receiverAccount = accountRepository.findAccountByStudentId(sendMoneyRequest.getReceiver())
                 .orElseThrow(() -> new NoSuchElementException("받는 사람을 찾을 수 없습니다"));
         BigDecimal amount = sendMoneyRequest.getAmount();
+        log.info("amount:{}",amount);
         senderAccount.withdraw(amount);
+        log.info("withdraw:{}",amount.getClass());
         receiverAccount.deposit(amount);
         accountRepository.flush();
 

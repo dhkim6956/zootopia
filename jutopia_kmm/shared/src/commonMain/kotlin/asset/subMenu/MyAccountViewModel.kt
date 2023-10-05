@@ -27,7 +27,7 @@ class MyAccountViewModel: ViewModel() {
 
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
-            _accountInformation.emit(MyAccountAPI().getAccountInfo())
+            _accountInformation.emit(MyAccountAPI().getAccountInfo("stduent22"))
             _isLoading.emit(false)
         }
     }

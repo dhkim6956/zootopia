@@ -1,5 +1,7 @@
 package com.ssafy.memberserver.domain.teachers.service;
 
+import com.ssafy.memberserver.domain.account.entity.Account;
+import com.ssafy.memberserver.domain.account.repository.AccountRepository;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
 import com.ssafy.memberserver.domain.teachers.dto.request.TeacherDeleteRequest;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 public class TeacherService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
@@ -51,16 +55,14 @@ public class TeacherService {
     }
     @Transactional
     public List<HelpMoney> helpMoney(String school, int grade, int classroom, BigDecimal income) {
-        List<Student> temp = studentRepository.findBySchoolAndGradeAndAndClassRoom(school, grade, classroom);
-        return temp.stream()
+        List<Student> students = studentRepository.findBySchoolAndGradeAndAndClassRoom(school, grade, classroom);
+        return students.stream()
                 .map(student -> {
-                    student.helpMoneyUpdate(income);
+                    Account account = accountRepository.findAccountByStudentId(student.getStudentId())
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid student ID: " + student.getStudentId()));
+                    account.helpMoneyUpdate(income);
                     HelpMoney helpMoneyResponse = new HelpMoney();
-                    // HelpMoneyResponse 객체의 필드를 설정하는 코드를 여기에 추가하십시오.
-                    // 예를 들어, helpMoneyResponse.setStudentName(student.getName()); 와 같은 방식으로 설정할 수 있습니다.
                     return helpMoneyResponse;
-                    // HelpMoney 객체의 필드를 설정하는 코드를 여기에 추가하십시오.
-                    // 예를 들어, helpMoney.setStudent(student); 과 같은 방식으로 설정할 수 있습니다.
                 })
                 .collect(Collectors.toList());
     }

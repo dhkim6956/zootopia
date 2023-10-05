@@ -1,8 +1,11 @@
 package stock.stocklist
 
 
+import UserInfo
 import co.touchlab.kermit.Logger
 import common.TmpUserInfo
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,6 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import pathTo
 import stock.common.Stock
 import stock.common.StockApiService
 import stock.common.StockListResponse
@@ -24,12 +28,14 @@ class StockListViewModel : ViewModel() {
     val stocks: StateFlow<List<Stock>> = _stocks
 
     private val stockApiService = StockApiService();
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
 
     init {
         viewModelScope.launch {
             try {
+                val storedUserInfo: UserInfo? = store.get()
                 while (true) {
-                    val response = stockApiService.getAllStocks(TmpUserInfo.getMemberId());
+                    val response = stockApiService.getAllStocks(storedUserInfo!!.uuid);
                     val apiResponse = Json.decodeFromString<StockListResponse>(response.bodyAsText())
                     val stockList = apiResponse.body
                     _stocks.emit(stockList!!)

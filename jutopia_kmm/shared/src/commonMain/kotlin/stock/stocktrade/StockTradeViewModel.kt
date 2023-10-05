@@ -1,7 +1,10 @@
 package stock.stocktrade
 
+import UserInfo
 import co.touchlab.kermit.Logger
 import common.TmpUserInfo
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,6 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.viewmodel.ViewModel
 import moe.tlaster.precompose.viewmodel.viewModelScope
+import pathTo
 import stock.common.StockApiService
 import stock.common.MyStock
 import stock.common.MyStockResponse
@@ -33,7 +37,7 @@ enum class TradeStatus {
 private val log = Logger.withTag("StockAPI")
 
 class StockTradeViewModel(stockId: String) : ViewModel() {
-    private val memberId = TmpUserInfo.getMemberId()
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
     private val stockId = stockId
 
 
@@ -65,8 +69,10 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
 
         viewModelScope.launch {
             try {
+                val storedUserInfo: UserInfo? = store.get()
+
                 log.i { "주식 id: $stockId" }
-                val res = stockApiService.getMyStock(memberId, stockId = stockId)
+                val res = stockApiService.getMyStock(storedUserInfo!!.uuid, stockId = stockId)
                 val apiResponse = Json.decodeFromString<MyStockResponse>(res.bodyAsText())
                 _myStock.emit(apiResponse.body)
                 log.i { "내 주식: ${myStock.value}" }
@@ -87,6 +93,9 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
 
         viewModelScope.launch {
             try {
+                val storedUserInfo: UserInfo? = store.get()
+
+                stockRequest.memberId = storedUserInfo!!.id
                 log.i{
                     "거래요청 내용 : $stockRequest"
                 }
