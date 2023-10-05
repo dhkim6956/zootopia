@@ -13,12 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.math.BigDecimal;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/teacher")
 public class WebController {
 
     private final TeacherService service;
@@ -39,7 +41,7 @@ public class WebController {
         log.info("{}", user.toString());
         if (user != null) {
             session.setAttribute("user", user);
-            return "redirect:/dashboard";
+            return "redirect:http://j9c108.p.ssafy.io:8000/teacher/dashboard";
         } else {
             return "login";
         }
@@ -56,17 +58,18 @@ public class WebController {
             , int grade
             , int clazzNumber
             , HttpSession session) {
-//        Member user = (Member) session.getAttribute("user");
+        Member user = (Member) session.getAttribute("user");
         SeatRequest request = SeatRequest.builder()
-//                .school(user.getSchool())
-                .school("싸피초등학교")
+                .school(user.getSchool())
+//                .school("싸피초등학교")
                 .grade(grade)
                 .clazzNumber(clazzNumber)
                 .totalCount(totalCount)
                 .build();
         service.createSeat(request);
 
-        return "redirect:/dashboard";
+        return "redirect:http://j9c108.p.ssafy.io:8000/teacher/dashboard";
+
     }
 
     @PostMapping("/createNotice")
@@ -81,7 +84,8 @@ public class WebController {
                 .build();
 
         service.createNotice(request);
-        return "redirect:/dashboard";
+        return "redirect:http://j9c108.p.ssafy.io:8000/teacher/dashboard";
+
 
     }
 
@@ -96,7 +100,8 @@ public class WebController {
                 .build();
 
         service.givePoint(request);
-        return "redirect:/dashboard";
+        return "redirect:http://j9c108.p.ssafy.io:8000/teacher/dashboard";
+
 
     }
 }

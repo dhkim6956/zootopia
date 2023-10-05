@@ -55,7 +55,7 @@
 <h1 th:text="|Welcome to ${session.user.school} Dashboard!|">Welcome to the Dashboard!</h1>
 
 <div class="grid">
-    <form th:action="@{/createSeat}" method="post">
+    <form th:action="@{/teacher/createSeat}" method="post">
         <h2>좌석 생성</h2>
         <label>총 좌석 수:</label>
         <input type="number" name="totalCount" required>
@@ -66,7 +66,7 @@
         <button type="submit">생성</button>
     </form>
 
-    <form th:action="@{/createProduct}" method="post">
+    <form th:action="@{/teacher/createProduct}" method="post">
         <h2>적금 상품 생성</h2>
         <label>상품명:</label>
         <input type="text" name="productName" required>
@@ -83,7 +83,7 @@
         <button type="submit">생성</button>
     </form>
 
-    <form th:action="@{/createNotice}" method="post">
+    <form th:action="@{/teacher/createNotice}" method="post">
         <h2>공지사항 생성</h2>
         <label>제목:</label>
         <input type="text" name="title" required>
@@ -92,7 +92,7 @@
         <button type="submit">공지</button>
     </form>
 
-    <form th:action="@{/providePoints}" method="post">
+    <form th:action="@{/teacher/providePoints}" method="post">
         <h2>포인트 일괄 지급</h2>
         <label>금액:</label>
         <input type="number" name="points" required>

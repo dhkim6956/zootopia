@@ -47,7 +47,7 @@ fun StockBuyingPage(
     val keyboardController = LocalSoftwareKeyboardController.current
     var showDialog by remember { mutableStateOf(false) }
     val tradeStatus by viewModel.tradeStatus.collectAsState()
-
+    val myPoint by viewModel.myPoint.collectAsState()
     val totalAmount: Double =
         if (orderQuantity.isNotBlank() && orderPrice.isNotBlank()) {
             orderQuantity.toDouble().times(orderPrice.toDouble())
@@ -62,6 +62,7 @@ fun StockBuyingPage(
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
+        Text("보유 포인트: $myPoint")
         OutlinedTextField(
             value = orderQuantity,
             onValueChange = {

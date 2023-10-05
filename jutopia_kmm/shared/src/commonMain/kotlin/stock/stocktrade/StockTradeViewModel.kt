@@ -3,6 +3,7 @@ package stock.stocktrade
 import UserInfo
 import co.touchlab.kermit.Logger
 import common.TmpUserInfo
+import home.Home
 import io.github.xxfast.kstore.KStore
 import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.statement.bodyAsText
@@ -59,18 +60,23 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
     private val _tradeStatus = MutableStateFlow<TradeStatus?>(null)
     val tradeStatus: StateFlow<TradeStatus?> = _tradeStatus
 
-    private val stockApiService: StockApiService = StockApiService()
+    private val _myPoint = MutableStateFlow<Double>(0.0)
+    val myPoint : StateFlow<Double> = _myPoint
 
+    private val stockApiService: StockApiService = StockApiService()
+    private val getPoint: Home = Home()
     init {
         getMyStockInfo()
     }
+
+
 
     private fun getMyStockInfo(){
 
         viewModelScope.launch {
             try {
                 val storedUserInfo: UserInfo? = store.get()
-
+                _myPoint.emit(getPoint.getPoint(storedUserInfo!!.id))
                 log.i { "주식 id: $stockId" }
                 val res = stockApiService.getMyStock(storedUserInfo!!.uuid, stockId = stockId)
                 val apiResponse = Json.decodeFromString<MyStockResponse>(res.bodyAsText())
@@ -108,6 +114,8 @@ class StockTradeViewModel(stockId: String) : ViewModel() {
                     _tradeStatus.value = TradeStatus.FAILURE
                 } else {
                     _tradeStatus.value = TradeStatus.SUCCESS
+                    val storedUserInfo: UserInfo? = store.get()
+                    _myPoint.emit(getPoint.getPoint(storedUserInfo!!.id))
                     getMyStockInfo()
                 }
             } catch (e: Exception) {

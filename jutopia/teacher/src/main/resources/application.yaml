@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: teacher
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
 
 eureka:
   instance:
@@ -12,8 +17,8 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
-#      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
+#      defaultZone: http://127.0.0.1:8761/eureka
+      defaultZone: http://j9c108.p.ssafy.io:8761/eureka
 
 
 management:
