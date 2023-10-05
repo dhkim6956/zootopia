@@ -7,7 +7,7 @@ from pykrx import stock
 import pandas as pd
 
 router = APIRouter()
-connection_string = "mongodb://juto:juto1234@127.0.0.1:27017/jutopia"
+connection_string = "mongodb://juto:juto1234@172.17.0.1:27017/jutopia"
 
 client = MongoClient(connection_string)
 db = client['jutopia']
