@@ -68,6 +68,7 @@ private val log = Logger.withTag("Send_detail")
 val Gray = Color(0xFFB1B6B9)
 val Navy = Color(0xFF3F51B5)
 
+
 class Send_detailAPI {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation){
@@ -97,7 +98,6 @@ class Send_detailAPI {
             log.e(e) { "송금에러" }
         }
     }
-
 }
 
 
@@ -110,7 +110,6 @@ fun Send_detail(navigator: Navigator, studentName: String, studentNumber: Int) {
     val coroutineScope = rememberCoroutineScope()
     var mybalance by remember { mutableStateOf(0.0) }
     var id by remember { mutableStateOf("") }
-    val sender =  "임준환"
     var showConfirmationDialog by remember { mutableStateOf(false) }
 
     val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
@@ -121,6 +120,11 @@ fun Send_detail(navigator: Navigator, studentName: String, studentNumber: Int) {
         }
     }
 
+    coroutineScope.launch {
+        val account = MyAccountAPI().getAccountInfo(id)
+        mybalance = account.balance
+    }
+
     fun formatThousandSeparator(number: Int?): String? {
         return number?.let {
             it.toString().reversed().chunked(3).joinToString(",").reversed()
@@ -129,10 +133,7 @@ fun Send_detail(navigator: Navigator, studentName: String, studentNumber: Int) {
 
     val formattedBalance = formatThousandSeparator(mybalance.toInt())
 
-    coroutineScope.launch {
-        val account = MyAccountAPI().getAccountInfo(id)
-        mybalance = account.balance
-    }
+
 
     Column {
         TopPageBar("송금하기", navigator=navigator)
@@ -190,7 +191,7 @@ fun Send_detail(navigator: Navigator, studentName: String, studentNumber: Int) {
                     .background(color = Navy)
                     .clickable {
                         coroutineScope.launch {
-                            Send_detailAPI().moneySend(sender!!, studentName!!, money!!, id!!)
+                            Send_detailAPI().moneySend(id!!, studentName!!, money!!, id!!)
                             showConfirmationDialog = true
                         }
                     },
@@ -205,7 +206,10 @@ fun Send_detail(navigator: Navigator, studentName: String, studentNumber: Int) {
                 title = { Text("송금 완료") },
                 text = { Text("송금이 성공적으로 완료되었습니다.") },
                 confirmButton = {
-                    Button(onClick= { showConfirmationDialog= false }) {
+                    Button(onClick= {
+                        showConfirmationDialog= false
+                        navigator.navigate("/asset")  // Navigate to "/asset" page.
+                    }) {
                         Text("확인")
                     }
                 }
