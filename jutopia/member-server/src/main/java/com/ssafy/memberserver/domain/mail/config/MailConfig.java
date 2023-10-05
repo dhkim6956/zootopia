@@ -21,8 +21,8 @@ public class MailConfig {
     @Bean
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-        log.info("{}",environment.getProperty(id));
-        log.info("{}",id);
+        log.info("env:{}",environment.getProperty(id));
+        log.info("id:{}",id);
 
         javaMailSender.setHost("smtp.naver.com");
         javaMailSender.setUsername(id);
