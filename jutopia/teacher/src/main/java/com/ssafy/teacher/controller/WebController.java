@@ -41,7 +41,7 @@ public class WebController {
         log.info("{}", user.toString());
         if (user != null) {
             session.setAttribute("user", user);
-            return "redirect:/teacher/dashboard";
+            return "redirect:http://j9c108.p.ssafy.io:8080/teacher/dashboard";
         } else {
             return "login";
         }
@@ -68,7 +68,7 @@ public class WebController {
                 .build();
         service.createSeat(request);
 
-        return "redirect:/teacher/dashboard";
+        return "redirect:http://j9c108.p.ssafy.io:8080/teacher/dashboard";
 
     }
 
@@ -84,7 +84,7 @@ public class WebController {
                 .build();
 
         service.createNotice(request);
-        return "redirect:/teacher/dashboard";
+        return "redirect:http://j9c108.p.ssafy.io:8080/teacher/dashboard";
 
 
     }
@@ -100,7 +100,7 @@ public class WebController {
                 .build();
 
         service.givePoint(request);
-        return "redirect:/teacher/dashboard";
+        return "redirect:http://j9c108.p.ssafy.io:8080/teacher/dashboard";
 
 
     }
