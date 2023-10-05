@@ -13,4 +13,7 @@ public class TeacherSignUpRequest{
     private String teacherPwd;
     private String teacherName;
     private String teacherEmail;
+    private String school;
+    private int grade;
+    private int classroom;
 }
