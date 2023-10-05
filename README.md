@@ -8,7 +8,7 @@
 ---
 
 # 🎬UCC
-[<img style="width: 5%;" src="./readme_assets/images/ucc.JPG">](https://youtu.be/SWT-23KWAW8)
+[<img style="width: 10px;" src="./readme_assets/images/ucc.JPG">](https://youtu.be/SWT-23KWAW8)
 
 ※ 이미지 클릭시 UCC youtube 이동 
 
