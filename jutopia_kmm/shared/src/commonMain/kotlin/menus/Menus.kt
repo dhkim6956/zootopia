@@ -81,7 +81,7 @@ fun Contents(userInfo: UserInfo, navigator: Navigator) {
     Column {
         UserBoard(userInfo)
         MenuHeader("내 정보")
-        MenuItem("drawable/menu_human.xml", "비밀번호 변경") {}
+        MenuItem("drawable/menu_human.xml", "비밀번호 변경") { navigator.navigate("/changepassword") }
         MenuItem("drawable/menu_door.xml", "로그아웃") { logout() }
     }
 }
