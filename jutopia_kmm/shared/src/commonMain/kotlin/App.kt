@@ -28,6 +28,7 @@ import home.Send_detail
 import home.Stock
 import home.Trade
 import lease.LeaseScreen
+import menus.ChangePassword
 import menus.Menus
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.transition.NavTransition
@@ -95,6 +96,11 @@ fun App() {
                     route = "/menus"
                 ) {
                     Menus(navigator)
+                }
+                scene(
+                    route = "/changepassword"
+                ) {
+                    ChangePassword(navigator)
                 }
                 scene(
                     route = "/bank"
