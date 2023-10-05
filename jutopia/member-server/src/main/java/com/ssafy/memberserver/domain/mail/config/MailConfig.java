@@ -10,9 +10,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import java.util.Properties;
 
 @Configuration
+@RequiredArgsConstructor
+@Slf4j
 public class MailConfig {
-    @Autowired
-    private Environment environment;
+    private final Environment environment;
     @Value("${spring.mail.username}")
     String id;
     @Value("${spring.mail.password}")
