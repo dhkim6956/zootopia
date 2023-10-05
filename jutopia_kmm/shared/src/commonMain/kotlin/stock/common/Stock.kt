@@ -39,7 +39,7 @@ data class ApiResult(
 
 @Serializable
 data class StockRequest(
-    val memberId: String,
+    var memberId: String,
     val stockId: String,
     val type: TradeType, //BUY, SELL
     val volume: Long,
