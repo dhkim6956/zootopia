@@ -58,6 +58,7 @@ class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
                     } ?: Pair(key, null)
                 }
             }
+
             when(timeFrame){
                 TimeFrame.minute -> _minuteChartData.emit(convertedData)
                 TimeFrame.hour -> _hourChartData.emit(convertedData)
@@ -91,15 +92,18 @@ class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
 
         viewModelScope.launch {
             while(true) {
-                delay(60_000)
+                delay(10_000)
                 log.i { "분 데이터 갱신" }
                 getChartData(TimeFrame.minute, stockCode)
+                if (_timeFrame.value == TimeFrame.minute) {
+                    _currentChartData.emit(_minuteChartData.value)
+                }
             }
         }
 
         viewModelScope.launch {
             while(true) {
-                delay(3_600_000)
+                delay(30_000)
                 log.i { "시 데이터 갱신" }
                 getChartData(TimeFrame.hour, stockCode)
             }
@@ -107,9 +111,9 @@ class StockChartViewModel(stockId: String, stockCode: String) : ViewModel() {
 
         viewModelScope.launch {
             while(true) {
-                delay(86_400_000)
-                log.i { "일 데이터 갱신" }
+                delay(30_000)
                 getChartData(TimeFrame.day, stockCode)
+                log.i { "일 데이터 갱신" }
             }
         }
 

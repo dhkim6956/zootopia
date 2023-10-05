@@ -1,6 +1,7 @@
 package home
 
 import BottomTabBar
+import UserInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,16 +19,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,10 +43,75 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import asset.subMenu.MyAccountAPI
+import co.touchlab.kermit.Logger
 import common.TopPageBar
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpResponse
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.InternalAPI
+import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import pathTo
+
+private val log = Logger.withTag("Trade")
+class TradedAPI {
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation){
+            json(
+                Json { ignoreUnknownKeys = true }
+            )
+        }
+    }
+    @OptIn(InternalAPI::class)
+    suspend fun moneyToPoint(student_id: String,income: String) {
+
+        val requestBody = mapOf(
+            "student_id" to student_id,
+            "income" to income,
+        )
+
+        try {
+            val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/member-server/api/pointtransaction/income") {
+                contentType(ContentType.Application.Json)
+                body = Json.encodeToString(requestBody)
+            }
+            log.i {"$response"}
+        } catch (e: Exception) {
+            log.e(e) { "환전 에러" }
+        }
+    }
+
+    @OptIn(InternalAPI::class)
+    suspend fun pointToMoney(student_id: String, expense: String) {
+
+        val requestBody = mapOf(
+            "student_id" to student_id,
+            "expense" to expense,
+        )
+
+        try {
+            val response: HttpResponse = client.post("http://j9c108.p.ssafy.io:8000/member-server/api/pointtransaction/expense") {
+                contentType(ContentType.Application.Json)
+                body = Json.encodeToString(requestBody)
+            }
+            log.i {"$response"}
+        } catch (e: Exception) {
+            log.e(e) { "환전 에러" }
+        }
+    }
+}
 
 val lightblue = Color(0xFFE7EFFA)
 val Blue = Color(0xFF3F51B5)
@@ -50,6 +120,7 @@ val DeepBlue = Color(0xFF3F51B5)
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Trade(navigator: Navigator) {
+    var showConfirmationDialog by remember { mutableStateOf(false) }
     var money by remember { mutableStateOf("") }
     var arrowImg = "drawable/arrow.xml"
     var bigarrowImg = "drawable/bigarrow.xml"
@@ -61,6 +132,29 @@ fun Trade(navigator: Navigator) {
     val items = listOf("달러", "포인트")
     var selectedCurrency by remember { mutableStateOf(items[0]) }
     val unselectedItem by derivedStateOf { items.first { it != selectedCurrency } }
+    var id by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    var mybalance by remember { mutableStateOf(0.0) }
+
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+    LaunchedEffect(1) {
+        val temp: UserInfo? = store.get()
+        if (temp != null) {
+            id = temp.id
+        }
+
+        val account = MyAccountAPI().getAccountInfo(id)
+        mybalance = account.balance
+    }
+
+    fun formatThousandSeparator(number: Int?): String? {
+        return number?.let {
+            it.toString().reversed().chunked(3).joinToString(",").reversed()
+        }
+    }
+
+    val formattedBalance = formatThousandSeparator(mybalance.toInt())
+
 
     Column {
         TopPageBar("환전", navigator=navigator)
@@ -144,7 +238,7 @@ fun Trade(navigator: Navigator) {
         ) {
             Column {
                 Text("나의 계좌에서... 에서")
-                Text("잔액 260,000 ₩", fontSize = 15.sp, color = Gray)
+                Text("잔액 ${formattedBalance} ₩", fontSize = 15.sp, color = Gray)
             }
         }
 
@@ -274,6 +368,11 @@ fun Trade(navigator: Navigator) {
                     Text(
                         text = unselectedItem, fontSize = 13.sp
                     )
+
+                    Spacer(Modifier.width(30.dp)) // Add some space between the items.
+                    Text(
+                        text = money, fontSize = 17.sp // Display the value of 'money'.
+                    )
                 }
                 Spacer(
                     Modifier
@@ -285,17 +384,6 @@ fun Trade(navigator: Navigator) {
             }
         }
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp)
-                .padding(start = 20.dp)
-        ) {
-            Text("환율 1333.25 달러 <-> 1 포인트",
-                color = Color.LightGray,
-                modifier = Modifier
-                    .align(Alignment.Center))
-        }
 
         Row(
             modifier = Modifier
@@ -307,10 +395,37 @@ fun Trade(navigator: Navigator) {
                 modifier = Modifier
                     .width(90.dp)
                     .height(36.dp)
-                    .background(DeepBlue),
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(DeepBlue)
+                    .clickable {
+                        coroutineScope.launch {
+                            if (selectedCurrency == "달러") {
+                                TradedAPI().moneyToPoint(id!!, money!!)
+                            } else if (selectedCurrency == "포인트") {
+                                TradedAPI().pointToMoney(id!!, money!!)
+                            }
+                            showConfirmationDialog = true
+                        }
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text("환전하기", color = Color.White)
+            }
+
+            if (showConfirmationDialog) {
+                AlertDialog(
+                    onDismissRequest = { showConfirmationDialog = false },
+                    title = { Text("환전 완료") },
+                    text = { Text("환전이 성공적으로 완료되었습니다.", fontSize = 20.sp) },
+                    confirmButton = {
+                        Button(onClick= {
+                            showConfirmationDialog= false
+                            navigator.navigate("/home") // Navigate to the '/home' route.
+                        }) {
+                            Text("확인")
+                        }
+                    }
+                )
             }
         }
     }
