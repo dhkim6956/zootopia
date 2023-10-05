@@ -11,7 +11,8 @@ import java.util.Properties;
 
 @Configuration
 public class MailConfig {
-
+    @Autowired
+    private Environment environment;
     @Value("${spring.mail.username}")
     String id;
     @Value("${spring.mail.password}")
@@ -20,6 +21,8 @@ public class MailConfig {
     @Bean
     public JavaMailSender javaMailService() {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
+        log.info("{}",environment.getProperty(id));
+        log.info("{}",id);
 
         javaMailSender.setHost("smtp.naver.com");
         javaMailSender.setUsername(id);
