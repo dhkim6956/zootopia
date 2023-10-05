@@ -53,4 +53,10 @@ public class Account {
             this.accountStatus = AccountStatus.INACTIVE;
         }
     }
+    public void updateBalance(BigDecimal balance){
+        this.accountBalance = balance;
+    }
+    public void updateBalance2(BigDecimal accountBalance){
+        this.accountBalance = accountBalance;
+    }
 }
