@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 import httpx
+import re
 
 NAVER_API_URL = "https://openapi.naver.com/v1/search/news.json"
 CLIENT_ID = "OCDILfuJhLKAdvqraNNy"
@@ -21,6 +22,11 @@ class NewsResponse(BaseModel):
     start: int
     display: int
     items: list[NewsItem]
+    
+def cleanhtml(raw_html):
+    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
 
 @router.get("/orig/{stock_name}/{display}/{start}/{sort}")
 async def fetch_news(stock_name: str, display: int, start: int, sort: str):
@@ -69,6 +75,8 @@ async def fetch_naver_news(stock_name: str, offset: int, max_num: int):
     
     items = response.json()["items"]
     naver_news = [item for item in items if "n.news.naver.com" in item["link"]]
+    for i in range(max_num):
+        naver_news[i]["title"] = cleanhtml(naver_news[i]["title"])
 
     print('got here 3')
     

@@ -54,6 +54,10 @@ spring:
           uri: lb://STOCK-SERVER
           predicates:
             - Path=/stock-server/**
+        - id: teacher
+          uri: lb://teacher
+          predicates:
+            - Path=/teacher/**
 
 #springdoc:
 #  enable-native-support: true
