@@ -15,7 +15,6 @@ public class ResponseStock {
     private String stockName;
 
     private BigDecimal nowMoney;
-    private BigDecimal prevMoney;
     private BigDecimal changeMoney;
 
     private Double changeRate;

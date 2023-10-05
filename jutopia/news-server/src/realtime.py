@@ -64,23 +64,6 @@ def get_chart(ticker: str, time_frame: str):
             result["percent"][timestamp_str] = None
         
         return result
-        
-        # 최근 30개의 일별 종가 데이터
-        # pykrx_data = pykrx_collection.find_one({"_id": stock_name})
-        # if not pykrx_data or "OHLCV" not in pykrx_data:
-        #     raise HTTPException(status_code=404, detail="pykrx's OHLCV data not found")
-        
-        # daily_data = list(pykrx_data["OHLCV"].items())
-        # daily_data.sort(key=lambda x: x[0], reverse=True) # 날짜 기준 내림차순 정렬
-        # latest_data = daily_data[:30]
-        
-        # stocks = [{"회사명": stock_name, "시간": date, "현재 주식 가격": data["종가"]} for date, data in latest_data]
-        
-        # # start_date = now - timedelta(days=30)
-        # # results = realtime_collection.find({
-        # #     "회사명": stock_name,
-        # #     "시간": {"$gte": start_date.strftime('%a %b {0:02} %H:%M:%S %Y')}
-        # # }).sort("시간", -1).limit(30)
 
     elif time_frame == "hour": # 지난 24시간간 1시간 단위 종가 데이터
         results = realtime_collection.find({ # results의 타입은 cursor -> MongoDB find()의 결과
@@ -89,7 +72,7 @@ def get_chart(ticker: str, time_frame: str):
         })
         df = pd.DataFrame(list(results)) # list(cursor)를 df로 변환
         
-        if "_id" in df.columns: # ObjectId 는 직렬화 불가능하기 _id 컬럼 삭제
+        if "_id" in df.columns: # ObjectId 는 직렬화 불가능하기 때문에 _id 컬럼 삭제
             df.drop(columns=["_id"], inplace=True)
         
         df['시간'] = pd.to_datetime(df['시간']) # ISODate 타입을 datetime 타입으로 변환
@@ -115,7 +98,7 @@ def get_chart(ticker: str, time_frame: str):
         })
         df = pd.DataFrame(list(results)) # list(cursor)를 df로 변환
         
-        if "_id" in df.columns: # ObjectId 는 직렬화 불가능하기 _id 컬럼 삭제
+        if "_id" in df.columns: # ObjectId 는 직렬화 불가능하기 때문에 _id 컬럼 삭제
             df.drop(columns=["_id"], inplace=True)
         
         df['시간'] = pd.to_datetime(df['시간']) # ISODate 타입을 datetime 타입으로 변환
@@ -177,7 +160,10 @@ def get_latest_stocks():
                 "data": {
                     "$push": {
                         "currentPrice": "$현재 주식 가격",
-                        "timestamp": "$시간"
+                        "timestamp": "$시간",
+                        "changeRate": "$퍼센트",
+                        "changeMoney": "$전일대비 변화 가격",
+                        "type": "$부호"
                     }
                 }
             }
@@ -185,17 +171,53 @@ def get_latest_stocks():
         {
             "$project": {
                 "stockName": "$_id",
-                "nowMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 0]
+                "stockCode": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": ["$_id", "삼성전자"]}, "then": "005930"},
+                            {"case": {"$eq": ["$_id", "현대차"]}, "then": "005380"},
+                            {"case": {"$eq": ["$_id", "NAVER"]}, "then": "035420"},
+                            {"case": {"$eq": ["$_id", "에스엠"]}, "then": "041510"},
+                            {"case": {"$eq": ["$_id", "한화"]}, "then": "000880"},
+                        ],
+                        "default": "Unknown"
+                    }
                 },
-                "prevMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 1]
+                "price": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.currentPrice", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
+                "changeMoney": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.changeMoney", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "type": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "+"]}, "then": 1},
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "-"]}, "then": -1},
+                        ],
+                        "default": 0
+                    }
                 }
             }
         }
     ]
 
     try:
+        print(f"pipeline : {pipeline}")
+        print(f"type of pipeline : {type(pipeline)}")
         result = list(realtime_collection.aggregate(pipeline))
         # '_id' 제거
         for item in result:
@@ -235,7 +257,10 @@ def get_latest_stocks(ticker: str):
                 "data": {
                     "$push": {
                         "currentPrice": "$현재 주식 가격",
-                        "timestamp": "$시간"
+                        "timestamp": "$시간",
+                        "changeRate": "$퍼센트",
+                        "changeMoney": "$전일대비 변화 가격",
+                        "type": "$부호"
                     }
                 }
             }
@@ -243,11 +268,45 @@ def get_latest_stocks(ticker: str):
         {
             "$project": {
                 "stockName": "$_id",
-                "nowMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 0]
+                "stockCode": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": ["$_id", "삼성전자"]}, "then": "005930"},
+                            {"case": {"$eq": ["$_id", "현대차"]}, "then": "005380"},
+                            {"case": {"$eq": ["$_id", "NAVER"]}, "then": "035420"},
+                            {"case": {"$eq": ["$_id", "에스엠"]}, "then": "041510"},
+                            {"case": {"$eq": ["$_id", "한화"]}, "then": "000880"},
+                        ],
+                        "default": "Unknown"
+                    }
                 },
-                "prevMoney": {
-                    "$arrayElemAt": ["$data.currentPrice", 1]
+                "price": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.currentPrice", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "changeRate": {"$toDouble": {"$arrayElemAt": ["$data.changeRate", 0]}},
+                "changeMoney": {
+                    "$toInt": {
+                        "$replaceOne": {
+                            "input": {"$arrayElemAt": ["$data.changeMoney", 0]},
+                            "find": ",",
+                            "replacement": ""
+                        }
+                    }
+                },
+                "type": {
+                    "$switch": {
+                        "branches": [
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "+"]}, "then": 1},
+                            {"case": {"$eq": [{"$arrayElemAt": ["$data.type", 0]}, "-"]}, "then": -1},
+                        ],
+                        "default": 0
+                    }
                 }
             }
         }
@@ -255,10 +314,8 @@ def get_latest_stocks(ticker: str):
 
     try:
         result = list(realtime_collection.aggregate(pipeline))
-        # Check if a result was found
         if not result:
             raise HTTPException(status_code=404, detail=f"No data found for ticker: {ticker}")
-        # Return the first item in the result
         stock_data = result[0]
         stock_data.pop("_id", None)
         return JSONResponse(content=stock_data)

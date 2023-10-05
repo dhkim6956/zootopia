@@ -34,7 +34,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
-import common.startTopBar
+import common.TopPageBar
+import home.deepSky
+import home.startColor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -138,7 +140,7 @@ fun StudentSignUp(navigator: Navigator, student_id: String?, student_pwd: String
     log.i { " $student_id, $student_pwd "}
 
     Column {
-        startTopBar("학생 회원가입", navigator = navigator)
+        TopPageBar("학생 회원가입", navigator = navigator, showChatBot = false, bgColor = startColor)
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally

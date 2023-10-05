@@ -2,6 +2,7 @@ package stock.stocklist
 
 
 import co.touchlab.kermit.Logger
+import common.TmpUserInfo
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,7 @@ class StockListViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 while (true) {
-                    val response = stockApiService.getAllStocks();
+                    val response = stockApiService.getAllStocks(TmpUserInfo.getMemberId());
                     val apiResponse = Json.decodeFromString<StockListResponse>(response.bodyAsText())
                     val stockList = apiResponse.body
                     _stocks.emit(stockList!!)

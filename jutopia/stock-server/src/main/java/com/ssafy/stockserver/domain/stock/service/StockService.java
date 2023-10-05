@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface StockService {
 
-    List<ResponseStock> getAllStocks();
+    List<ResponseStock> getAllStocks(UUID userId);
     ResponseStock getStock(UUID stockId);
 
 

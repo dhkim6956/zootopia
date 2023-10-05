@@ -59,6 +59,7 @@ import pathTo
 
 private val log = Logger.withTag("Home")
 val LightGray = Color(0xFFF6F6F6)
+val startColor = Color(0xFF8FE0FF)
 
 @Serializable
 data class PointResponse(
@@ -102,6 +103,12 @@ class Home {
 @Composable
 fun Home(navigator: Navigator) {
 
+    fun formatThousandSeparator(number: Int?): String? {
+        return number?.let {
+            it.toString().reversed().chunked(3).joinToString(",").reversed()
+        }
+    }
+
     val coroutineScope = rememberCoroutineScope()
     var myaccount by remember { mutableStateOf("") }
     var mybalance by remember { mutableStateOf(0.0) }
@@ -111,18 +118,16 @@ fun Home(navigator: Navigator) {
     coroutineScope.launch {
         var test = Home()
         test.getHome()
-        val account = MyAccountAPI().getAccountInfo()
+        val account = MyAccountAPI().getAccountInfo(id)
         myPoint = Home().getPoint(id)
         myaccount = account.number
         mybalance = account.balance
+        log.i { "$account" }
     }
 
     val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
-
-
     LaunchedEffect(1) {
         val temp: UserInfo? = store.get()
-
         if (temp != null) {
             id = temp.id
         }
@@ -145,6 +150,8 @@ fun Home(navigator: Navigator) {
 
     var selectedTab by remember { mutableStateOf(0) }
 
+    val formattedBalance = formatThousandSeparator(mybalance.toInt())
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -162,9 +169,8 @@ fun Home(navigator: Navigator) {
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-
                 Text("나의 계좌번호: ${myaccount}")
-                Text("나의 화폐: ${mybalance.toInt()}")
+                Text("나의 화폐: ${formattedBalance}")
                 Text("나의 포인트: $myPoint")
                 Box(
                     modifier = Modifier
