@@ -29,15 +29,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SeatService {
 
-    //TODO : 히스토리 테이블 생성해 기록 저장
+
     private final SeatRepository seatRepository;
     private final SeatCacheRepository seatCacheRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserServerClient userServerClient;
 
     public List<Seat> createGrid(int totalCount, int clazzNumber, int grade, String school) {
-        //TODO : 해당 반의 좌석 정보가 변경됐을떄는 기존의 자리는?
-        //만약 해당반, 학년, 학교 조합의 데이터가 존재한다 -> 전부 DELETED처리 후 새로 추가
         Optional<List<Seat>> existingSeats = seatRepository.getAllSeats(clazzNumber, grade, school);
         if (existingSeats.isPresent()){
             existingSeats.get().forEach(it -> it.changeStatus(SeatStatus.DELETED));
@@ -49,7 +47,7 @@ public class SeatService {
         int count = 1;
         for (int i = 0; i < totalCount; i++) {
             var seat = Seat.builder()
-                    .price(new BigDecimal(1000))
+                    .price(new BigDecimal(100000))
                     .clazzNumber(clazzNumber)
                     .grade(grade)
                     .school(school)

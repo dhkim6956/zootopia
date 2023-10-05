@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -22,7 +19,6 @@ public class WebController {
 
     private final TeacherService service;
 
-    ObjectMapper mapper = new ObjectMapper();
 
     @GetMapping("/login")
     public String login() throws JsonProcessingException {
@@ -30,15 +26,18 @@ public class WebController {
     }
 
     @PostMapping("/login")
-    public String loginPost(@RequestBody TeacherRequest request, HttpSession session) {
-        String user = service.login(request);
+    public String loginPost(String memberId, String memberPwd, HttpSession session) {
+        TeacherRequest request = TeacherRequest.builder()
+                .memberId(memberId)
+                .memberPwd(memberPwd)
+                .build();
+        Member user = service.login(request);
         if (user != null) {
             session.setAttribute("user", user);
             return "redirect:/dashboard";
         } else {
             return "login";
         }
-
     }
 
 
