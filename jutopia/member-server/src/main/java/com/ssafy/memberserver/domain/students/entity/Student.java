@@ -60,7 +60,7 @@ public class Student {
                 .studentName(studentSignUpRequest.getStudentName())
                 .memberBioStatus(MemberBioStatus.INACTIVE)
                 .money(BigDecimal.ZERO)
-                .point(BigDecimal.ZERO)
+                .point(new BigDecimal(300000))
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .memberRole(MemberRole.STUDENT)

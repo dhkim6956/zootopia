@@ -15,15 +15,12 @@ public class TeacherService {
     private final MemberClient memberClient;
     private final RentClient rentClient;
 
-    public String login(TeacherRequest request){
-        Member user = memberClient.login(request);
-        return "1";
+    public Member login(TeacherRequest request){
+        return memberClient.login(request).getBody();
     }
 
     public String createSeat(SeatRequest request){
 
-        var res = rentClient.createSeats(request);
-
-        return res;
+        return rentClient.createSeats(request);
     }
 }
