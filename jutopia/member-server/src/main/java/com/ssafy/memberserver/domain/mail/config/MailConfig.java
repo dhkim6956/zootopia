@@ -16,10 +16,9 @@ import java.util.Properties;
 @Slf4j
 public class MailConfig {
     private final Environment environment;
-    @Value("${spring.mail.username}")
-    String id;
-    @Value("${spring.mail.password}")
-    String password;
+    private static final String id = "hans0537@naver.com";
+
+    private static final String password = "hans1224";
 
     @Bean
     public JavaMailSender javaMailService() {
