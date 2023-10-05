@@ -44,7 +44,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
-import common.startTopBar
 import common.TopPageBar
 import home.deepSky
 import io.ktor.client.HttpClient
