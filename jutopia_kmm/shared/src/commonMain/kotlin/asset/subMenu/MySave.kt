@@ -157,7 +157,7 @@ fun History(viewModel: MySaveViewModel) {
             ) {
                 Text(detail.time, color = Color(0xFF7B7B7B))
                 Text(
-                    if (detail.type == transactionType.Deposit) "입금" else "출금",
+                    if (detail.type == TransactionType.Deposit) "입금" else "출금",
                     color = Color(0xFF7B7B7B)
                 )
             }
@@ -170,7 +170,7 @@ fun History(viewModel: MySaveViewModel) {
                 Text(
                     addComma(detail.amount.toDouble()) + "원",
                     fontSize = 20.sp,
-                    color = if (detail.type == transactionType.Deposit) Color(0xFFCB0B47) else Color(
+                    color = if (detail.type == TransactionType.Deposit) Color(0xFFCB0B47) else Color(
                         0xFF167BDF
                     ),
                     fontWeight = FontWeight.Bold

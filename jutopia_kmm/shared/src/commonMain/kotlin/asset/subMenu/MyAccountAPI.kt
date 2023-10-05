@@ -41,4 +41,29 @@ class MyAccountAPI {
             httpClient.close()
         }
     }
+
+    @Throws(Exception::class)
+    suspend fun getAccoutHistory(uuid: String): List<DepositDetail> {
+        try {
+            val response: AccountHistoryResponseData = httpClient.get("http://j9c108.p.ssafy.io:8000/member-server/api/history") {
+                url {
+                    parameters.append("accountId", uuid)
+                }
+            }.body<AccountHistoryResponseData>()
+
+            val transform: List<DepositDetail> = response.body.map { history ->
+                DepositDetail("${history.time[0]}.${history.time[1]}.${history.time[2]}", "${history.time[3]}:${history.time[4]}:${history.time[5]}", if(history.transactionType == "INCOME") TransactionType.Deposit else TransactionType.Withdrawal, if(history.transactionType == "INCOME") "받기 | ${history.sender}" else "송금 | ${history.receiver}", history.amount, history.changes)
+            }
+
+            Logger.d("내역 어디감? ${response.body}")
+
+            return transform
+
+        } catch (e: Exception) {
+            println("Error: ${e.message}")
+            return emptyList()
+        } finally {
+            httpClient.close()
+        }
+    }
 }

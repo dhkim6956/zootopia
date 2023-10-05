@@ -93,7 +93,7 @@ fun Bank(navigator: Navigator) {
                         ) {
                             Image(painter = humanIcon, contentDescription = "Human Icon")
                             Spacer(modifier = Modifier.width(10.dp))
-                            Text("김도훈",color = Color.White)
+                            Text("임준환",color = Color.White)
                         }
                     }
 
