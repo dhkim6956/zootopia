@@ -33,7 +33,6 @@ public class Notice {
 
     public static Notice from(NoticeRequest noticeRequest){
         return Notice.builder()
-                .id(noticeRequest.getId())
                 .title(noticeRequest.getTitle())
                 .content(noticeRequest.getContent())
                 .createdAt(LocalDateTime.now())
