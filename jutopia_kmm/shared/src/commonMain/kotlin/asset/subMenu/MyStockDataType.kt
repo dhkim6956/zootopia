@@ -31,8 +31,6 @@ data class StockItem(
     val stockCode: String,
     @SerialName("nowMoney")
     val nowMoney: Int,
-    @SerialName("prevMoney")
-    val prevMoney: Int,
     @SerialName("changeMoney")
     val changeMoney: Int,
     @SerialName("changeRate")
