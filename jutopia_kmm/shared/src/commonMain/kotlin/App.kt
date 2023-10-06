@@ -27,6 +27,7 @@ import home.Send
 import home.Send_detail
 import home.Stock
 import home.Trade
+import landing.Landing
 import lease.LeaseScreen
 import menus.ChangePassword
 import menus.Menus
@@ -58,8 +59,13 @@ fun App() {
                     pauseTransition = ExitTransition.None,
                     resumeTransition = EnterTransition.None
                 ),
-                initialRoute = "/mainpage",
+                initialRoute = "/landing",
             ) {
+                scene(
+                    route = "/landing"
+                ) {
+                    Landing(navigator)
+                }
                 scene(
                     route = "/mainpage"
                 ) {
