@@ -64,7 +64,7 @@ class LeaseApiService {
     @OptIn(InternalAPI::class)
     suspend fun setSeat(seatId: String): HttpResponse{
         val storedUserInfo: UserInfo? = store.get()
-        val userId = storedUserInfo!!.uuid
+        val userId = storedUserInfo!!.id
         val seatRequest = SeatRequest(seatId, userId)
         val jsonData = Json.encodeToString(seatRequest);
 
