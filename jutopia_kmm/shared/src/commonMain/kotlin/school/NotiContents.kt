@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalResourceApi::class)
+
 package school
 
 import BottomTabBar
+import Variables.ColorsPrimary
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,11 +11,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -25,6 +34,8 @@ import icejaramFontFamily
 import icesiminFontFamily
 import moe.tlaster.precompose.navigation.Navigator
 import moe.tlaster.precompose.viewmodel.viewModel
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun NotiContents(navigator: Navigator, idx: Int) {
@@ -38,11 +49,37 @@ fun NotiContents(navigator: Navigator, idx: Int) {
 
         Contents(contentViewModel)
     }
-    BottomTabBar(navigator)
+    BottomTabBar(navigator, 2)
 }
 
 @Composable
 fun Contents(viewModel: NotiContentsViewModel) {
+
+
+    val notice by viewModel.notice.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+    if (isLoading) viewModel.fetchDetailData()
+
+    if(isLoading) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(80.dp)
+        ) {
+            CircularProgressIndicator(
+                color = ColorsPrimary,
+                backgroundColor = Color.LightGray,
+                modifier = Modifier.width(64.dp)
+            )
+        }
+    } else {
+        notice?.let { NoticeSticker(it) }
+    }
+}
+
+@Composable
+fun NoticeSticker(notice: NoticeDetail) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,20 +115,25 @@ fun Contents(viewModel: NotiContentsViewModel) {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        viewModel.notice.title,
+                        notice.title,
                         fontWeight = FontWeight.Bold,
                         fontSize = 28.sp,
                         fontFamily = icesiminFontFamily
                     )
-                    Column(
-                        horizontalAlignment = Alignment.End
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(viewModel.notice.date)
-                        Text(viewModel.notice.time)
+                        Icon(
+                            painterResource("drawable/eyes.xml"),
+                            "",
+                            modifier = Modifier.height(40.dp)
+                        )
+                        Text(notice.views.toString())
                     }
                 }
                 Divider()
-                Text(viewModel.notice.detail, fontSize = 24.sp, fontFamily = icejaramFontFamily)
+                Text(notice.detail, fontSize = 24.sp, fontFamily = icejaramFontFamily)
             }
         }
     }

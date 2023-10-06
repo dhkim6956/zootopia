@@ -2,15 +2,14 @@ package com.ssafy.memberserver.domain.students.controller;
 
 import com.ssafy.memberserver.common.api.Api;
 import com.ssafy.memberserver.common.api.ApiResponse;
-import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
+import com.ssafy.memberserver.domain.students.dto.request.*;
 import com.ssafy.memberserver.domain.students.dto.response.StudentDeleteResponse;
 import com.ssafy.memberserver.domain.students.dto.response.StudentInfoResponse;
 import com.ssafy.memberserver.domain.students.dto.response.StudentPointUpdateResponse;
 import com.ssafy.memberserver.domain.students.dto.response.StudentUpdateResponse;
 import com.ssafy.memberserver.domain.students.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.ws.rs.QueryParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +39,25 @@ public class StudentController {
         return Api.OK(studentService.studentDelete(studentDeleteRequest));
     }
     @Operation(summary = "임대 학생 포인트 차감")
-    @PutMapping("/student/point")
-    public Api<StudentPointUpdateResponse> studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest, String seatId){
-        return Api.OK(studentService.studentPointUpdate(studentPointUpdateRequest, UUID.fromString(seatId)));
+    @PutMapping("/point")
+    public Api<?> studentPointUpdate(@RequestBody StudentPointUpdateRequest studentPointUpdateRequest){
+        return studentService.studentPointUpdate(studentPointUpdateRequest);
+    }
+
+    // Feign ---------------------------------------------------
+    @GetMapping("/feign/{userId}")
+    public ApiResponse getMember(@PathVariable UUID userId){
+        System.out.println("member 호출1: " + userId);
+        System.out.println("member 호출2: " + userId.getClass());
+        return ApiResponse.success(studentService.getMemberInfo(userId));
+    }
+
+    @PutMapping("/feign/point")
+    public ApiResponse memberPointUpdate(@RequestBody MemberPointUpdateRequest memberPointUpdateRequest){
+        return ApiResponse.success(studentService.memberPointUpdate(memberPointUpdateRequest));
+    }
+    @PutMapping("/feign/money")
+    public ApiResponse memberMoneyUpdate(@RequestBody MemberMoneyUpdateRequest memberMoneyUpdateRequest){
+        return ApiResponse.success(studentService.memberMoneyUpdate(memberMoneyUpdateRequest));
     }
 }

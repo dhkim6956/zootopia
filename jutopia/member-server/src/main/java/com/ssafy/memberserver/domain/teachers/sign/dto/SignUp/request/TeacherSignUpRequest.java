@@ -3,17 +3,17 @@ package com.ssafy.memberserver.domain.teachers.sign.dto.SignUp.request;
 import com.ssafy.memberserver.common.enums.MemberBioStatus;
 import com.ssafy.memberserver.common.enums.MemberRole;
 import com.ssafy.memberserver.common.enums.MemberStatus;
+import lombok.Getter;
 
 import java.util.UUID;
 
-public record TeacherSignUpRequest(
-        UUID id,
-        String teacherId,
-        String teacherPwd,
-        String Name,
-        String teacherEmail,
-        MemberRole memberRole,
-        MemberStatus memberStatus,
-        MemberBioStatus memberBioStatus
-) {
+@Getter
+public class TeacherSignUpRequest{
+    private String teacherId;
+    private String teacherPwd;
+    private String teacherName;
+    private String teacherEmail;
+    private String school;
+    private int grade;
+    private int classroom;
 }

@@ -22,12 +22,12 @@ import java.math.BigDecimal;
         }
         @Operation(summary = "포인트 수입")
         @PostMapping("/income")
-        public ApiResponse income(@RequestBody PointIncomeRequest pointIncomeRequest, @RequestParam String studentId, @RequestParam BigDecimal income){
-            return ApiResponse.success(pointTransactionService.pointIncome(pointIncomeRequest,studentId,income));
+        public ApiResponse income(@RequestBody PointIncomeRequest pointIncomeRequest){
+            return ApiResponse.success(pointTransactionService.pointIncome(pointIncomeRequest));
         }
         @Operation(summary = "포인트 지출")
         @PostMapping("/expense")
-        public ApiResponse expense(@RequestBody PointExpenseRequest pointExpenseRequest, @RequestParam String studentId, @RequestParam BigDecimal expense){
-            return ApiResponse.success(pointTransactionService.pointExpense(pointExpenseRequest,studentId,expense));
+        public ApiResponse expense(@RequestBody PointExpenseRequest pointExpenseRequest){
+            return ApiResponse.success(pointTransactionService.pointExpense(pointExpenseRequest));
         }
     }

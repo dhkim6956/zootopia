@@ -1,5 +1,7 @@
 package common
 
+import Variables
+import Variables.ColorsBackground
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import co.touchlab.kermit.Logger
@@ -28,7 +31,7 @@ import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
-fun TopPageBar(navLoc: String, navigator: Navigator, showReturn: Boolean = true) {
+fun TopPageBar(navLoc: String, navigator: Navigator, showReturn: Boolean = true, showChatBot: Boolean = true, bgColor: Color = ColorsBackground) {
 
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -37,7 +40,7 @@ fun TopPageBar(navLoc: String, navigator: Navigator, showReturn: Boolean = true)
             .padding(0.dp)
             .fillMaxWidth()
             .height(80.dp)
-            .background(color = Variables.ColorsBackground)
+            .background(color = bgColor)
             .padding(start = 20.dp, top = 16.dp, end = 40.dp, bottom = 16.dp)
     ) {
         Row (
@@ -59,7 +62,7 @@ fun TopPageBar(navLoc: String, navigator: Navigator, showReturn: Boolean = true)
             }
             Text(navLoc, fontFamily = icehimchanFontFamily, fontSize = 28.sp)
         }
-        if(navLoc != "챗봇"){
+        if(showChatBot){
             Image(
                 painterResource("drawable/text_bubble.xml"),
                 null,

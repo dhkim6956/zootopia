@@ -34,13 +34,10 @@ public class StockController {
         this.mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
     }
 
-    @GetMapping("/")
-    public Api<List<ResponseStock>> getAllStocks() {
-        Iterable<Stock> stockList = stockService.getAllStocks();
-        List<ResponseStock> result = new ArrayList<>();
-
-        stockList.forEach(s -> result.add(mapper.map(s, ResponseStock.class)));
-        return Api.OK(result);
+    @GetMapping("/stocklist/{userId}")
+    public Api<List<ResponseStock>> getAllStocks(@PathVariable UUID userId) {
+        List<ResponseStock> stockList = stockService.getAllStocks(userId);
+        return Api.OK(stockList);
     }
 
     @PostMapping("/")
@@ -50,14 +47,9 @@ public class StockController {
 
     @GetMapping("/{stockId}")
     public Api<ResponseStock> getStock(@PathVariable UUID stockId) {
-        Optional<Stock> stock = stockService.getStock(stockId);
-        if (stock.isPresent()) {
-            // Optional이 값으로 채워져 있다면 매핑을 수행
-            ResponseStock responseStock = mapper.map(stock.get(), ResponseStock.class);
-            return Api.OK(responseStock);
-        } else {
-            // Optional이 비어있는 경우에 대한 처리
-            return Api.NOT_FOUND(null); // 예: 404 Not Found
-        }
+        ResponseStock stock = stockService.getStock(stockId);
+        if (stock == null) return Api.NOT_FOUND(null);
+
+        return Api.OK(stock);
     }
 }

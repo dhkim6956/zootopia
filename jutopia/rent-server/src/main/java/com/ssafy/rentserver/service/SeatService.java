@@ -3,9 +3,8 @@ package com.ssafy.rentserver.service;
 import com.ssafy.common.api.Api;
 import com.ssafy.common.error.ErrorCode;
 import com.ssafy.common.error.RentErrorCode;
-import com.ssafy.common.exception.ApiException;
+import com.ssafy.rentserver.dto.PointReductionRequest;
 import com.ssafy.rentserver.dto.SeatChangeRequest;
-import com.ssafy.rentserver.dto.SeatRequest;
 import com.ssafy.rentserver.dto.SeatResponse;
 import com.ssafy.rentserver.enums.SeatStatus;
 import com.ssafy.rentserver.feignclient.UserServerClient;
@@ -15,30 +14,28 @@ import com.ssafy.rentserver.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SeatService {
 
-    //TODO : 히스토리 테이블 생성해 기록 저장
+
     private final SeatRepository seatRepository;
     private final SeatCacheRepository seatCacheRepository;
     private final RedisTemplate<String, String> redisTemplate;
     private final UserServerClient userServerClient;
 
     public List<Seat> createGrid(int totalCount, int clazzNumber, int grade, String school) {
-        //TODO : 해당 반의 좌석 정보가 변경됐을떄는 기존의 자리는?
-        //만약 해당반, 학년, 학교 조합의 데이터가 존재한다 -> 전부 DELETED처리 후 새로 추가
         Optional<List<Seat>> existingSeats = seatRepository.getAllSeats(clazzNumber, grade, school);
         if (existingSeats.isPresent()){
             existingSeats.get().forEach(it -> it.changeStatus(SeatStatus.DELETED));
@@ -50,7 +47,7 @@ public class SeatService {
         int count = 1;
         for (int i = 0; i < totalCount; i++) {
             var seat = Seat.builder()
-                    .price(new BigDecimal(1000))
+                    .price(new BigDecimal(100000))
                     .clazzNumber(clazzNumber)
                     .grade(grade)
                     .school(school)
@@ -122,7 +119,13 @@ public class SeatService {
                 return Api.ERROR(ErrorCode.BAD_REQUEST, "신청할 수 없는 좌석입니다.");
             }
 
-            Api<?> pointResponse = userServerClient.reducePoint();
+            var request = PointReductionRequest.builder()
+                    .studentId(userId)
+                    .seatId(seatId)
+                    .point(seat.getPrice())
+                    .build();
+
+            Api<?> pointResponse = userServerClient.reducePointAndSetSeat(request);
 
             var errorCode = pointResponse.getResult().getResultCode();
 
@@ -130,8 +133,12 @@ public class SeatService {
                 return Api.ERROR(RentErrorCode.POINT_LACK, "포인트가 부족합니다.");
             }
 
+            if (errorCode != 200) {
+                return Api.ERROR(RentErrorCode.SERVER_ERROR, "멤버 서버에서 에러 발생");
+            }
+
             seat.changeStatus(SeatStatus.INUSE);
-            seat.changeUserId(UUID.fromString(userId));
+            seat.changeUserId(userId);
             var newSeat = SeatResponse.toResponse(seatRepository.save(seat));
 
             String key = seatCacheRepository.getListKey(seat.getSchool(), seat.getGrade(), seat.getClazzNumber());

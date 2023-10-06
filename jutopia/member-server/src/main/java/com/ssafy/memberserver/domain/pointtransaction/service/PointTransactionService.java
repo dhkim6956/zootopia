@@ -1,5 +1,7 @@
 package com.ssafy.memberserver.domain.pointtransaction.service;
 
+import com.ssafy.memberserver.domain.account.entity.Account;
+import com.ssafy.memberserver.domain.account.repository.AccountRepository;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointExpenseRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointIncomeRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.response.PointExpenseResponse;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @Slf4j
@@ -24,6 +27,7 @@ import java.util.NoSuchElementException;
 public class PointTransactionService {
     private final PointTransactionRepository pointTransactionRepository;
     private final StudentRepository studentRepository;
+    private final AccountRepository accountRepository;
 
     @Operation(summary = "특정 학생의 포인트 조회")
     @Transactional(readOnly = true)
@@ -33,12 +37,17 @@ public class PointTransactionService {
                 .orElseThrow(() -> new NoSuchElementException("학생의 포인트를 찾을 수 없습니다."));
     }
     @Transactional
-    public PointIncomeResponse pointIncome(PointIncomeRequest pointIncomeRequest, String studentId, BigDecimal income){
-        return studentRepository.findByStudentId(studentId)
+    public PointIncomeResponse pointIncome(PointIncomeRequest pointIncomeRequest){
+        return studentRepository.findByStudentId(pointIncomeRequest.getStudentId())
                 .map(student -> {
-                    if (student.getPoint() != null && pointIncomeRequest.income() != null) {
-                        BigDecimal pointIncome = student.getPoint().add(income);
-                        student.pointIncomeUpdate(pointIncomeRequest, pointIncome);
+                    if (student.getPoint() != null && pointIncomeRequest.getIncome() != null) {
+                        BigDecimal pointIncome = student.getPoint().add(pointIncomeRequest.getIncome());
+                        log.info("{}",pointIncome);
+                        student.pointIncomeUpdate(pointIncomeRequest,pointIncome);
+
+                        Optional<Account> account = accountRepository.findAccountByStudentId(pointIncomeRequest.getStudentId());
+                        BigDecimal accountBalance = account.get().getAccountBalance().subtract(pointIncomeRequest.getIncome());
+                        account.get().updateBalance(accountBalance);
                         PointTransaction point = pointTransactionRepository.save(PointTransaction.incomeFrom(pointIncomeRequest, student));
                         pointTransactionRepository.flush();
                         return PointIncomeResponse.from(point);
@@ -49,13 +58,17 @@ public class PointTransactionService {
                 .orElseThrow(() -> new NoSuchElementException("학생이 존재하지 않습니다."));
     }
     @Transactional
-    public PointExpenseResponse pointExpense(PointExpenseRequest pointExpenseRequest, String studentId, BigDecimal expense){
-        return studentRepository.findByStudentId(studentId)
+    public PointExpenseResponse pointExpense(PointExpenseRequest pointExpenseRequest){
+        return studentRepository.findByStudentId(pointExpenseRequest.getStudentId())
                 .map(student -> {
-                    if (student.getPoint() != null && pointExpenseRequest.expense() != null) {
-                        BigDecimal pointExpense = student.getPoint().subtract(expense);
+                    if (student.getPoint() != null && pointExpenseRequest.getExpense() != null) {
+                        BigDecimal pointExpense = student.getPoint().subtract(pointExpenseRequest.getExpense());
                         student.pointExpenseUpdate(pointExpenseRequest, pointExpense);
                         PointTransaction point = pointTransactionRepository.save(PointTransaction.expenseFrom(pointExpenseRequest, student));
+
+                        Optional<Account> account = accountRepository.findAccountByStudentId(pointExpenseRequest.getStudentId());
+                        BigDecimal accountBalance = account.get().getAccountBalance().add(pointExpenseRequest.getExpense());
+                        account.get().updateBalance2(accountBalance);
                         pointTransactionRepository.flush();
                         return PointExpenseResponse.from(point);
                     } else {
@@ -63,5 +76,5 @@ public class PointTransactionService {
                     }
                 })
                 .orElseThrow(() -> new NoSuchElementException("학생이 존재하지 않습니다."));
-        }
+    }
 }

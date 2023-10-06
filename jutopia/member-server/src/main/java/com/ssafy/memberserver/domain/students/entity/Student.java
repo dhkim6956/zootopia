@@ -8,9 +8,7 @@ import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointIncomeRequest;
 import com.ssafy.memberserver.domain.pointtransaction.dto.request.PointExpenseRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentDeleteRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentPointUpdateRequest;
-import com.ssafy.memberserver.domain.students.dto.request.StudentUpdateRequest;
+import com.ssafy.memberserver.domain.students.dto.request.*;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import jakarta.persistence.*;
 import lombok.*;
@@ -34,6 +32,7 @@ public class Student {
     private String studentId;
     private String studentPwd;
     private String studentName;
+    private String seatId;
     private BigDecimal point;
     private BigDecimal money;
     private LocalDateTime createdAt;
@@ -47,27 +46,31 @@ public class Student {
     @Enumerated(EnumType.STRING)
     SeatOwnershipStatus seatOwnershipStatus;
     private String school;
-    private Integer grade;
-    private Integer classRoom;
-    private Integer studentNumber;
+    private int grade;
+    private int classRoom;
+    private int studentNumber;
+
+    private UUID classroomId;
+
 
     public static Student from(StudentSignUpRequest studentSignUpRequest, PasswordEncoder passwordEncoder){
         return  Student.builder()
                 .studentId(studentSignUpRequest.getStudentId())
                 .studentPwd(passwordEncoder.encode(studentSignUpRequest.getStudentPwd()))
                 .studentName(studentSignUpRequest.getStudentName())
-                .point(studentSignUpRequest.getPoint())
-                .money(studentSignUpRequest.getMoney())
                 .memberBioStatus(MemberBioStatus.INACTIVE)
+                .money(BigDecimal.ZERO)
+                .point(new BigDecimal(300000))
                 .createdAt(LocalDateTime.now())
-                .updatedAt(studentSignUpRequest.getUpdateTimeAt())
-                .memberRole(studentSignUpRequest.getMemberRole())
-                .memberStatus(studentSignUpRequest.getMemberStatus())
+                .updatedAt(LocalDateTime.now())
+                .memberRole(MemberRole.STUDENT)
+                .memberStatus(MemberStatus.ACTIVE)
                 .school(studentSignUpRequest.getSchool())
                 .grade(studentSignUpRequest.getGrade())
                 .classRoom(studentSignUpRequest.getClassRoom())
                 .studentNumber(studentSignUpRequest.getStudentNumber())
-                .seatOwnershipStatus(studentSignUpRequest.getSeatOwnershipStatus())
+                .seatOwnershipStatus(SeatOwnershipStatus.NOTOWNED)
+                .classroomId(studentSignUpRequest.getClassroomId())
                 .build();
     }
     public void update(StudentUpdateRequest studentUpdateRequest, PasswordEncoder passwordEncoder){
@@ -89,13 +92,24 @@ public class Student {
         }
     }
     public void pointIncomeUpdate(PointIncomeRequest pointIncomeRequest, BigDecimal addPoint){
-        if(pointIncomeRequest.income() != null){
+        if(pointIncomeRequest.getIncome() != null){
             this.point = addPoint;
         }
     }
     public void pointExpenseUpdate(PointExpenseRequest pointExpenseRequest, BigDecimal subtractPoint){
-        if(pointExpenseRequest.expense() != null){
+        if(pointExpenseRequest.getExpense() != null){
             this.point = subtractPoint;
         }
+    }
+    public void changeSeat(String seatId){
+        this.seatId = seatId;
+    }
+
+    // feign -----------------------------------------------------------------
+    public void memberPointUpdate(MemberPointUpdateRequest memberPointUpdateRequest){
+        this.point = point.subtract(memberPointUpdateRequest.getPoint());
+    }
+    public void memberMoneyUpdate(MemberMoneyUpdateRequest memberMoneyUpdateRequest){
+        this.money = money.subtract(memberMoneyUpdateRequest.getMoney());
     }
 }

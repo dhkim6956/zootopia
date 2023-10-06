@@ -8,22 +8,16 @@ import lombok.Getter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 public class StudentSignUpRequest {
     private String studentId;
     private String studentPwd;
     private String studentName;
-    private BigDecimal point;
-    private BigDecimal money;
-    private MemberBioStatus memberBioStatus;
-    private LocalDateTime createTimeAt;
-    private LocalDateTime updateTimeAt;
-    private MemberRole memberRole;
-    private MemberStatus memberStatus;
     private String school;
-    private Integer grade;
-    private Integer classRoom;
-    private Integer studentNumber;
-    private SeatOwnershipStatus seatOwnershipStatus;
+    private int grade;
+    private int classRoom;
+    private int studentNumber;
+    private UUID classroomId;
 }

@@ -1,16 +1,26 @@
 package school
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import moe.tlaster.precompose.viewmodel.ViewModel
+import moe.tlaster.precompose.viewmodel.viewModelScope
 
 class SchoolViewModel: ViewModel() {
-    private val _notice = mutableStateOf(mutableListOf<NotiDetail>(
-        NotiDetail(0, "칠판당번 공지","2023.09.07", "10:09:00"),
-        NotiDetail(1, "청소구역 바꼈습니다~~","2023.09.01", "10:00:00"),
-        NotiDetail(2, "포인트 규칙 수정사항","2023.09.01", "09:35:00"),
-        NotiDetail(3, "환율 주의사항입니다","2023.08.21", "17:12:00")
-    ))
+    private val _notice: MutableStateFlow<List<NotiDetail>> = MutableStateFlow(listOf())
 
-    val notice: State<List<NotiDetail>> = _notice
+    val notice: StateFlow<List<NotiDetail>> = _notice
+
+    private val _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(true)
+
+    val isLoading: StateFlow<Boolean> = _isLoading
+
+    fun fetchData(school: String, grade: Int, classRoom: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _notice.emit(SchoolAPI().getNoti(school, grade, classRoom))
+            _isLoading.emit(false)
+        }
+    }
 }

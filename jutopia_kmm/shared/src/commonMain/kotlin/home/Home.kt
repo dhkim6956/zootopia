@@ -3,6 +3,7 @@
 package home
 
 import BottomTabBar
+import UserInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,37 +16,124 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import asset.subMenu.MyAccountAPI
+import co.touchlab.kermit.Logger
 import common.TopPageBar
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.InternalAPI
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
-import stock.stocklist.StockListPage
+import pathTo
 
+private val log = Logger.withTag("Home")
 val LightGray = Color(0xFFF6F6F6)
+val startColor = Color(0xFF8FE0FF)
 
-//@Composable
-//fun Home(navigator: Navigator) {
-//    Column {
-//        TopPageBar("홈")
-//        BottomTabBar(navigator)
-//    }
-//}
+@Serializable
+data class PointResponse(
+    val api_status: String,
+    val message: String?,
+    val data: Double
+)
+
+
+class Home {
+    private val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(
+                Json { ignoreUnknownKeys = true }
+            )
+        }
+    }
+
+    suspend fun getHome(): String {
+        val response: HttpResponse =
+            client.get("http://j9c108.p.ssafy.io:8000/class-server/api/school/")
+        val body: String = response.bodyAsText()
+        return body
+    }
+
+    suspend fun getPoint(studentId: String): Double {
+
+        val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/member-server/api/pointtransaction/point/student?studentId=$studentId")
+        val body: String = response.bodyAsText()
+        val json = Json { ignoreUnknownKeys = true }
+        val pointResponse = json.decodeFromString<PointResponse>(body)
+
+        return pointResponse.data
+    }
+}
+
+
+
+
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Home(navigator: Navigator) {
+
+    fun formatThousandSeparator(number: Int?): String? {
+        return number?.let {
+            it.toString().reversed().chunked(3).joinToString(",").reversed()
+        }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
+    var myaccount by remember { mutableStateOf("") }
+    var mybalance by remember { mutableStateOf(0.0) }
+    var myPoint by remember { mutableStateOf(0.0) }
+    var id by remember { mutableStateOf("") }
+
+    coroutineScope.launch {
+        var test = Home()
+        test.getHome()
+        val account = MyAccountAPI().getAccountInfo(id)
+        myPoint = Home().getPoint(id)
+        myaccount = account.number
+        mybalance = account.balance
+        log.i { "$account" }
+    }
+
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+    LaunchedEffect(1) {
+        val temp: UserInfo? = store.get()
+        if (temp != null) {
+            id = temp.id
+        }
+    }
+
     var bankImg = "drawable/bank.xml"
     var stockImg = "drawable/stock.xml"
     var rentImg = "drawable/rent.xml"
@@ -62,6 +150,8 @@ fun Home(navigator: Navigator) {
     val noticeIcon: Painter = painterResource(noticeImg)
 
     var selectedTab by remember { mutableStateOf(0) }
+
+    val formattedBalance = formatThousandSeparator(mybalance.toInt())
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -80,9 +170,9 @@ fun Home(navigator: Navigator) {
                 horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                Text("나의 계좌번호:302-535463")
-                Text("나의 화폐: 10,000$")
-                Text("나의 포인트: 12P")
+                Text("나의 계좌번호: ${myaccount}")
+                Text("나의 화폐: ${formattedBalance}")
+                Text("나의 포인트: $myPoint")
                 Box(
                     modifier = Modifier
                         .width(200.dp)
@@ -136,6 +226,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 1 },
                     contentAlignment = Alignment.Center
@@ -152,6 +243,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 2 },
                     contentAlignment = Alignment.Center
@@ -168,6 +260,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 3 },
                     contentAlignment = Alignment.Center
@@ -193,6 +286,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 4 },
                     contentAlignment = Alignment.Center
@@ -209,6 +303,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 5 },
                     contentAlignment = Alignment.Center
@@ -225,6 +320,7 @@ fun Home(navigator: Navigator) {
                     modifier = Modifier
                         .width(60.dp)
                         .height(60.dp)
+                        .clip(RoundedCornerShape(10.dp))
                         .background(LightGray)
                         .clickable { selectedTab = 6 },
                     contentAlignment = Alignment.Center
@@ -269,6 +365,6 @@ fun Home(navigator: Navigator) {
 
         }
 
-        BottomTabBar(navigator)
+        BottomTabBar(navigator, 0)
     }
 }

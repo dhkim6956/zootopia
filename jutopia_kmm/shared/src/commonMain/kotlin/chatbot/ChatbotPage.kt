@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -132,7 +133,10 @@ fun ChatbotPage(
                         focusManager.clearFocus()
                     },
                     enabled = !isSending && newMessage.isNotEmpty(),
-                    modifier = Modifier.width(80.dp).fillMaxHeight()
+                    modifier = Modifier.width(80.dp).fillMaxHeight(),
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = Color(0xFFC3E0E8)
+                    )
 
                 ) {
                     if (isSending) {
@@ -157,18 +161,18 @@ fun ChatMessageRow(message: ChatMessage) {
             modifier = Modifier
                 .padding(16.dp)
                 .background(
-                    color = if (message.fromServer) Color.White else Color.Gray,
+                    color = if (message.fromServer) Color.White else Color(0xFFC3E0E8),
                     shape = RoundedCornerShape(8.dp)
                 )
 
         ) {
             Column(modifier = Modifier.padding(15.dp)) {
-                Text(message.message, color = if (message.fromServer) Color.Black else Color.White)
-//                Text(
-//                    message.timestamp,
-//                    fontSize = 10.sp,
-//                    color = if (message.from_server) Color.Black else Color.White
-//                )
+                Text(message.message, color = Color.Black)
+                Text(
+                    message.parsedTime,
+                    fontSize = 10.sp,
+                    color = Color.Black
+                )
             }
         }
     }

@@ -1,3 +1,7 @@
+import Sign.MainPage
+import Sign.SignUp
+import Sign.StudentSignUp
+import Sign.TeacherSignUp
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
@@ -24,6 +28,7 @@ import home.Send_detail
 import home.Stock
 import home.Trade
 import lease.LeaseScreen
+import menus.ChangePassword
 import menus.Menus
 import moe.tlaster.precompose.navigation.path
 import moe.tlaster.precompose.navigation.transition.NavTransition
@@ -53,8 +58,13 @@ fun App() {
                     pauseTransition = ExitTransition.None,
                     resumeTransition = EnterTransition.None
                 ),
-                initialRoute = "/home",
+                initialRoute = "/mainpage",
             ) {
+                scene(
+                    route = "/mainpage"
+                ) {
+                    MainPage(navigator)
+                }
                 scene(
                     route = "/home"
                 ) {
@@ -80,12 +90,17 @@ fun App() {
                 scene(
                     route = "/news"
                 ) {
-                    News(navigator)
+                    News(navigator, revealCanvasState)
                 }
                 scene(
                     route = "/menus"
                 ) {
                     Menus(navigator)
+                }
+                scene(
+                    route = "/changepassword"
+                ) {
+                    ChangePassword(navigator)
                 }
                 scene(
                     route = "/bank"
@@ -128,16 +143,18 @@ fun App() {
                     StockListScreen(navigator)
                 }
                 scene(
-                    route = "/stockChart/{stockId}?"
+                    route = "/stockChart/{stockId}/{stockCode}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockScreen(stockId!!, navigator)
+                    val stockCode: String? = backStackEntry.path<String>("stockCode")
+                    StockScreen(stockId!!,stockCode!!, navigator)
                 }
                 scene(
-                    route = "/stocktrade/{stockId}?"
+                    route = "/stocktrade/{stockId}/{stockCode}?"
                 ) { backStackEntry ->
                     val stockId: String? = backStackEntry.path<String>("stockId")
-                    StockScreen(stockId!!, navigator)
+                    val stockCode: String? = backStackEntry.path<String>("stockCode")
+                    StockScreen(stockId!!,stockCode!!, navigator)
                 }
                 scene(
                     route = "/send"
@@ -150,14 +167,37 @@ fun App() {
                     Save(navigator, revealCanvasState = revealCanvasState)
                 }
                 scene(
-                    route = "/send_detail"
-                ) {
-                    Send_detail(navigator)
+                    route = "/send_detail/{studentName}/{studentNumber}"
+                ) { backStackEntry ->
+                    val studentName: String? = backStackEntry.path<String>("studentName")
+                    val studentNumber: Int? = backStackEntry.path<String>("studentNumber")?.toIntOrNull()
+                    Send_detail(navigator, studentName!!, studentNumber!!)
                 }
                 scene(
                     route = "/chatbot"
-                ){
+                ) {
                     ChatbotScreen(navigator)
+                }
+                scene(
+                    route = "/signup"
+                ) {
+                    SignUp(navigator)
+                }
+                scene(
+                    route = "/studentsignup/{id}/{password}"
+                ) { backStackEntry ->
+                    val id = backStackEntry.path<String>("id")
+                    val password = backStackEntry.path<String>("password")
+
+                    StudentSignUp(navigator, id, password)
+                }
+                scene(
+                    route = "/teachersignup/{id}/{password}"
+                ) { backStackEntry ->
+                    val id = backStackEntry.path<String>("id")
+                    val password = backStackEntry.path<String>("password")
+
+                    TeacherSignUp(navigator, id, password)
                 }
             }
         }
@@ -172,3 +212,8 @@ expect val icesiminFontFamily: FontFamily
 expect val icesotongFontFamily: FontFamily
 expect val pretendardFontFamily: FontFamily
 expect fun formatDouble(value: Double, decimalPlaces: Int): String
+expect fun addComma(value: Double): String
+
+expect fun openUrl(url: String?)
+
+expect fun pathTo(id: String): String

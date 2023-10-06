@@ -29,15 +29,14 @@ public class NoticeService {
         return noticeRepository.findById(id)
                 .map(NoticeResponse::from)
                 .map(response -> {
-                    noticeRepository.updateByViewCount(response.viewCount(), id);
+                    noticeRepository.updateViewCount(id);
                     return response;
                 })
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 공지사항입니다."));
     }
     @Transactional(readOnly = true)
-    public List<NoticeResponse> getNotices(){
-        Sort sort = Sort.by(Sort.Direction.DESC,"id","createdAt");
-        List<Notice> notices = noticeRepository.findAll(sort);
+    public List<NoticeResponse> getNotices(String school, int grade, int classroom){
+        List<Notice> notices = noticeRepository.findBySchoolAndGradeAndClassroom(school, grade, classroom);
         return notices.stream().map(NoticeResponse::from).collect(Collectors.toList());
     }
 

@@ -24,7 +24,7 @@ private val log = Logger.withTag("LeaseAPI")
 class LeaseApiService {
 
     private companion object {
-        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/seat-service/api/seat"
+        const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/api"
     }
     private val client = HttpClient(CIO) {
         install(ContentNegotiation){
@@ -58,7 +58,7 @@ class LeaseApiService {
 
     @OptIn(InternalAPI::class)
     suspend fun setSeat(seatId: String): HttpResponse{
-        val userId = "0e1f7fba-ca6a-4ba9-82f8-da4dec778e74"
+        val userId = "test"
         val seatRequest = SeatRequest(seatId, userId)
         val jsonData = Json.encodeToString(seatRequest);
 

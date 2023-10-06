@@ -23,9 +23,4 @@ public class StockServerApplication {
         return Logger.Level.FULL; // 모든 레벨 등록
     }
 
-    @Bean
-    @LoadBalanced // 주소체계를 MSA 서비스 네임으로 하기 위함 127.0.0.1:8000 => news-server...
-    public RestTemplate getRestTemplate() {
-        return new RestTemplate();
-    }
 }

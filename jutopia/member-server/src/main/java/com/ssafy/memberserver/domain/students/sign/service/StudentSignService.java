@@ -1,16 +1,18 @@
 package com.ssafy.memberserver.domain.students.sign.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.ssafy.memberserver.common.api.Api;
+import com.ssafy.memberserver.common.enums.MemberRole;
 import com.ssafy.memberserver.common.error.ErrorCode;
 import com.ssafy.memberserver.common.exception.ApiException;
-import com.ssafy.memberserver.domain.security.TokenProvider;
+import com.ssafy.memberserver.domain.account.entity.Account;
+import com.ssafy.memberserver.domain.account.repository.AccountRepository;
 import com.ssafy.memberserver.domain.students.entity.Student;
 import com.ssafy.memberserver.domain.students.repository.StudentRepository;
-import com.ssafy.memberserver.domain.students.sign.dto.signIn.StudentSignInRequest;
-import com.ssafy.memberserver.domain.students.sign.dto.signIn.StudentSignInResponse;
+
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpRequest;
 import com.ssafy.memberserver.domain.students.sign.dto.signUp.StudentSignUpResponse;
+
+import com.ssafy.memberserver.domain.teachers.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,36 +20,61 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class StudentSignService {
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
     private final PasswordEncoder passwordEncoder;
-    private final TokenProvider tokenProvider;
+    private final AccountRepository accountRepository;
+
     @Transactional
     public StudentSignUpResponse studentSignUp(StudentSignUpRequest studentSignUpRequest) {
         if (studentRepository.findByStudentId(studentSignUpRequest.getStudentId()).isPresent()) {
-            throw new ApiException(ErrorCode.BAD_REQUEST,"아이디가 중복입니다.");
+            throw new ApiException(ErrorCode.BAD_REQUEST, "아이디가 중복입니다.");
         }
         Student student = studentRepository.save(Student.from(studentSignUpRequest, passwordEncoder));
         studentRepository.flush();
+        String accountNumber = CreateAccountNumber.generateAccountNumber();
+        Account account = accountRepository.save(Account.from(student,accountNumber));
+        accountRepository.flush();
         return StudentSignUpResponse.from(student);
     }
-    @Transactional
-    public StudentSignInResponse studentSignIn(StudentSignInRequest studentSignInRequest) throws JsonProcessingException {
-//        Student student =
-                Optional.ofNullable(studentRepository.findByStudentId(studentSignInRequest.getStudentId()))
-                .orElseThrow(()-> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"존재하지 않는 아이디입니다."))
-                .filter(student -> passwordEncoder.matches(studentSignInRequest.getStudentPwd(),student.getStudentPwd()))
-                .orElseThrow(() -> new ApiException(ErrorCode.STUDENT_INVALID_INPUT,"비밀번호가 틀렸습니다"));
-                String accessToken = tokenProvider.createAccessToken("test");
-                log.info("accessToken:"+"{}",accessToken);
-                log.info("decodeJwtPayloadSubject:"+"{}",tokenProvider.decodeJwtPayloadSubject(accessToken));
-        return new StudentSignInResponse();
+    public boolean checkIdDuplicated(String memberId) {
+        boolean student = studentRepository.existsByStudentId(memberId);
+        boolean teacher = teacherRepository.existsByTeacherId(memberId);
+        if (student == false && teacher == false) {
+            return false;
+        }
+        return true;
     }
-    public boolean checkStudentIdDuplicated(String studentId){
-        return studentRepository.existsByStudentId(studentId);
+    public class CreateAccountNumber {
+        public static String generateAccountNumber() {
+            // 12자리의 랜덤 숫자 생성
+            String accountNumber = generateRandomNumbers(12);
+
+            // 포맷 형식에 맞게 변경
+            return formatAccountNumber(accountNumber);
+        }
+
+        private static String generateRandomNumbers(int length) {
+            Random random = new Random();
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < length; i++) {
+                stringBuilder.append(random.nextInt(10));
+            }
+            return stringBuilder.toString();
+        }
+
+        private static String formatAccountNumber(String accountNumber) {
+            // "xxx-xxxxxx-xxx" 형식으로 포맷팅
+            return String.format("%s-%s-%s",
+                    accountNumber.substring(0, 3),
+                    accountNumber.substring(3, 9),
+                    accountNumber.substring(9));
+        }
     }
 }

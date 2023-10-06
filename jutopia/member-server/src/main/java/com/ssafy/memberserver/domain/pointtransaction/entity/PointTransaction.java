@@ -26,15 +26,15 @@ public class PointTransaction {
 
     public static PointTransaction incomeFrom(PointIncomeRequest pointIncomeRequest, Student student){
         return PointTransaction.builder()
-                .income(pointIncomeRequest.income())
-                .place(pointIncomeRequest.place())
+                .income(pointIncomeRequest.getIncome())
+                .place(pointIncomeRequest.getPlace())
                 .student(student)
                 .build();
     }
     public static PointTransaction expenseFrom(PointExpenseRequest pointExpenseRequest, Student student){
         return PointTransaction.builder()
-                .expense(pointExpenseRequest.expense())
-                .place(pointExpenseRequest.place())
+                .expense(pointExpenseRequest.getExpense())
+                .place(pointExpenseRequest.getPlace())
                 .student(student)
                 .build();
     }
