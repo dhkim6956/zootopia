@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -45,6 +47,7 @@ import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
@@ -56,7 +59,7 @@ import moe.tlaster.precompose.navigation.Navigator
 
 private val log = Logger.withTag("TeacherSignUp")
 
-class TeacherSignUp {
+class teacherSignUp {
     private val client = HttpClient(CIO) {
         install(ContentNegotiation) {
             json(
@@ -97,6 +100,51 @@ class TeacherSignUp {
             log.e(e) { "Error during sign up" }
         }
     }
+
+    @OptIn(InternalAPI::class)
+    suspend fun sendEmail(
+        email_id: String,
+    ) {
+
+        val requestBody = mapOf(
+            "email_id" to email_id,
+        )
+
+        try {
+            val response: HttpResponse =
+                client.post("http://j9c108.p.ssafy.io:8000/member-server/api/teacher/sign-in/mailConfirm") {
+                    contentType(ContentType.Application.Json)
+                    body = Json.encodeToString(requestBody)
+                }
+            log.i { "$response" }
+        } catch (e: Exception) {
+            log.e(e) { "메일 발송" }
+        }
+    }
+
+    @OptIn(InternalAPI::class)
+    suspend fun confirmCode(
+        code: String,
+    ): String { // Return type changed to String
+
+        val requestBody = mapOf(
+            "code" to code,
+        )
+
+        return try {
+            val response: HttpResponse =
+                client.post("http://j9c108.p.ssafy.io:8000/member-server/api/teacher/sign-in/verifyCode") {
+                    contentType(ContentType.Application.Json)
+                    body = Json.encodeToString(requestBody)
+                }
+            log.i { "인증코드: $response" }
+
+            response.bodyAsText()
+        } catch (e: Exception) {
+            log.e(e) { "인증" }
+            ""
+        }
+    }
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -109,12 +157,14 @@ fun TeacherSignUp(navigator: Navigator, teacher_id: String?, teacher_pwd: String
     var teacher_name by remember { mutableStateOf("") }
     var verification by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-
+    var confirmResult by remember { mutableStateOf("") }
+    var showDialog by remember { mutableStateOf(false) } // 추가
     var selectedTab by remember { mutableStateOf(0) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    var showSendEmailDialog by remember { mutableStateOf(false) }
+    var emailResultMessage by remember { mutableStateOf("") }
 
-    log.i { " $teacher_id, $teacher_pwd " }
 
     Column {
         TopPageBar("선생님 회원가입", navigator = navigator, showChatBot = false, bgColor = startColor)
@@ -168,13 +218,31 @@ fun TeacherSignUp(navigator: Navigator, teacher_id: String?, teacher_pwd: String
                         .height(60.dp)
                         .padding(top = 20.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .border(2.dp, Color.LightGray),
+                        .border(2.dp, Color.LightGray)
+                        .clickable {
+//
+                        val api = teacherSignUp()
+                        coroutineScope.launch {
+                            api.sendEmail(email!!)
+                            emailResultMessage="메일을 전송하였습니다."
+                            showSendEmailDialog=true
+                        }
+                    },
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("인증")
+                    Text("발송")
                 }
             }
-
+            if (showSendEmailDialog) {
+                AlertDialog(
+                    onDismissRequest = { showSendEmailDialog = false },
+                    title = { Text(text = "메일 발송 결과") },
+                    text = {
+                        Text(text = emailResultMessage, fontSize = 20.sp)
+                    },
+                    confirmButton ={ Button(onClick ={showSendEmailDialog=false}){Text("확인")}}
+                )
+            }
             Spacer(modifier = Modifier.height(10.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -220,11 +288,35 @@ fun TeacherSignUp(navigator: Navigator, teacher_id: String?, teacher_pwd: String
                         .height(60.dp)
                         .padding(top = 20.dp)
                         .clip(RoundedCornerShape(5.dp))
-                        .border(2.dp, Color.LightGray),
+                        .border(2.dp, Color.LightGray)
+                        .clickable {
+                            val api = teacherSignUp()
+                            coroutineScope.launch {
+                                confirmResult = api.confirmCode(
+                                    verification!!,
+                                )
+                                showDialog = true // 인증이 완료되면 대화 상자 표시 설정
+                            }
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Text("확인")
                 }
+            }
+
+            if (showDialog) { // 대화 상자 표시 여부에 따라 AlertDialog 보여주기/숨기기 결정
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text(text = "인증 결과") },
+                    text = {
+                        if (confirmResult == "false") {
+                            Text(text ="인증이 완료되었습니다.", fontSize = 20.sp)
+                        } else {
+                            Text(text ="인증에 실패하였습니다.", fontSize = 20.sp)
+                        }
+                    },
+                    confirmButton ={ Button(onClick ={showDialog=false}){Text("확인")}}
+                )
             }
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -394,7 +486,7 @@ fun TeacherSignUp(navigator: Navigator, teacher_id: String?, teacher_pwd: String
                     .border(2.dp, Color.LightGray)
                     .clickable {
                         selectedTab = 1
-                        val api = TeacherSignUp()
+                        val api = teacherSignUp()
                         coroutineScope.launch {
                             api.signUpTeacher(
                                 teacher_id!!,

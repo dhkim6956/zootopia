@@ -89,7 +89,7 @@ data class Result(
 )
 
 private val log = Logger.withTag("Save")
-val classroomId = "6600f67c-85f4-46f9-9c66-5c5148f20040"
+val classroomId = "4d78f335-3d9e-4d7e-ad25-0de0247d8e59"
 
 class saveAPI {
     private val client = HttpClient(CIO) {
@@ -101,11 +101,13 @@ class saveAPI {
     }
 
     suspend fun getSave(): List<Product> {
+        log.i { "$classroomId" }
         val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/class-server/api/bank/$classroomId/product")
         val body: String = response.bodyAsText()
         // JSON 문자열을 객체로 변환
         val result = Json.decodeFromString<ServerResponse>(body)
         // result.body 에 있는 List<Product> 반환
+        log.i { "$response c" }
         return result.body
     }
 
