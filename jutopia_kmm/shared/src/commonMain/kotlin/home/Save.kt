@@ -89,7 +89,7 @@ data class Result(
 )
 
 private val log = Logger.withTag("Save")
-val classroomId = "6600f67c-85f4-46f9-9c66-5c5148f20040"
+val classroomId = "4d78f335-3d9e-4d7e-ad25-0de0247d8e59"
 
 class saveAPI {
     private val client = HttpClient(CIO) {
@@ -213,7 +213,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                     Text("6학년 1반", fontSize = 25.sp)
                     Row {
                         Text("$productName ", fontSize = 25.sp, color = deepNavy)
-//                        Text("적금", fontSize = 25.sp)
+                        Text("적금", fontSize = 25.sp)
                     }
                     Row(
                         modifier = Modifier
