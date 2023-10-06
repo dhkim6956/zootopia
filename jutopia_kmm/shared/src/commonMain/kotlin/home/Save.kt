@@ -89,7 +89,6 @@ data class Result(
 )
 
 private val log = Logger.withTag("Save")
-val classroomId = "4d78f335-3d9e-4d7e-ad25-0de0247d8e59"
 
 class saveAPI {
     private val client = HttpClient(CIO) {
@@ -100,7 +99,7 @@ class saveAPI {
         }
     }
 
-    suspend fun getSave(): List<Product> {
+    suspend fun getSave(classroomId: String): List<Product> {
         log.i { "$classroomId" }
         val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/class-server/api/bank/$classroomId/product")
         val body: String = response.bodyAsText()
@@ -134,6 +133,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
     var firstProduct by remember { mutableStateOf<Product?>(null) }
     val coroutineScope = rememberCoroutineScope()
     var student_member_id by remember { mutableStateOf("") }
+    var classroomId by remember { mutableStateOf("") }
 
 
     val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
@@ -141,16 +141,16 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
         val temp: UserInfo? = store.get()
         if (temp != null) {
             student_member_id = temp.uuid
+            classroomId = temp.classUUID
+            var test = saveAPI()
+            var products = test.getSave(classroomId)
+            log.i {"$products"}
+            firstProduct = products[0]
         }
     }
 
 
-    coroutineScope.launch {
-        var test = saveAPI()
-        var products = test.getSave()
-        log.i {"$products"}
-        firstProduct = products[0]
-    }
+
     var productId  = firstProduct?.id
     var minMoney = firstProduct?.minMoney?.toInt()
     var maxMoney = firstProduct?.maxMoney?.toInt()
