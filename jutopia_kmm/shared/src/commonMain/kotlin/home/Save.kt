@@ -215,7 +215,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                     Text("6학년 1반", fontSize = 25.sp)
                     Row {
                         Text("$productName ", fontSize = 25.sp, color = deepNavy)
-//                        Text("적금", fontSize = 25.sp)
+                        Text("적금", fontSize = 25.sp)
                     }
                     Row(
                         modifier = Modifier
