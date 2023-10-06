@@ -1,6 +1,9 @@
 package lease
 
+import UserInfo
 import co.touchlab.kermit.Logger
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -18,10 +21,12 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.InternalAPI
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import pathTo
 
 private val log = Logger.withTag("LeaseAPI")
 
 class LeaseApiService {
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
 
     private companion object {
         const val BASE_URL = "http://j9c108.p.ssafy.io:8000/rent-server/api"
@@ -58,7 +63,8 @@ class LeaseApiService {
 
     @OptIn(InternalAPI::class)
     suspend fun setSeat(seatId: String): HttpResponse{
-        val userId = "test"
+        val storedUserInfo: UserInfo? = store.get()
+        val userId = storedUserInfo!!.uuid
         val seatRequest = SeatRequest(seatId, userId)
         val jsonData = Json.encodeToString(seatRequest);
 
