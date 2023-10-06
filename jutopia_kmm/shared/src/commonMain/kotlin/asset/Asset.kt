@@ -92,7 +92,7 @@ fun Asset(navigator: Navigator, category: Int?, viewModel: AssetViewModel = view
                 0 -> MyAccount(navigator, userInfo!!)
                 1 -> MySave()
                 2 -> MyPoint()
-                3 -> MyStock(navigator)
+                3 -> MyStock(userInfo!!, navigator)
                 4 -> MyBuilding()
                 else -> Text("Error Page")
             }

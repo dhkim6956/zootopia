@@ -1,5 +1,6 @@
 package asset.subMenu
 
+import UserInfo
 import Variables.ColorsOnPrimary
 import Variables.ColorsOnSecondary
 import Variables.ColorsPrimary
@@ -44,12 +45,12 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun MyStock(navigator: Navigator, viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewModel::class) {
+fun MyStock(userInfo: UserInfo, navigator: Navigator, viewModel: MyStockViewModel = viewModel(modelClass = MyStockViewModel::class) {
     MyStockViewModel()
 }) {
     val ownedStock by viewModel.ownedStock.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
-    if (isLoading) viewModel.fetchData()
+    if (isLoading) viewModel.fetchData(userInfo.uuid)
 
     if(isLoading) {
         Box(

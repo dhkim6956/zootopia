@@ -1,6 +1,7 @@
 package home
 
 import BottomTabBar
+import UserInfo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,9 +27,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import common.TopPageBar
+import io.github.xxfast.kstore.KStore
+import io.github.xxfast.kstore.file.storeOf
 import moe.tlaster.precompose.navigation.Navigator
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import pathTo
 
 val deepBlue = Color(0xFF3F51B5)
 val lightBlue = Color(0xFF5D7DD4)
@@ -35,6 +40,15 @@ val lightGray = Color(0xFFF6F6F6)
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun Bank(navigator: Navigator) {
+    var userName by remember { mutableStateOf("") }
+    val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
+    LaunchedEffect(1) {
+        val temp: UserInfo? = store.get()
+        if (temp != null) {
+            userName = temp.name
+        }
+    }
+
     var humanImg = "drawable/human.xml"
     var sendImg = "drawable/send.xml"
     var saveImg = "drawable/save.xml"
@@ -93,7 +107,7 @@ fun Bank(navigator: Navigator) {
                         ) {
                             Image(painter = humanIcon, contentDescription = "Human Icon")
                             Spacer(modifier = Modifier.width(10.dp))
-                            Text("임준환",color = Color.White)
+                            Text(userName,color = Color.White)
                         }
                     }
 

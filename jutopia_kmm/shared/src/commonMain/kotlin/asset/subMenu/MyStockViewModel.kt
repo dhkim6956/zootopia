@@ -18,9 +18,9 @@ class MyStockViewModel: ViewModel() {
 
     val isLoading: StateFlow<Boolean> = _isLoading
 
-    fun fetchData() {
+    fun fetchData(userUUID: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _ownedStock.emit(MyStockAPI().getMyStock())
+            _ownedStock.emit(MyStockAPI().getMyStock(userUUID))
             _isLoading.emit(false)
         }
     }
