@@ -4,7 +4,7 @@ import requests
 import re
 from transformers import PreTrainedTokenizerFast, BartForConditionalGeneration
 
-openai.api_key = "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"
+openai.api_key = "DELETED_API_KEY"
 
 # 파싱용 변수
 punct = "/-'?!.,#$%\'()*+-/:;<=>@[\\]^_`{|}~" + '""“”’' + '∞θ÷α•à−β∅³π‘₹´°£€\×™√²—–&'
