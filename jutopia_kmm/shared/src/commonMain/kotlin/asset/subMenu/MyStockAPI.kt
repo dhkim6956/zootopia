@@ -20,22 +20,24 @@ class MyStockAPI {
     }
 
     @Throws(Exception::class)
-    suspend fun getMyStock(): List<StockDetail> {
+    suspend fun getMyStock(userUUID: String): List<StockDetail> {
+        val log = Logger.withTag("stockApi")
 
+        log.d("start")
 
         try {
-            val response: ResponseData = httpClient.get("http://j9c108.p.ssafy.io:8000/stock-server/api/memberstock/7a7d8d91-b63a-42da-9552-62c749d9ae94").body<ResponseData>()
+            val response: ResponseData = httpClient.get("http://j9c108.p.ssafy.io:8000/stock-server/api/memberstock/${userUUID}").body<ResponseData>()
 
             val transform: List<StockDetail> = response.body.map { si ->
-                StockDetail(si.stockName, si.prevMoney, si.nowMoney, si.qty, si.changeRate, if(si.type == 1) Comparison.Increased else if (si.type == 0) Comparison.NotChanged else Comparison.Decreased)
+                StockDetail(si.stockName, si.nowMoney + si.changeMoney * si.type * -1, si.nowMoney, si.qty, si.changeRate, if(si.type == 1) Comparison.Increased else if (si.type == 0) Comparison.NotChanged else Comparison.Decreased)
             }
 
-            Logger.d("fetch data!!!")
+            log.d("stock detail : ${transform}")
 
             return transform
 
         } catch (e: Exception) {
-            println("Error: ${e.message}")
+            log.d("Error: ${e.message}")
             return emptyList()
         } finally {
             httpClient.close()

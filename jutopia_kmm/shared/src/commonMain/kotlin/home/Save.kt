@@ -89,7 +89,6 @@ data class Result(
 )
 
 private val log = Logger.withTag("Save")
-val classroomId = "6600f67c-85f4-46f9-9c66-5c5148f20040"
 
 class saveAPI {
     private val client = HttpClient(CIO) {
@@ -100,12 +99,14 @@ class saveAPI {
         }
     }
 
-    suspend fun getSave(): List<Product> {
+    suspend fun getSave(classroomId: String): List<Product> {
+        log.i { "$classroomId" }
         val response: HttpResponse = client.get("http://j9c108.p.ssafy.io:8000/class-server/api/bank/$classroomId/product")
         val body: String = response.bodyAsText()
         // JSON 문자열을 객체로 변환
         val result = Json.decodeFromString<ServerResponse>(body)
         // result.body 에 있는 List<Product> 반환
+        log.i { "$response c" }
         return result.body
     }
 
@@ -132,6 +133,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
     var firstProduct by remember { mutableStateOf<Product?>(null) }
     val coroutineScope = rememberCoroutineScope()
     var student_member_id by remember { mutableStateOf("") }
+    var classroomId by remember { mutableStateOf("") }
 
 
     val store: KStore<UserInfo> = storeOf(filePath = pathTo("user"))
@@ -139,16 +141,16 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
         val temp: UserInfo? = store.get()
         if (temp != null) {
             student_member_id = temp.uuid
+            classroomId = temp.classUUID
+            var test = saveAPI()
+            var products = test.getSave(classroomId)
+            log.i {"$products"}
+            firstProduct = products[0]
         }
     }
 
 
-    coroutineScope.launch {
-        var test = saveAPI()
-        var products = test.getSave()
-        log.i {"$products"}
-        firstProduct = products[0]
-    }
+
     var productId  = firstProduct?.id
     var minMoney = firstProduct?.minMoney?.toInt()
     var maxMoney = firstProduct?.maxMoney?.toInt()
@@ -213,7 +215,7 @@ fun Save(navigator: Navigator, revealCanvasState: RevealCanvasState) {
                     Text("6학년 1반", fontSize = 25.sp)
                     Row {
                         Text("$productName ", fontSize = 25.sp, color = deepNavy)
-//                        Text("적금", fontSize = 25.sp)
+                        Text("적금", fontSize = 25.sp)
                     }
                     Row(
                         modifier = Modifier
