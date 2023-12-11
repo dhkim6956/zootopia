@@ -7,12 +7,12 @@ spring:
   rabbitmq:
     host: 127.0.0.1
     port: 5672
-    username: guest
-    password: guest
+    username: [member-server-username]
+    password: [member-server-password]
   security:
     user:
-      name: ssafy
-      password: ssafy
+      name: [member-server-name]
+      password: [member-server-password]
 
 
 eureka:
